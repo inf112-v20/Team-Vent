@@ -7,11 +7,11 @@ Gruppenavn: Team Vent
 
 Kompetanse:
 
-Oda:
-Caroline:
-John Isak:
-Marius:
-Simen:
+Oda:  
+Caroline:  
+John Isak:  
+Marius:  
+Simen:  
 
 Roller:  
 Oda- Utvikler,  
@@ -30,7 +30,7 @@ Spesifikasjon RoboRally:
 2. Liste over krav:
 - Vise spillebrettet
 - Programmere robot
-- Vise spillere 
+- Vise roboter
 - Dele ut kort
 - Spille en runde
 - Avgjøre om en spiller har vunnet 
@@ -39,7 +39,7 @@ Spesifikasjon RoboRally:
 - Roboten kan dø
 - Spilleren kan dø
 - Roboten kan bli reparert
-- Implementere timer 
+- Tidsbegrensning på programmering av robot 
 - Vegger stopper roboter
 - Vegger stopper lasere
 - Robot stopper laser 
@@ -47,8 +47,9 @@ Spesifikasjon RoboRally:
 - Dytte annen robot 
 
 3. Prioritert liste:
-- Vise 1 spillebrett
-- Vise 1 robot
+- Vise spillebrett
+- Vise robot
 - Spille en runde 
 
 Deloppgave 3: 
+
