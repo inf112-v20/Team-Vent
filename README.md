@@ -7,4 +7,4 @@ when the java version used is >8. This has no effect on function or performance,
 
 ## Resources
 The [robot icon](https://commons.wikimedia.org/wiki/File:Robot-icon.svg) is licenced under Wikimedia Commons.  
-The tiles are provided by http://www.yeoldewebsiteknight.co.uk/roborally​
+The tiles are provided by [yeoldewebsiteknight](http://www.yeoldewebsiteknight.co.uk/roborally​).
