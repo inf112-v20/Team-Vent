@@ -43,8 +43,6 @@ public class HelloRobot implements ApplicationListener {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
         mapRenderer.render();
     }
@@ -61,3 +59,5 @@ public class HelloRobot implements ApplicationListener {
     public void resume() {
     }
 }
+
+//@Authors:
