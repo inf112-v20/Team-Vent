@@ -1,5 +1,4 @@
-# INF112 Maven template 
-Simple skeleton with libgdx.
+# INF112 RoboRally Game
 
 ## Known bugs
 Currently throws "WARNING: An illegal reflective access operation has occurred", 
