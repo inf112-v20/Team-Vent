@@ -1,10 +1,10 @@
 
-#Obligatorisk oppgave 1
-####Gruppenavn: Team Vent
+# Obligatorisk oppgave 1
+#### Gruppenavn: Team Vent
 
-##Delopgave 1:
+## Delopgave 1:
 
-###Kompetanse i teamet:
+### Kompetanse i teamet:
 **Oda**: Oda går siste året på bachelor i kognitiv vitenskap. Hun har jobbet i team på et programmeringsprosjekt utenfor studiene, og tar med seg noen erfaringer derfra.
 
 **Caroline**: Caroline har litt erfaring med koding, etter INF100, INF101 og lærer seg Python dette semesteret. Har også god kunnskap om SQL. Jobbet litt i team før, så er kjent med ulike type gruppedynamikker. Har blant annet vært skiftleder for et vaktlag på 5-8 folk i Forsvaret. 
@@ -15,7 +15,7 @@
 
 **Simen**: Simen har kompetanse i Java programmering, Haskell og Python. Han er også komfortabel med logikk og er god til å løse praktiske problemer.
 
-###Roller:  
+### Roller:  
 **Oda**: Utvikler   
 **Caroline**: Utvikler, Prosjektleder  
 **John Isak**: Utvikler     
@@ -25,7 +25,7 @@
 
 ## Deloppgave 2: Krav 
 
-###Spesifikasjon RoboRally:
+### Spesifikasjon RoboRally:
 
 Det overordnede målet for applikasjonen er å lage en digital versjon av brettspillet Robo Rally. 
 
@@ -54,7 +54,7 @@ Det overordnede målet for applikasjonen er å lage en digital versjon av bretts
 	1. Vise spillebrett
 	2. Vise robot
 
-##Deloppgave 3: Prosess
+## Deloppgave 3: Prosess
 
 **Prosjektmetodikk**  
 Team Vent går ut i fra prosjektmetodikken Kanban. Vi velger å ta utgangspunkt i Kanban fordi med denne metodikken har man en kontinuerlig flyt, og vi går utifra at alle er tildelt en oppgave av gangen, visualisert i prosjekttavlen. En annen fordel med denne metodikken er at den legger til rette for at man kan jobbe parallelt, samtidig som den setter en viss disiplin til de enkelte i teamet. 
