@@ -1,6 +1,9 @@
 package inf112.skeleton.app;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,7 +15,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 
-public class HelloRobot implements ApplicationListener {
+public class HelloRobot extends InputAdapter implements ApplicationListener {
     private static final int MAP_SIZE_X = 5;
     private static final int MAP_SIZE_Y = 5;
     private static final int TILE_PIXELS = 300;
@@ -33,6 +36,7 @@ public class HelloRobot implements ApplicationListener {
         mapRenderer.setView(camera);
         Texture playerTexture = new Texture("floating-robot.png");
         playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTexture)));
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -42,6 +46,7 @@ public class HelloRobot implements ApplicationListener {
 
     @Override
     public void render() {
+        move();
         playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
         mapRenderer.render();
     }
@@ -57,6 +62,26 @@ public class HelloRobot implements ApplicationListener {
     @Override
     public void resume() {
     }
+
+    private void move() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
+            playerPos.y += 1;
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
+            playerPos.y -= 1;
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
+            playerPos.x += 1;
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
+            playerPos.x -= 1;
+        }
+    }
+
 }
 
 //@Authors:
