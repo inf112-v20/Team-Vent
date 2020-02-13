@@ -1,4 +1,5 @@
 # INF112 RoboRally Game
+[![Build Status](https://travis-ci.com/inf112-v20/Team-Vent.svg?branch=master)](https://travis-ci.com/inf112-v20/Team-Vent)
 
 ## Known bugs
 Currently throws "WARNING: An illegal reflective access operation has occurred", 
