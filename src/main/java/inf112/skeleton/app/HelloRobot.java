@@ -18,25 +18,31 @@ import com.badlogic.gdx.math.Vector2;
 public class HelloRobot extends InputAdapter implements ApplicationListener {
     private static final int MAP_SIZE_X = 5;
     private static final int MAP_SIZE_Y = 5;
-    private static final int TILE_PIXELS = 300;
-    TiledMapTileLayer playerLayer;
+    private static final int TILE_PIXELS = 96;
+    private TiledMapTileLayer playerLayer;
+    private TiledMapTileLayer tileLayer;
     private OrthogonalTiledMapRenderer mapRenderer;
     private Cell playerCell;
     private Vector2 playerPos = new Vector2(2, 2);
+    private Texture playerTextureDead;
 
     @Override
     public void create() {
         TiledMap tiledMap = new TmxMapLoader().load("demo.tmx");
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, MAP_SIZE_X, MAP_SIZE_Y);
         camera.position.x = (float) MAP_SIZE_X / 2;
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
         mapRenderer.setView(camera);
-        Texture playerTexture = new Texture("floating-robot.png");
+        Texture playerTexture = new Texture("Player/floating-robot.png");
+        playerTextureDead = new Texture("Player/floating-robot-dead.png");
         playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTexture)));
         Gdx.input.setInputProcessor(this);
+        tiledMap.getLayers().get("PLayer");
+        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
     }
 
     @Override
@@ -46,8 +52,6 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
 
     @Override
     public void render() {
-        move();
-        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
         mapRenderer.render();
     }
 
@@ -63,23 +67,29 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
     public void resume() {
     }
 
-    private void move() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+    @Override
+    public boolean keyUp (int keycode) {
+        if (keycode == Input.Keys.UP) {
             playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
             playerPos.y += 1;
         }
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        else if (keycode == Input.Keys.DOWN) {
             playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
             playerPos.y -= 1;
         }
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+        else if (keycode == Input.Keys.RIGHT) {
             playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
             playerPos.x += 1;
         }
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+        else if (keycode == Input.Keys.LEFT) {
             playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
             playerPos.x -= 1;
         }
+        if (tileLayer.getCell((int) playerPos.x, (int) playerPos.y).getTile().getId() == 6) {
+            playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTextureDead)));
+        }
+        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
+        return true;
     }
 
 }
