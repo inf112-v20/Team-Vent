@@ -46,7 +46,6 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
 
     @Override
     public void render() {
-        move();
         playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
         mapRenderer.render();
     }
@@ -62,24 +61,30 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
     @Override
     public void resume() {
     }
+    @Override
+    public boolean keyUp(int keycode) {
+        switch (keycode) {
+            case Input.Keys.LEFT:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.x -= 1;
+                return true;
 
-    private void move() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.y += 1;
+            case Input.Keys.UP:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.y += 1;
+                return true;
+
+            case Input.Keys.RIGHT:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.x += 1;
+                return true;
+
+            case Input.Keys.DOWN:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.y -= 1;
+                return true;
         }
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.y -= 1;
-        }
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.x += 1;
-        }
-        else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.x -= 1;
-        }
+        return false;
     }
 
 }
