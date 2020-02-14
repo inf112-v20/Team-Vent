@@ -61,32 +61,36 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
     @Override
     public void resume() {
     }
+
     @Override
     public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.LEFT ||
+                keycode == Input.Keys.UP ||
+                keycode == Input.Keys.RIGHT ||
+                keycode == Input.Keys.DOWN) {
+
+            playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+        } else return false;
+
         switch (keycode) {
             case Input.Keys.LEFT:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
                 playerPos.x -= 1;
                 return true;
 
             case Input.Keys.UP:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
                 playerPos.y += 1;
                 return true;
 
             case Input.Keys.RIGHT:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
                 playerPos.x += 1;
                 return true;
 
             case Input.Keys.DOWN:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
                 playerPos.y -= 1;
                 return true;
         }
         return false;
     }
-
 }
 
 //@Authors:
