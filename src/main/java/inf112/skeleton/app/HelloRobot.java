@@ -68,7 +68,6 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
             case Input.Keys.LEFT:
                 playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
                 playerPos.x -= 1;
-                System.out.println(playerPos.x);
                 return true;
             case Input.Keys.UP:
                 playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
