@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 public class HelloRobot extends InputAdapter implements ApplicationListener {
     private static final int MAP_SIZE_X = 5;
     private static final int MAP_SIZE_Y = 5;
-    private static final int TILE_PIXELS = 96;
+    private static final int TILE_PIXELS = 100;
     private TiledMapTileLayer playerLayer;
     private TiledMapTileLayer tileLayer;
     private OrthogonalTiledMapRenderer mapRenderer;
