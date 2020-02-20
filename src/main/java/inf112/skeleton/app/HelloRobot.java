@@ -90,11 +90,6 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
             default:
                 return false;
         }
-        if (tileLayer.getCell((int) playerPos.x, (int) playerPos.y).getTile().getId() == 6) {
-            playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTextureDead)));
-        }
-        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
-        return true;
     }
 }
 
