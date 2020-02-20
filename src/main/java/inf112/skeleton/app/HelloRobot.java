@@ -52,6 +52,7 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
 
     @Override
     public void render() {
+        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
         mapRenderer.render();
     }
 
@@ -68,22 +69,26 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
     }
 
     @Override
-    public boolean keyUp (int keycode) {
-        if (keycode == Input.Keys.UP) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.y += 1;
-        }
-        else if (keycode == Input.Keys.DOWN) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.y -= 1;
-        }
-        else if (keycode == Input.Keys.RIGHT) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.x += 1;
-        }
-        else if (keycode == Input.Keys.LEFT) {
-            playerLayer.setCell((int)playerPos.x, (int)playerPos.y, new Cell());
-            playerPos.x -= 1;
+    public boolean keyUp(int keycode) {
+        switch (keycode) {
+            case Input.Keys.LEFT:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.x -= 1;
+                return true;
+            case Input.Keys.UP:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.y += 1;
+                return true;
+            case Input.Keys.RIGHT:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.x += 1;
+                return true;
+            case Input.Keys.DOWN:
+                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
+                playerPos.y -= 1;
+                return true;
+            default:
+                return false;
         }
         if (tileLayer.getCell((int) playerPos.x, (int) playerPos.y).getTile().getId() == 6) {
             playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTextureDead)));
@@ -91,7 +96,6 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
         playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
         return true;
     }
-
 }
 
 //@Authors:
