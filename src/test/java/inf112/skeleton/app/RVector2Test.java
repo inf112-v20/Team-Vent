@@ -5,7 +5,8 @@ import inf112.skeleton.app.board.RVector2;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class RVector2Test {
     private RVector2 rVector2;

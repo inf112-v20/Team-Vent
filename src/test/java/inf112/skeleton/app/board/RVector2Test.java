@@ -7,11 +7,11 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class RVector2Test {
-    Vector2 v2;
-    RVector2 rv2;
+    private Vector2 v2;
+    private RVector2 rv2;
 
     @Before
-    public void setup() {
+    public void setUp() {
         v2 = new Vector2(2, 1);
         rv2 = new RVector2(v2);
     }

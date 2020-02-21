@@ -11,7 +11,7 @@ public class LocationTest {
     private Location locEast;
 
     @Before
-    public void setup() {
+    public void setUp() {
         RVector2 r2 = new RVector2(2, 3);
         locNorth = new Location(r2, Direction.NORTH);
         locEast = new Location(r2, Direction.EAST);

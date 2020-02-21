@@ -4,7 +4,7 @@ import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.board.Side;
 
 public class RotateCard implements IProgramCard {
-    Side side;
+    private Side side;
 
     public RotateCard(Side side) {
         this.side = side;

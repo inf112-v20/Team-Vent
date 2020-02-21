@@ -7,7 +7,7 @@ import inf112.skeleton.app.cards.RotateLeftCard;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class RobotTest {
@@ -16,7 +16,7 @@ public class RobotTest {
     private Location originalLocation;
 
     @Before
-    public void setup() {
+    public void setUp() {
         originalLocation = new Location(new RVector2(2, 3), Direction.WEST);
         robot = new Robot(originalLocation);
     }
