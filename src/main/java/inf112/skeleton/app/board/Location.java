@@ -3,6 +3,7 @@ package inf112.skeleton.app.board;
 import java.util.Objects;
 
 public class Location {
+    // Location objects are immutable
     private final RVector2 position;
     private final Direction direction;
 
@@ -12,15 +13,21 @@ public class Location {
     }
 
     public Location forward() {
-        return new Location(this.position.add(this.direction.vector()), this.direction) ;
+        return new Location(this.position.add(this.direction.unitVector()), this.direction);
     }
 
+    /**
+     * @return return a new Location that is rotated to the left (no change in position)
+     */
     public Location rotateLeft() {
-        return new Location(position, this.direction.turn(Side.LEFT));
+        return new Location(position, this.direction.left());
     }
 
+    /**
+     * @return return a new Location that is rotated to the right (no change in position)
+     */
     public Location rotateRight() {
-        return new Location(position, this.direction.turn(Side.RIGHT));
+        return new Location(position, this.direction.right());
     }
 
     public Location copy() {

@@ -2,52 +2,58 @@ package inf112.skeleton.app.board;
 
 import org.junit.Test;
 
+import static inf112.skeleton.app.board.Direction.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class DirectionTest {
 
-    public static final Direction [] directions = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+    public static final Direction [] directions = {NORTH, EAST, SOUTH, WEST};
 
 
     @Test
-    public void left() {
-        for(int i = 0; i < directions.length; i++) {
-            assertEquals(directions[i], directions[(i+1)%directions.length].left());
+    public void leftIsLeft() {
+        for (int i = 0; i < directions.length; i++) {
+            assertEquals(directions[i], directions[(i + 1) % directions.length].left());
         }
     }
 
     @Test
-    public void right() {
-        for(int i = 0; i < directions.length; i++) {
-            assertEquals(directions[i].right(), directions[(i+1)%directions.length]);
+    public void rightIsRight() {
+        for (int i = 0; i < directions.length; i++) {
+            assertEquals(directions[i].right(), directions[(i + 1) % directions.length]);
         }
     }
 
     @Test
     public void leftAndRightAreInverse() {
-        for(Direction d : directions) {
+        for (Direction d : directions) {
             assertEquals(d.left().right(), d);
             assertEquals(d.right().left(), d);
         }
     }
 
     @Test
-    public void vector() {
-        assertEquals(Direction.NORTH.vector(), new RVector2(0, 1));
-        assertEquals(Direction.SOUTH.vector(), new RVector2(0, -1));
-        assertEquals(Direction.WEST.vector(), new RVector2(-1, 0));
-        assertEquals(Direction.EAST.vector(), new RVector2(1, 0));
-
-    }
-
-    @Test
-    public void turn() {
-        for(Direction d: directions) {
-            assertEquals(d.right(), d.turn(Side.RIGHT));
-            assertEquals(d.left(), d.turn(Side.LEFT));
+    public void turnDoesTurn() {
+        for (Direction d : directions) {
             assertNotEquals(d, d.right());
             assertNotEquals(d, d.left());
         }
+    }
+
+    @Test
+    public void turningFourTimesIsACircle() {
+        for (Direction d : directions) {
+            assertEquals(d, d.left().left().left().left());
+            assertEquals(d, d.right().right().right().right());
+        }
+    }
+
+    @Test
+    public void unitVectors() {
+        assertEquals(NORTH.unitVector(), new RVector2(0, 1));
+        assertEquals(SOUTH.unitVector(), new RVector2(0, -1));
+        assertEquals(WEST.unitVector(), new RVector2(-1, 0));
+        assertEquals(EAST.unitVector(), new RVector2(1, 0));
     }
 }

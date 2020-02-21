@@ -6,7 +6,7 @@ import java.util.Objects;
 
 // RVector2 encapsulates Vector2 and ensures the coordinates are integers.
 public class RVector2 {
-    private final Vector2 vector;
+    private Vector2 vector;
 
     public RVector2(int x, int y) {
         this(new Vector2(x, y));
@@ -21,8 +21,14 @@ public class RVector2 {
         return this.vector.cpy();
     }
 
-    public RVector2 add(RVector2 other) {
-        return new RVector2(this.vector.cpy().add(other.vector));
+    /**
+     * Adds the given vector to this vector
+     * @param v the vector to add
+     * @return this vector for chaining
+     */
+    public RVector2 add(RVector2 v) {
+        this.vector = this.vector.add(v.vector);
+        return this;
     }
 
     /**
@@ -44,7 +50,7 @@ public class RVector2 {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RVector2 that = (RVector2) o;
-        return Objects.equals(vector, that.vector);
+        return vector.epsilonEquals(that.vector);
     }
 
     public RVector2 copy() {

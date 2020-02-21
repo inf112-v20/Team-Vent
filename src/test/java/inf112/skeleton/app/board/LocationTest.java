@@ -24,7 +24,7 @@ public class LocationTest {
         assertEquals(locNorth.forward(), locNorth.forward());
         assertNotSame(locNorth, locNorth.forward()); // immutable, returns new instance
         for(Direction d : DirectionTest.directions) {
-            assertEquals(new Location(new RVector2(0, 0), d).forward(), new Location(d.vector(), d));
+            assertEquals(new Location(new RVector2(0, 0), d).forward(), new Location(d.unitVector(), d));
         }
     }
 

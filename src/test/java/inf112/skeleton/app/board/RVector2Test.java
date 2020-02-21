@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
 
 public class RVector2Test {
@@ -19,15 +19,17 @@ public class RVector2Test {
     }
 
     @Test
-    public void add() {
-        new RVector2(v2.add(v2));
+    public void addingMeansAddingInternalVectors() {
         assertEquals(rv2.add(rv2.copy()), new RVector2(v2.add(v2)));
-        assertNotEquals(rv2, rv2.add(rv2));
-        assertNotSame(rv2, rv2.add(rv2));
     }
 
     @Test
-    public void copy() {
+    public void addReturnsSameObject() {
+        assertSame(rv2, rv2.add(rv2));
+    }
+
+    @Test
+    public void copiesAreEqualButNotTheSame() {
         assertEquals(rv2, rv2.copy());
         assertNotSame(rv2, rv2.copy());
     }
