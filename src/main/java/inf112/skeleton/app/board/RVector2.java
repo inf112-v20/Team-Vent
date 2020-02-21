@@ -2,8 +2,6 @@ package inf112.skeleton.app.board;
 
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.Objects;
-
 // RVector2 encapsulates Vector2 and ensures the coordinates are integers.
 public class RVector2 {
     private Vector2 vector;
