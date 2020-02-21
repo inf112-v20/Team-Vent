@@ -14,8 +14,14 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
+import inf112.skeleton.app.board.Direction;
+import inf112.skeleton.app.board.Location;
+import inf112.skeleton.app.board.RVector2;
+import inf112.skeleton.app.cards.MoveForwardCard;
+import inf112.skeleton.app.cards.RotateLeftCard;
+import inf112.skeleton.app.cards.RotateRightCard;
 
-public class HelloRobot extends InputAdapter implements ApplicationListener {
+public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private static final int MAP_SIZE_X = 5;
     private static final int MAP_SIZE_Y = 5;
     private static final int TILE_PIXELS = 100;
@@ -25,6 +31,9 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
     private Cell playerCell;
     private Vector2 playerPos = new Vector2(2, 2);
     private Texture playerTextureDead;
+    
+    private Robot robot;
+    
 
     @Override
     public void create() {
@@ -37,12 +46,15 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
         mapRenderer.setView(camera);
+        
+        robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
+        
         Texture playerTexture = new Texture("Player/floating-robot.png");
         playerTextureDead = new Texture("Player/floating-robot-dead.png");
         playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTexture)));
         Gdx.input.setInputProcessor(this);
         tiledMap.getLayers().get("PLayer");
-        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
+        playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
     }
 
     @Override
@@ -52,7 +64,7 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
 
     @Override
     public void render() {
-        playerLayer.setCell((int) playerPos.x, (int) playerPos.y, playerCell);
+        playerLayer.setCell((int) robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
     }
 
@@ -72,20 +84,19 @@ public class HelloRobot extends InputAdapter implements ApplicationListener {
     public boolean keyUp(int keycode) {
         switch (keycode) {
             case Input.Keys.LEFT:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
-                playerPos.x -= 1;
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(new RotateLeftCard());
                 return true;
             case Input.Keys.UP:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
-                playerPos.y += 1;
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(new MoveForwardCard());
                 return true;
             case Input.Keys.RIGHT:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
-                playerPos.x += 1;
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(new RotateRightCard());
                 return true;
             case Input.Keys.DOWN:
-                playerLayer.setCell((int) playerPos.x, (int) playerPos.y, null);
-                playerPos.y -= 1;
+                // do nothing for now
                 return true;
             default:
                 return false;
