@@ -4,9 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 
 public class RVector2Test {
     private Vector2 v2;
@@ -16,6 +14,16 @@ public class RVector2Test {
     public void setUp() {
         v2 = new Vector2(2, 1);
         rv2 = new RVector2(v2);
+    }
+
+    @Test
+    public void checkInvariant() {
+        try {
+            new RVector2(new Vector2(0.3f, 0.5f));
+            fail();
+        } catch (IllegalStateException e) {
+            // this should happen
+        }
     }
 
     @Test

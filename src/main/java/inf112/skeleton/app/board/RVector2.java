@@ -40,7 +40,7 @@ public class RVector2 {
 
     @Override
     public String toString() {
-        return vector.toString();
+        return String.format("(%.0f, %.0f)", vector.x, vector.y);
     }
 
     @Override
