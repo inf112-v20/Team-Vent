@@ -4,7 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
 
 public class RVector2Test {
     private Vector2 v2;
