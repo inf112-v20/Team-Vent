@@ -1,0 +1,135 @@
+package inf112.skeleton.app;
+
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import inf112.skeleton.app.board.Direction;
+import inf112.skeleton.app.board.Location;
+import inf112.skeleton.app.board.RVector2;
+import inf112.skeleton.app.cards.MoveForwardCard;
+import inf112.skeleton.app.cards.RotateLeftCard;
+import inf112.skeleton.app.cards.RotateRightCard;
+
+public class GameScreen extends InputAdapter implements Screen {
+    private static final int TILES_WIDE = 5;
+    private static final int TILES_HIGH = 5;
+    private static final int TILE_ID_HOLE = 6;
+    private static final int PIXELS_PER_TILE = 100;
+    private RoboRally game;
+    private TiledMapTileLayer playerLayer;
+    private OrthogonalTiledMapRenderer mapRenderer;
+    private TiledMapTileLayer.Cell playerCell;
+    private Robot robot;
+    private TiledMapTileLayer tileLayer;
+    private TiledMapTileLayer.Cell blackRobotCell;
+    private TiledMapTileLayer.Cell redRobotCell;
+
+    public GameScreen(RoboRally game) {
+        this.game = game;
+    }
+
+    private static void log(String message) {
+        Gdx.app.log(GameScreen.class.getName(), message);
+    }
+
+    @Override
+    public void show() {
+        // create camera
+        OrthographicCamera camera = new OrthographicCamera();
+        camera.setToOrtho(false, TILES_WIDE, TILES_HIGH);
+        camera.position.x = (float) TILES_WIDE / 2;
+        camera.update();
+
+        // create map
+        TiledMap tiledMap = new TmxMapLoader().load("demo.tmx");
+        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Tile");
+        mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / PIXELS_PER_TILE);
+        mapRenderer.setView(camera);
+
+        // create robot
+        robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
+        blackRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
+                new Texture("Player/floating-robot.png"))));
+        redRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
+                new Texture("Player/floating-robot-dead.png"))));
+        playerCell = blackRobotCell;
+        Gdx.input.setInputProcessor(this);
+    }
+
+    @Override
+    public void render(float v) {
+        playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
+        mapRenderer.render();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        log(String.format("Resized to width=%d, height=%d", width, height));
+    }
+
+    @Override
+    public void pause() {
+        log("Paused");
+    }
+
+    @Override
+    public void resume() {
+        log("Resumed");
+    }
+
+    @Override
+    public void hide() {
+        mapRenderer.dispose();
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
+        switch (keycode) {
+            case Input.Keys.LEFT:
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(new RotateLeftCard());
+                break;
+            case Input.Keys.UP:
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(new MoveForwardCard());
+                break;
+            case Input.Keys.RIGHT:
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(new RotateRightCard());
+                break;
+            default:
+                return false; // the robot did not move
+        }
+        update();
+        return true; // the robot moved
+    }
+
+    private void update() {
+        // precondition: the robot has moved
+        TiledMapTile tileUnderRobot = tileLayer.getCell(robot.getX(), robot.getY()).getTile();
+        if (tileUnderRobot.getId() == TILE_ID_HOLE) {
+            log(robot.status());
+            robot.takeDamage();
+            playerCell = redRobotCell;
+        } else {
+            playerCell = blackRobotCell;
+        }
+        playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
+        if (!robot.alive()) {
+            game.setGameOverScreen();
+        }
+    }
+}
