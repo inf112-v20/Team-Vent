@@ -1,10 +1,9 @@
 
 # Obligatorisk oppgave 1
-#### Gruppenavn: Team Vent
 
-## Delopgave 1:
+## Delopgave 1
 
-### Kompetanse i teamet:
+### Kompetanse i teamet
 **Oda**: Oda går siste året på bachelor i kognitiv vitenskap. Hun har jobbet i team på et programmeringsprosjekt utenfor studiene, og tar med seg noen erfaringer derfra.
 
 **Caroline**: Caroline har litt erfaring med koding, etter INF100, INF101 og lærer seg Python dette semesteret. Har også god kunnskap om SQL. Jobbet litt i team før, så er kjent med ulike type gruppedynamikker. Har blant annet vært skiftleder for et vaktlag på 5-8 folk i Forsvaret. 
@@ -15,7 +14,7 @@
 
 **Simen**: Simen har kompetanse i Java programmering, Haskell og Python. Han er også komfortabel med logikk og er god til å løse praktiske problemer.
 
-### Roller:  
+### Roller
 **Oda**: Utvikler   
 **Caroline**: Utvikler, Prosjektleder  
 **John Isak**: Utvikler     
@@ -78,7 +77,6 @@ Tar en oppsummering og diskuterer på hvert møte hvordan hver arbeidsoppgave i 
 **Deling og oppbevaring av felles dokumenter, diagram, kode**  
 Kode og prosjekttavle på GitHub, felles dokumenter i Google Docs der alle kan endre og ha oversikt. Lenker til dokumentene i Slack. 
 
-
 ## Deloppgave 4: Brukerhistorier og kode
 
 Som spiller trenger jeg å se brettet slik at jeg kan se alle feltene.
@@ -90,7 +88,6 @@ Som spiller trenger jeg å se roboten min på brettet slik at jeg vet hvor den e
 Arbeidsoppgaver: 
 Gjøre del I av libGDX-tutorial
 Endre ikonet til spilleren
-
 
 ## Oppsummering
 
@@ -119,6 +116,3 @@ Vi møttes og kom frem til hvem som hadde den beste løsningen av tutorialen i l
 
 **Møte 06.02.20**  
 Vi diskuterte hvordan vi skal utføre tutorialen som får roboten til å bevege seg og så på brukerhistoriene på nytt. Så gjorde vi retrospektiv og vurderte det vi har gjort så langt.
-
-
-

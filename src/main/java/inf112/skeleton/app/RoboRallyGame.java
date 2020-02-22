@@ -13,7 +13,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.app.board.Direction;
 import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.board.RVector2;
@@ -26,31 +25,25 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private static final int MAP_SIZE_Y = 5;
     private static final int TILE_PIXELS = 100;
     private TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer tileLayer;
     private OrthogonalTiledMapRenderer mapRenderer;
     private Cell playerCell;
-    private Vector2 playerPos = new Vector2(2, 2);
-    private Texture playerTextureDead;
-    
+
     private Robot robot;
-    
+
 
     @Override
     public void create() {
         TiledMap tiledMap = new TmxMapLoader().load("demo.tmx");
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
+        //TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, MAP_SIZE_X, MAP_SIZE_Y);
         camera.position.x = (float) MAP_SIZE_X / 2;
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
         mapRenderer.setView(camera);
-        
         robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
-        
         Texture playerTexture = new Texture("Player/floating-robot.png");
-        playerTextureDead = new Texture("Player/floating-robot-dead.png");
         playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTexture)));
         Gdx.input.setInputProcessor(this);
         tiledMap.getLayers().get("PLayer");
