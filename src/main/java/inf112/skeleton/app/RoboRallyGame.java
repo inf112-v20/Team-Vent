@@ -4,8 +4,12 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,6 +20,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.board.Direction;
 import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.board.RVector2;
+import inf112.skeleton.app.cards.IProgramCard;
 import inf112.skeleton.app.cards.MoveForwardCard;
 import inf112.skeleton.app.cards.RotateLeftCard;
 import inf112.skeleton.app.cards.RotateRightCard;
@@ -28,7 +33,10 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private OrthogonalTiledMapRenderer mapRenderer;
     private Cell playerCell;
     private Robot robot;
+    private Player mrT;
 
+    private SpriteBatch batch;
+    private BitmapFont font;
 
     @Override
     public void create() {
@@ -36,8 +44,8 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         //TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, MAP_SIZE_X+MAP_SIZE_X/2, MAP_SIZE_Y);
-        camera.position.x = (float) MAP_SIZE_X / 2  + MAP_SIZE_X/4;
+        camera.setToOrtho(false, MAP_SIZE_X+MAP_SIZE_X / 2, MAP_SIZE_Y);
+        camera.position.x = (float) MAP_SIZE_X / 2  + MAP_SIZE_X / 4;
         camera.position.y = (float) MAP_SIZE_Y / 2;
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
@@ -48,15 +56,23 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
         Gdx.input.setInputProcessor(this);
         tiledMap.getLayers().get("PLayer");
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
+
+        mrT = new Player();
+        mrT.genereateCardHand();
+        createFont();
     }
 
     @Override
     public void dispose() {
         mapRenderer.dispose();
+        batch.dispose();
+        font.dispose();
     }
 
     @Override
     public void render() {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        renderfont();
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
     }
@@ -75,6 +91,7 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
 
     @Override
     public boolean keyUp(int keycode) {
+        cardKeyCodes(keycode);
         switch (keycode) {
             case Input.Keys.LEFT:
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
@@ -89,12 +106,38 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
                 robot.execute(new RotateRightCard());
                 return true;
             case Input.Keys.DOWN:
-                // do nothing for now
+                // maybe implement later
                 return true;
             default:
                 return false;
         }
     }
+
+
+    private void createFont() {
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+    }
+
+    private void renderfont() {
+        batch.begin();
+        font.draw(batch, mrT.generateHandAsString(),600,550);
+        batch.end();
+    }
+
+    private void cardKeyCodes(int keycode) {
+        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            IProgramCard card = mrT.playCard(keycode - 8);
+            if (card != null) {
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(card);
+            }
+        }
+        if (keycode == Input.Keys.G) {mrT.genereateCardHand();}
+    }
+
+
 }
 
 //@Authors:

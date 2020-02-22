@@ -30,7 +30,7 @@ public class Player {
 
     public IProgramCard[] getCardHand() { return cardHand; }
 
-    //Methods below are for testing purposes atm, should be removed/ moved to other classes later.
+    //Methods below are for testing purposes atm, should be removed/moved to other classes later.
 
     public void genereateCardHand() {
         for (int i = 0; i < 9; i++) {
@@ -44,5 +44,36 @@ public class Player {
                 cardHand[i] = new RotateRightCard();
             }
         }
+    }
+
+    public String generateHandAsString() {
+        StringBuilder handAsString = new StringBuilder();
+        for (int i = 0; i < cardHand.length; i++) {
+            handAsString.append(i + 1);
+            handAsString.append("  ");
+            if (cardHand[i] != null) {
+                if (cardHand[i].getClass().equals(MoveForwardCard.class)) {
+                    handAsString.append("FORWARD");
+                }
+                else if (cardHand[i].getClass().equals(RotateLeftCard.class)) {
+                    handAsString.append("ROTATE LEFT");
+                }
+                else {
+                    handAsString.append("ROTATE RIGHT");
+                }
+            }
+            handAsString.append("\n");
+        }
+        handAsString.append("\n G  Generate New Hand");
+        return handAsString.toString();
+    }
+
+    public IProgramCard playCard(int handSlot) {
+        if (cardHand[handSlot] != null) {
+            IProgramCard playCard = cardHand[handSlot];
+            cardHand[handSlot] = null;
+            return playCard;
+        }
+        return null;
     }
 }
