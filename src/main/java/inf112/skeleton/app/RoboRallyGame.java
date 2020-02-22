@@ -33,8 +33,8 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private OrthogonalTiledMapRenderer mapRenderer;
     private Cell playerCell;
     private Robot robot;
-    private Player mrT;
 
+    private Player mrT;
     private SpriteBatch batch;
     private BitmapFont font;
 
