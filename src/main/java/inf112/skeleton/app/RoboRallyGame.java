@@ -29,22 +29,20 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private Cell playerCell;
 
     private Robot robot;
-    
+
 
     @Override
     public void create() {
         TiledMap tiledMap = new TmxMapLoader().load("demo.tmx");
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
+        //TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, MAP_SIZE_X, MAP_SIZE_Y);
         camera.position.x = (float) MAP_SIZE_X / 2;
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
         mapRenderer.setView(camera);
-        
         robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
-        
         Texture playerTexture = new Texture("Player/floating-robot.png");
         playerCell = new Cell().setTile(new StaticTiledMapTile(new TextureRegion(playerTexture)));
         Gdx.input.setInputProcessor(this);
