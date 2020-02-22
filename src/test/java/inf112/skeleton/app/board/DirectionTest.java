@@ -52,12 +52,4 @@ public class DirectionTest {
             assertEquals(d, d.right().right().right().right());
         }
     }
-
-    @Test
-    public void unitVectors() {
-        assertEquals(NORTH.unitVector(), new RVector2(0, 1));
-        assertEquals(SOUTH.unitVector(), new RVector2(0, -1));
-        assertEquals(WEST.unitVector(), new RVector2(-1, 0));
-        assertEquals(EAST.unitVector(), new RVector2(1, 0));
-    }
 }

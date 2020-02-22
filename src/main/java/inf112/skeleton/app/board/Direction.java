@@ -54,10 +54,10 @@ public enum Direction {
         }
     };
 
-    RVector2 UNIT_VECTOR_NORTH = new RVector2(0, 1);
-    RVector2 UNIT_VECTOR_WEST = new RVector2(UNIT_VECTOR_NORTH.getVector().rotate90(1));
-    RVector2 UNIT_VECTOR_SOUTH = new RVector2(UNIT_VECTOR_WEST.getVector().rotate90(1));
-    RVector2 UNIT_VECTOR_EAST = new RVector2(UNIT_VECTOR_SOUTH.getVector().rotate90(1));
+    final RVector2 UNIT_VECTOR_NORTH = new RVector2(0, 1);
+    final RVector2 UNIT_VECTOR_WEST = new RVector2(UNIT_VECTOR_NORTH.getVector().rotate90(1));
+    final RVector2 UNIT_VECTOR_SOUTH = new RVector2(UNIT_VECTOR_WEST.getVector().rotate90(1));
+    final RVector2 UNIT_VECTOR_EAST = new RVector2(UNIT_VECTOR_SOUTH.getVector().rotate90(1));
 
     /**
      * @return the new direction after turning left from this one
