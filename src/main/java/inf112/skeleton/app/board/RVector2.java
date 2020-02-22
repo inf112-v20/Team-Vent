@@ -51,7 +51,7 @@ public class RVector2 {
         return vector.epsilonEquals(that.vector);
     }
 
-    public RVector2 copy() {
+    public RVector2 cpy() {
         return new RVector2(this.vector.cpy());
     }
 }

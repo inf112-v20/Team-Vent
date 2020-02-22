@@ -28,7 +28,7 @@ public class RVector2Test {
 
     @Test
     public void addingMeansAddingInternalVectors() {
-        assertEquals(rv2.add(rv2.copy()), new RVector2(v2.add(v2)));
+        assertEquals(new RVector2(v2.cpy().add(v2)), rv2.add(rv2));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class RVector2Test {
 
     @Test
     public void copiesAreEqualButNotTheSame() {
-        assertEquals(rv2, rv2.copy());
-        assertNotSame(rv2, rv2.copy());
+        assertEquals(rv2, rv2.cpy());
+        assertNotSame(rv2, rv2.cpy());
     }
 }

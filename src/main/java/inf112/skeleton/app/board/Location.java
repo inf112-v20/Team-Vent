@@ -33,7 +33,7 @@ public class Location {
     }
 
     public Location copy() {
-        return new Location(this.position.copy(), this.direction);
+        return new Location(this.position.cpy(), this.direction);
     }
 
     public Direction getDirection() {
@@ -41,7 +41,7 @@ public class Location {
     }
 
     public RVector2 getPosition() {
-        return this.position.copy();
+        return this.position.cpy();
     }
 
     @Override

@@ -18,22 +18,22 @@ public class DirectionTest {
     @Test
     public void leftIsLeft() {
         for (int i = 0; i < directions.length; i++) {
-            assertEquals(directions[i], directions[(i + 1) % directions.length].left());
+            assertEquals(directions[(i + 1) % directions.length].left(), directions[i]);
         }
     }
 
     @Test
     public void rightIsRight() {
         for (int i = 0; i < directions.length; i++) {
-            assertEquals(directions[i].right(), directions[(i + 1) % directions.length]);
+            assertEquals(directions[(i + 1) % directions.length], directions[i].right());
         }
     }
 
     @Test
     public void leftAndRightAreInverse() {
         for (Direction d : directions) {
-            assertEquals(d.left().right(), d);
-            assertEquals(d.right().left(), d);
+            assertEquals(d, d.left().right());
+            assertEquals(d, d.right().left());
         }
     }
 

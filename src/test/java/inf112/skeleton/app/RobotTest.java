@@ -41,18 +41,18 @@ public class RobotTest {
 
     @Test
     public void getLocation() {
-        assertEquals(robot.getLocation(), originalLocation);
+        assertEquals(originalLocation, robot.getLocation());
     }
 
     @Test
     public void getXY() {
-        assertEquals(robot.getX(), (int) originalLocation.getPosition().getVector().x);
-        assertEquals(robot.getY(), (int) originalLocation.getPosition().getVector().y);
+        assertEquals((int) originalLocation.getPosition().getVector().x, robot.getX());
+        assertEquals((int) originalLocation.getPosition().getVector().y, robot.getY());
     }
 
     @Test
     public void setLocation() {
         robot.setLocation(originalLocation.forward());
-        assertEquals(robot.getLocation(), originalLocation.forward());
+        assertEquals(originalLocation.forward(), robot.getLocation());
     }
 }
