@@ -1,4 +1,3 @@
-
 # Obligatorisk oppgave 1
 
 ## Delopgave 1
@@ -21,10 +20,9 @@
 **Marius**: Utvikler, Kundekontakt  
 **Simen**: Utvikler
 
-
 ## Deloppgave 2: Krav 
 
-### Spesifikasjon RoboRally:
+### Spesifikasjon RoboRally
 
 Det overordnede målet for applikasjonen er å lage en digital versjon av brettspillet Robo Rally. 
 

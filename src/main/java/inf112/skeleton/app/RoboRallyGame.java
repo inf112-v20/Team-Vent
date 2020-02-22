@@ -27,7 +27,6 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private TiledMapTileLayer playerLayer;
     private OrthogonalTiledMapRenderer mapRenderer;
     private Cell playerCell;
-
     private Robot robot;
 
 
