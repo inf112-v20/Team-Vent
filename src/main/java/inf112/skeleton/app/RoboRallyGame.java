@@ -36,8 +36,9 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         //TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, MAP_SIZE_X, MAP_SIZE_Y);
-        camera.position.x = (float) MAP_SIZE_X / 2;
+        camera.setToOrtho(false, MAP_SIZE_X+MAP_SIZE_X/2, MAP_SIZE_Y);
+        camera.position.x = (float) MAP_SIZE_X / 2  + MAP_SIZE_X/4;
+        camera.position.y = (float) MAP_SIZE_Y / 2;
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
         mapRenderer.setView(camera);
@@ -56,7 +57,7 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
 
     @Override
     public void render() {
-        playerLayer.setCell((int) robot.getX(), robot.getY(), playerCell);
+        playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
     }
 
