@@ -4,9 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 
 public class RVector2Test {
     private Vector2 v2;
@@ -19,8 +17,18 @@ public class RVector2Test {
     }
 
     @Test
+    public void checkInvariant() {
+        try {
+            new RVector2(new Vector2(0.3f, 0.5f));
+            fail();
+        } catch (IllegalStateException e) {
+            // this should happen
+        }
+    }
+
+    @Test
     public void addingMeansAddingInternalVectors() {
-        assertEquals(rv2.add(rv2.copy()), new RVector2(v2.add(v2)));
+        assertEquals(new RVector2(v2.cpy().add(v2)), rv2.add(rv2));
     }
 
     @Test
@@ -30,7 +38,7 @@ public class RVector2Test {
 
     @Test
     public void copiesAreEqualButNotTheSame() {
-        assertEquals(rv2, rv2.copy());
-        assertNotSame(rv2, rv2.copy());
+        assertEquals(rv2, rv2.cpy());
+        assertNotSame(rv2, rv2.cpy());
     }
 }

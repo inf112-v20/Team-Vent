@@ -10,6 +10,10 @@ public class Robot {
         this.location = location;
     }
 
+    public Robot() {
+        this(new Location());
+    }
+
     public void execute(IProgramCard card) {
         this.location = card.instruction(this.location);
     }

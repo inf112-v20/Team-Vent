@@ -18,22 +18,22 @@ public class DirectionTest {
     @Test
     public void leftIsLeft() {
         for (int i = 0; i < directions.length; i++) {
-            assertEquals(directions[i], directions[(i + 1) % directions.length].left());
+            assertEquals(directions[(i + 1) % directions.length].left(), directions[i]);
         }
     }
 
     @Test
     public void rightIsRight() {
         for (int i = 0; i < directions.length; i++) {
-            assertEquals(directions[i].right(), directions[(i + 1) % directions.length]);
+            assertEquals(directions[(i + 1) % directions.length], directions[i].right());
         }
     }
 
     @Test
     public void leftAndRightAreInverse() {
         for (Direction d : directions) {
-            assertEquals(d.left().right(), d);
-            assertEquals(d.right().left(), d);
+            assertEquals(d, d.left().right());
+            assertEquals(d, d.right().left());
         }
     }
 
@@ -51,13 +51,5 @@ public class DirectionTest {
             assertEquals(d, d.left().left().left().left());
             assertEquals(d, d.right().right().right().right());
         }
-    }
-
-    @Test
-    public void unitVectors() {
-        assertEquals(NORTH.unitVector(), new RVector2(0, 1));
-        assertEquals(SOUTH.unitVector(), new RVector2(0, -1));
-        assertEquals(WEST.unitVector(), new RVector2(-1, 0));
-        assertEquals(EAST.unitVector(), new RVector2(1, 0));
     }
 }

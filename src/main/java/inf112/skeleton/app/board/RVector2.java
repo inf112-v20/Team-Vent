@@ -40,7 +40,7 @@ public class RVector2 {
 
     @Override
     public String toString() {
-        return vector.toString();
+        return String.format("(%.0f, %.0f)", vector.x, vector.y);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RVector2 {
         return vector.epsilonEquals(that.vector);
     }
 
-    public RVector2 copy() {
+    public RVector2 cpy() {
         return new RVector2(this.vector.cpy());
     }
 }

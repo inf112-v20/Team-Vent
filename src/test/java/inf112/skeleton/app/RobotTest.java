@@ -33,4 +33,26 @@ public class RobotTest {
         robot.execute(new RotateLeftCard());
         assertEquals(originalLocation, robot.getLocation());
     }
+
+    @Test
+    public void robotsHaveDifferentIdentities() {
+        assertNotEquals(new Robot(), new Robot());
+    }
+
+    @Test
+    public void getLocation() {
+        assertEquals(originalLocation, robot.getLocation());
+    }
+
+    @Test
+    public void getXY() {
+        assertEquals((int) originalLocation.getPosition().getVector().x, robot.getX());
+        assertEquals((int) originalLocation.getPosition().getVector().y, robot.getY());
+    }
+
+    @Test
+    public void setLocation() {
+        robot.setLocation(originalLocation.forward());
+        assertEquals(originalLocation.forward(), robot.getLocation());
+    }
 }

@@ -1,7 +1,5 @@
 package inf112.skeleton.app.board;
 
-import java.util.Objects;
-
 public class Location {
     // Location objects are immutable
     private final RVector2 position;
@@ -10,6 +8,10 @@ public class Location {
     public Location(RVector2 position, Direction direction) {
         this.position = position;
         this.direction = direction;
+    }
+
+    public Location() {
+        this(new RVector2(0, 0), Direction.NORTH);
     }
 
     public Location forward() {
@@ -31,7 +33,7 @@ public class Location {
     }
 
     public Location copy() {
-        return new Location(this.position.copy(), this.direction);
+        return new Location(this.position.cpy(), this.direction);
     }
 
     public Direction getDirection() {
@@ -39,7 +41,7 @@ public class Location {
     }
 
     public RVector2 getPosition() {
-        return this.position.copy();
+        return this.position.cpy();
     }
 
     @Override
@@ -49,10 +51,5 @@ public class Location {
         Location location = (Location) o;
         return getPosition().equals(location.getPosition()) &&
                 getDirection() == location.getDirection();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getPosition(), getDirection());
     }
 }
