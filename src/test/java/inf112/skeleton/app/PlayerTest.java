@@ -12,10 +12,10 @@ public class PlayerTest {
     public void placingACardFromHandSlot0ToProgrammingSlot0() {
         Player testPlayer = new Player();
         testPlayer.setCardinHand(0, new MoveForwardCard());
-        IProgramCard testCard = testPlayer.getCardHand()[0];
+        IProgramCard testCard = testPlayer.getCardinHand(0);
         testPlayer.placeCardFromHandToSlot(0, 0);
 
-        assertEquals(testPlayer.getProgrammingSlots()[0], testCard);
+        assertEquals(testPlayer.getCardInProgrammingSlot(0), testCard);
     }
 
 

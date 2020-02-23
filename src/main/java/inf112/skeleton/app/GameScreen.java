@@ -79,7 +79,9 @@ public class GameScreen extends InputAdapter implements Screen {
 
     @Override
     public void render(float v) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // todo: is this neccessary
+        //Clears screen between every render so removal of text gets updated correctly.
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
         renderFont();

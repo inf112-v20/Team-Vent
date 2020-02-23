@@ -20,16 +20,16 @@ public class Player {
         return false;
     }
 
-    public IProgramCard[] getProgrammingSlots() {
-        return programmingSlots;
+    public IProgramCard getCardInProgrammingSlot(int slot) {
+        return programmingSlots[slot];
     }
 
     public void setCardinHand(int handSlot, IProgramCard programCard) {
         cardHand[handSlot] = programCard;
     }
 
-    public IProgramCard[] getCardHand() {
-        return cardHand;
+    public IProgramCard getCardinHand(int handSlot) {
+        return cardHand[handSlot];
     }
 
     //Methods below are for testing purposes atm, should be removed/moved to other classes later.
