@@ -4,8 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
 public class RoboRally extends Game {
-    Screen gameScreen;
-    Screen gameOverScreen;
+    private Screen gameScreen;
+    private Screen gameOverScreen;
 
     @Override
     public void create() {
