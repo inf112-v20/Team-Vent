@@ -7,8 +7,8 @@ import inf112.skeleton.app.cards.RotateRightCard;
 
 public class Player {
 
-    IProgramCard[] cardHand = new IProgramCard[9];
-    IProgramCard[] programmingSlots = new IProgramCard[5];
+    private IProgramCard[] cardHand = new IProgramCard[9];
+    private IProgramCard[] programmingSlots = new IProgramCard[5];
     // Boolean finishedPlacingCards = false;
 
     public boolean placeCardFromHandToSlot(int handSlot, int programmingSlot) {
