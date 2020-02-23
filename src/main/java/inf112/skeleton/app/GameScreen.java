@@ -173,8 +173,8 @@ public class GameScreen extends InputAdapter implements Screen {
             if (card != null) {
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
                 robot.execute(card);
+                return true; // input has been handled, no need to handle further
             }
-            return true; // input has been handled, no need to handle further
         }
         if (keycode == Input.Keys.G) {
             player.genereateCardHand();
