@@ -14,7 +14,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.board.Direction;
 import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.board.RVector2;
