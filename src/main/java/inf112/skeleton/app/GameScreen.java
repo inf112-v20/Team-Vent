@@ -40,7 +40,6 @@ public class GameScreen extends InputAdapter implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private boolean shiftIsPressed;
-    private Timer timer;
     public GameScreen(RoboRally game) {
         this.game = game;
     }
@@ -184,7 +183,7 @@ public class GameScreen extends InputAdapter implements Screen {
 
     private boolean cardKeyCodes(int keycode) {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
-            player.UndoProgrammingSlotPlacement(keycode -8);
+            player.undoProgrammingSlotPlacement(keycode -8);
             return true;
         }
         else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {

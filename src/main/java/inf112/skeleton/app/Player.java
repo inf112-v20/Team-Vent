@@ -26,7 +26,7 @@ public class Player {
         return false;
     }
 
-    public boolean UndoProgrammingSlotPlacement(int programmingSlot) {
+    public boolean undoProgrammingSlotPlacement(int programmingSlot) {
         if (programmingSlots[programmingSlot] != null) {
             for (int i = 0; i  < cardHand.length; i++) {
                 if (cardHand[i] == null) {
