@@ -2,17 +2,13 @@ package inf112.skeleton.app.board;
 
 import org.junit.Test;
 
-import static inf112.skeleton.app.board.Direction.NORTH;
-import static inf112.skeleton.app.board.Direction.SOUTH;
-import static inf112.skeleton.app.board.Direction.EAST;
-import static inf112.skeleton.app.board.Direction.WEST;
-
+import static inf112.skeleton.app.board.Direction.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class DirectionTest {
 
-    public static final Direction [] directions = {NORTH, EAST, SOUTH, WEST};
+    public static final Direction[] directions = {NORTH, EAST, SOUTH, WEST};
 
 
     @Test

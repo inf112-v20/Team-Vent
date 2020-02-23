@@ -53,13 +53,12 @@ public class GameOverScreen extends InputAdapter implements Screen {
 
     @Override
     public void hide() {
-
+        font.dispose();
+        batch.dispose();
     }
 
     @Override
     public void dispose() {
-        font.dispose();
-        batch.dispose();
     }
 
     @Override

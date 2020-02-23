@@ -1,8 +1,12 @@
 package inf112.skeleton.app;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -13,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.board.Direction;
 import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.board.RVector2;
+import inf112.skeleton.app.cards.IProgramCard;
 import inf112.skeleton.app.cards.MoveForwardCard;
 import inf112.skeleton.app.cards.RotateLeftCard;
 import inf112.skeleton.app.cards.RotateRightCard;
@@ -30,6 +35,9 @@ public class GameScreen extends InputAdapter implements Screen {
     private TiledMapTileLayer tileLayer;
     private TiledMapTileLayer.Cell blackRobotCell;
     private TiledMapTileLayer.Cell redRobotCell;
+    private Player player;
+    private SpriteBatch batch;
+    private BitmapFont font;
 
     public GameScreen(RoboRally game) {
         this.game = game;
@@ -43,8 +51,9 @@ public class GameScreen extends InputAdapter implements Screen {
     public void show() {
         // create camera
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, TILES_WIDE, TILES_HIGH);
-        camera.position.x = (float) TILES_WIDE / 2;
+        camera.setToOrtho(false, TILES_WIDE + TILES_WIDE / 2f, TILES_HIGH);
+        camera.position.x = (float) TILES_WIDE / 2 + TILES_WIDE / 4f;
+        camera.position.y = (float) TILES_HIGH / 2;
         camera.update();
 
         // create map
@@ -62,12 +71,18 @@ public class GameScreen extends InputAdapter implements Screen {
                 new Texture("Player/floating-robot-dead.png"))));
         playerCell = blackRobotCell;
         Gdx.input.setInputProcessor(this);
+
+        player = new Player();
+        player.genereateCardHand();
+        createFont();
     }
 
     @Override
     public void render(float v) {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // todo: is this neccessary
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
+        renderFont();
     }
 
     @Override
@@ -88,6 +103,8 @@ public class GameScreen extends InputAdapter implements Screen {
     @Override
     public void hide() {
         mapRenderer.dispose();
+        batch.dispose();
+        font.dispose();
     }
 
     @Override
@@ -97,6 +114,9 @@ public class GameScreen extends InputAdapter implements Screen {
     @Override
     public boolean keyUp(int keycode) {
         log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
+        if (cardKeyCodes(keycode)) {
+            return true;  // input has been handled
+        }
         switch (keycode) {
             case Input.Keys.LEFT:
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
@@ -131,5 +151,33 @@ public class GameScreen extends InputAdapter implements Screen {
         if (!robot.alive()) {
             game.setGameOverScreen();
         }
+    }
+
+    private void createFont() {
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+    }
+
+    private void renderFont() {
+        batch.begin();
+        font.draw(batch, player.generateHandAsString(), 600, 550);
+        batch.end();
+    }
+
+    private boolean cardKeyCodes(int keycode) {
+        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            IProgramCard card = player.playCard(keycode - 8);
+            if (card != null) {
+                playerLayer.setCell(robot.getX(), robot.getY(), null);
+                robot.execute(card);
+            }
+            return true; // input has been handled, no need to handle further
+        }
+        if (keycode == Input.Keys.G) {
+            player.genereateCardHand();
+            return true;
+        }
+        return false;
     }
 }

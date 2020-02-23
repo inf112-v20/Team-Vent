@@ -8,4 +8,9 @@ public class RotateLeftCard implements IProgramCard {
     public Location instruction(Location start) {
         return start.rotateLeft();
     }
+
+    @Override
+    public String toString() {
+        return "ROTATE LEFT";
+    }
 }
