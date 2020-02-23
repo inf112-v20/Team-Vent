@@ -22,15 +22,15 @@ public class Robot {
         return this.location;
     }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public int getX() {
         return (int) getLocation().getPosition().getVector().x;
     }
 
     public int getY() {
         return (int) getLocation().getPosition().getVector().y;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 }

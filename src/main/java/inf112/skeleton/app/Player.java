@@ -7,9 +7,9 @@ import inf112.skeleton.app.cards.RotateRightCard;
 
 public class Player {
 
-   IProgramCard[] cardHand = new IProgramCard[9];
-   IProgramCard[] programmingSlots = new IProgramCard[5];
-   Boolean FinishedPlacingCards = false;
+    IProgramCard[] cardHand = new IProgramCard[9];
+    IProgramCard[] programmingSlots = new IProgramCard[5];
+    // Boolean finishedPlacingCards = false;
 
     public boolean placeCardFromHandToSlot(int handSlot, int programmingSlot) {
         if (cardHand[handSlot] != null && programmingSlots[programmingSlot] == null) {
@@ -28,7 +28,9 @@ public class Player {
         cardHand[handSlot] = programCard;
     }
 
-    public IProgramCard[] getCardHand() { return cardHand; }
+    public IProgramCard[] getCardHand() {
+        return cardHand;
+    }
 
     //Methods below are for testing purposes atm, should be removed/moved to other classes later.
 
@@ -36,11 +38,9 @@ public class Player {
         for (int i = 0; i < 9; i++) {
             if (i < 3) {
                 cardHand[i] = new MoveForwardCard();
-            }
-            else if (i < 6) {
+            } else if (i < 6) {
                 cardHand[i] = new RotateLeftCard();
-            }
-            else {
+            } else {
                 cardHand[i] = new RotateRightCard();
             }
         }
@@ -52,19 +52,11 @@ public class Player {
             handAsString.append(i + 1);
             handAsString.append("  ");
             if (cardHand[i] != null) {
-                if (cardHand[i].getClass().equals(MoveForwardCard.class)) {
-                    handAsString.append("FORWARD");
-                }
-                else if (cardHand[i].getClass().equals(RotateLeftCard.class)) {
-                    handAsString.append("ROTATE LEFT");
-                }
-                else {
-                    handAsString.append("ROTATE RIGHT");
-                }
+                handAsString.append(cardHand[i].toString());
             }
             handAsString.append("\n");
         }
-        handAsString.append("\n G  Generate New Hand");
+        handAsString.append("\nG  Generate New Hand");
         return handAsString.toString();
     }
 

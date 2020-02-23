@@ -21,6 +21,7 @@ public class RVector2 {
 
     /**
      * Adds the given vector to this vector
+     *
      * @param v the vector to add
      * @return this vector for chaining
      */

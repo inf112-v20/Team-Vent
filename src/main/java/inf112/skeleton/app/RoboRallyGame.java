@@ -34,7 +34,7 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     private Cell playerCell;
     private Robot robot;
 
-    private Player mrT;
+    private Player player;
     private SpriteBatch batch;
     private BitmapFont font;
 
@@ -44,8 +44,8 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         //TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, MAP_SIZE_X+MAP_SIZE_X / 2, MAP_SIZE_Y);
-        camera.position.x = (float) MAP_SIZE_X / 2  + MAP_SIZE_X / 4;
+        camera.setToOrtho(false, MAP_SIZE_X + MAP_SIZE_X / 2f, MAP_SIZE_Y);
+        camera.position.x = (float) MAP_SIZE_X / 2 + MAP_SIZE_X / 4f;
         camera.position.y = (float) MAP_SIZE_Y / 2;
         camera.update();
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_PIXELS);
@@ -57,8 +57,8 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
         tiledMap.getLayers().get("PLayer");
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
 
-        mrT = new Player();
-        mrT.genereateCardHand();
+        player = new Player();
+        player.genereateCardHand();
         createFont();
     }
 
@@ -72,7 +72,7 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
     @Override
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderfont();
+        renderFont();
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
     }
@@ -91,7 +91,9 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
 
     @Override
     public boolean keyUp(int keycode) {
-        cardKeyCodes(keycode);
+        if (cardKeyCodes(keycode)) {
+            return true;  // input has been handled
+        }
         switch (keycode) {
             case Input.Keys.LEFT:
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
@@ -120,21 +122,26 @@ public class RoboRallyGame extends InputAdapter implements ApplicationListener {
         font.setColor(Color.WHITE);
     }
 
-    private void renderfont() {
+    private void renderFont() {
         batch.begin();
-        font.draw(batch, mrT.generateHandAsString(),600,550);
+        font.draw(batch, player.generateHandAsString(), 600, 550);
         batch.end();
     }
 
-    private void cardKeyCodes(int keycode) {
+    private boolean cardKeyCodes(int keycode) {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-            IProgramCard card = mrT.playCard(keycode - 8);
+            IProgramCard card = player.playCard(keycode - 8);
             if (card != null) {
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
                 robot.execute(card);
             }
+            return true; // input has been handled, no need to handle further
         }
-        if (keycode == Input.Keys.G) {mrT.genereateCardHand();}
+        if (keycode == Input.Keys.G) {
+            player.genereateCardHand();
+            return true;
+        }
+        return false;
     }
 
 
