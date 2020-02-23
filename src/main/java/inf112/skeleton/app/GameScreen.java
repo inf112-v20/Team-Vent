@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.board.Direction;
 import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.board.RVector2;
@@ -39,7 +40,7 @@ public class GameScreen extends InputAdapter implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private boolean shiftIsPressed;
-
+    private Timer timer;
     public GameScreen(RoboRally game) {
         this.game = game;
     }
@@ -183,7 +184,7 @@ public class GameScreen extends InputAdapter implements Screen {
 
     private boolean cardKeyCodes(int keycode) {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
-            player.removeCardFromProgrammingSlot(keycode -8);
+            player.UndoProgrammingSlotPlacement(keycode -8);
             return true;
         }
         else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
@@ -194,6 +195,26 @@ public class GameScreen extends InputAdapter implements Screen {
             player.genereateCardHand();
             return true;
         }
+        else if (keycode == Input.Keys.E) {
+            endTurn();
+            return true;
+        }
         return false;
+    }
+
+    private void endTurn() {
+        for (int i = 0; i < 5; i++) {
+            doPhase(i);
+        }
+        player.clearProgrammingSlots();
+        player.genereateCardHand();
+    }
+
+    private void doPhase(int i) {
+        IProgramCard card = player.getCardInProgrammingSlot(i);
+        if (card != null) {
+            playerLayer.setCell(robot.getX(), robot.getY(), null);
+            robot.execute(card);
+        }
     }
 }

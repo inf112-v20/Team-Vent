@@ -5,6 +5,8 @@ import inf112.skeleton.app.cards.MoveForwardCard;
 import inf112.skeleton.app.cards.RotateLeftCard;
 import inf112.skeleton.app.cards.RotateRightCard;
 
+import java.util.Arrays;
+
 public class Player {
 
     private IProgramCard[] cardHand = new IProgramCard[9];
@@ -24,7 +26,7 @@ public class Player {
         return false;
     }
 
-    public boolean removeCardFromProgrammingSlot(int programmingSlot) {
+    public boolean UndoProgrammingSlotPlacement(int programmingSlot) {
         if (programmingSlots[programmingSlot] != null) {
             for (int i = 0; i  < cardHand.length; i++) {
                 if (cardHand[i] == null) {
@@ -37,9 +39,9 @@ public class Player {
         return false;
     }
 
-    public IProgramCard getCardInProgrammingSlot(int slot) {
-        return programmingSlots[slot];
-    }
+    public void clearProgrammingSlots() { Arrays.fill(programmingSlots, null); }
+
+    public IProgramCard getCardInProgrammingSlot(int slot) { return programmingSlots[slot]; }
 
     public void setCardinHand(int handSlot, IProgramCard programCard) {
         cardHand[handSlot] = programCard;
@@ -89,7 +91,7 @@ public class Player {
         }
     }
 
-    public IProgramCard playCard(int handSlot) {
+    public IProgramCard playCardFromHand(int handSlot) {
         if (cardHand[handSlot] != null) {
             IProgramCard playCard = cardHand[handSlot];
             cardHand[handSlot] = null;
