@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -33,11 +31,14 @@ public class GameScreen extends InputAdapter implements Screen {
     private TiledMapTileLayer.Cell playerCell;
     private Robot robot;
     private TiledMapTileLayer tileLayer;
-    private TiledMapTileLayer.Cell blackRobotCell;
+    private TiledMapTileLayer.Cell StillRobotCell;
     private TiledMapTileLayer.Cell redRobotCell;
     private Player player;
     private SpriteBatch batch;
     private BitmapFont font;
+    private Animation walk;
+    private float elapsedTime =0;
+    private TextureAtlas textureAtlas;
 
     public GameScreen(RoboRally game) {
         this.game = game;
@@ -63,14 +64,17 @@ public class GameScreen extends InputAdapter implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / PIXELS_PER_TILE);
         mapRenderer.setView(camera);
 
-        // create robot
+        // create robot, (robots under CC BY-SA 3.0, we will credit Skorpio in the coming credits
         robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
-        blackRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
-                new Texture("Player/floating-robot.png"))));
+        StillRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
+                new Texture("Player/Mechs/Mech5.psd"))));
         redRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
-                new Texture("Player/floating-robot-dead.png"))));
-        playerCell = blackRobotCell;
+                new Texture("Player/Mechs/Mech5.psd"))));
+        playerCell = StillRobotCell;
         Gdx.input.setInputProcessor(this);
+        //walking animation textureAtlas needs a spritesheet looking into converting psd to spritesheet
+       // textureAtlas = new TextureAtlas(Gdx.files.internal("Player/Mechs/Mech5.psd"));
+       // walk = new Animation(1/15f, textureAtlas.getRegions());
 
         player = new Player();
         player.genereateCardHand();
@@ -105,6 +109,8 @@ public class GameScreen extends InputAdapter implements Screen {
         mapRenderer.dispose();
         batch.dispose();
         font.dispose();
+
+        //textureAtlas.dispose(); until Spritesheet fix
     }
 
     @Override
@@ -124,6 +130,7 @@ public class GameScreen extends InputAdapter implements Screen {
                 break;
             case Input.Keys.UP:
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
+
                 robot.execute(new MoveForwardCard());
                 break;
             case Input.Keys.RIGHT:
@@ -145,7 +152,7 @@ public class GameScreen extends InputAdapter implements Screen {
             robot.takeDamage();
             playerCell = redRobotCell;
         } else {
-            playerCell = blackRobotCell;
+            playerCell = StillRobotCell;
         }
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         if (!robot.alive()) {
