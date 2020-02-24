@@ -23,7 +23,6 @@ public class Robot {
     public void execute(IProgramCard card) {
         this.lastLocation = this.location;
         this.location = card.instruction(this.location);
-        int x = 2; // todo
     }
 
     public Location getLocation() {

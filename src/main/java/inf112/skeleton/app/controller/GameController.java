@@ -25,7 +25,12 @@ public class GameController {
         this.game = game;
     }
 
-    private boolean cardKeyCodes(int keycode) {
+    /**
+     * Program the robot using the keyboard input.
+     *
+     * @return true iff the robot moved
+     */
+    private boolean handleCardInput(int keycode) {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
             gameModel.getPlayer().undoProgrammingSlotPlacement(keycode - 8);
             return true;
@@ -42,14 +47,12 @@ public class GameController {
         return false;
     }
 
-    public boolean handleKeyUp(int keycode) {
-        if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = false;
-        }
-        // moving with cards
-        cardKeyCodes(keycode);
-
-        // moving with arrows (useful when testing)
+    /**
+     * Move the robot with the arrow-keys without programming int. Useful for testing.
+     *
+     * @return true iff the robot moved
+     */
+    private boolean handleTestingInput(int keycode) {
         switch (keycode) {
             case Input.Keys.LEFT:
                 robot.execute(new RotateLeftCard());
@@ -63,9 +66,24 @@ public class GameController {
             default:
                 return false; // game stayed the same
         }
-        updateRobotAfterMove();
-        return true; // game model has changed
+        return true;
     }
+
+
+    public boolean handleKeyUp(int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = false;
+        }
+        boolean moved = handleCardInput(keycode);
+        if (!moved && gameModel.inTestMode()) {
+            moved = handleTestingInput(keycode);
+        }
+        if (moved) {
+            updateRobotAfterMove();
+        }
+        return moved; // game model has changed
+    }
+
 
     private void updateRobotAfterMove() {
         TiledMapTileLayer.Cell cellUnderRobot = tileLayer.getCell(robot.getX(), robot.getY());
@@ -90,7 +108,9 @@ public class GameController {
     }
 
     private void log(String message) {
-        Gdx.app.log(GameController.class.getName(), message);
+        if (gameModel.inTestMode()) {
+            Gdx.app.log(GameController.class.getName(), message);
+        }
     }
 
     public boolean handleKeyDown(int keycode) {
