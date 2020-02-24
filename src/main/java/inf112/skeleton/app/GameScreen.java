@@ -34,11 +34,12 @@ public class GameScreen extends InputAdapter implements Screen {
     private TiledMapTileLayer.Cell playerCell;
     private Robot robot;
     private TiledMapTileLayer tileLayer;
-    private TiledMapTileLayer.Cell StillRobotCell;
+    private TiledMapTileLayer.Cell stillRobotCell;
     private TiledMapTileLayer.Cell redRobotCell;
     private Player player;
     private SpriteBatch batch;
     private BitmapFont font;
+    private boolean shiftIsPressed;
     //private Animation walk;
     //private float elapsedTime = 0;
     //private TextureAtlas textureAtlas;
@@ -69,11 +70,11 @@ public class GameScreen extends InputAdapter implements Screen {
 
         // create robot, (robots under CC BY-SA 3.0, we will credit Skorpio in the coming credits
         robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
-        StillRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
+        stillRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
                 new Texture("Player/Mechs/Mech5.psd"))));
         redRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
                 new Texture("Player/Mechs/Mech5.psd"))));
-        playerCell = StillRobotCell;
+        playerCell = stillRobotCell;
         Gdx.input.setInputProcessor(this);
         //walking animation textureAtlas needs a spritesheet looking into converting psd to spritesheet
         // textureAtlas = new TextureAtlas(Gdx.files.internal("Player/Mechs/Mech5.psd"));
@@ -86,7 +87,7 @@ public class GameScreen extends InputAdapter implements Screen {
 
     @Override
     public void render(float v) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // todo: is this neccessary
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
         renderFont();
@@ -112,8 +113,6 @@ public class GameScreen extends InputAdapter implements Screen {
         mapRenderer.dispose();
         batch.dispose();
         font.dispose();
-
-        //textureAtlas.dispose(); until Spritesheet fix
     }
 
     @Override
@@ -123,6 +122,9 @@ public class GameScreen extends InputAdapter implements Screen {
     @Override
     public boolean keyUp(int keycode) {
         log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = false;
+        }
         if (cardKeyCodes(keycode)) {
             return true;  // input has been handled
         }
@@ -133,7 +135,6 @@ public class GameScreen extends InputAdapter implements Screen {
                 break;
             case Input.Keys.UP:
                 playerLayer.setCell(robot.getX(), robot.getY(), null);
-
                 robot.execute(new MoveForwardCard());
                 break;
             case Input.Keys.RIGHT:
@@ -147,6 +148,15 @@ public class GameScreen extends InputAdapter implements Screen {
         return true; // the robot moved
     }
 
+    @Override
+    public boolean keyDown (int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = true;
+            return true;
+        }
+        return false;
+    }
+
     private void update() {
         // precondition: the robot has moved
         TiledMapTile tileUnderRobot = tileLayer.getCell(robot.getX(), robot.getY()).getTile();
@@ -155,7 +165,7 @@ public class GameScreen extends InputAdapter implements Screen {
             robot.takeDamage();
             playerCell = redRobotCell;
         } else {
-            playerCell = StillRobotCell;
+            playerCell = stillRobotCell;
         }
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         if (!robot.alive()) {
@@ -171,23 +181,42 @@ public class GameScreen extends InputAdapter implements Screen {
 
     private void renderFont() {
         batch.begin();
-        font.draw(batch, player.generateHandAsString(), 600, 550);
+        font.draw(batch, player.generateHandAsString(), 550, 550);
+        font.draw(batch, player.generateProgrammingSlotsAsString(), 550, 300);
         batch.end();
     }
 
     private boolean cardKeyCodes(int keycode) {
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-            IProgramCard card = player.playCard(keycode - 8);
-            if (card != null) {
-                playerLayer.setCell(robot.getX(), robot.getY(), null);
-                robot.execute(card);
-            }
+        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
+            player.undoProgrammingSlotPlacement(keycode -8);
+            return true;
+        } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            player.placeCardFromHandToSlot(keycode -8);
             return true; // input has been handled, no need to handle further
-        }
-        if (keycode == Input.Keys.G) {
+        } else if (keycode == Input.Keys.G) {
             player.genereateCardHand();
             return true;
         }
+        else if (keycode == Input.Keys.E) {
+            endTurn();
+            return true;
+        }
         return false;
+    }
+
+    private void endTurn() {
+        for (int i = 0; i < 5; i++) {
+            doPhase(i);
+        }
+        player.clearProgrammingSlots();
+        player.genereateCardHand();
+    }
+
+    private void doPhase(int i) {
+        IProgramCard card = player.getCardInProgrammingSlot(i);
+        if (card != null) {
+            playerLayer.setCell(robot.getX(), robot.getY(), null);
+            robot.execute(card);
+        }
     }
 }
