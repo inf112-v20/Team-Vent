@@ -12,7 +12,7 @@ import view.GameRenderer;
 
 public class GameScreen extends InputAdapter implements Screen {
     private final RoboRallyGame game;
-    GameModel gameModel;
+    private GameModel gameModel;
     private GameRenderer renderer;
     private GameController controller;
 

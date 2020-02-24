@@ -17,8 +17,6 @@ import inf112.skeleton.app.model.board.Direction;
 
 public class GameRenderer {
     private static final int PIXELS_PER_TILE = 100;
-    private final int TILES_WIDE;
-    private final int TILES_HIGH;
     private GameModel gameModel;
     private OrthogonalTiledMapRenderer boardRenderer;
     private TiledMapTileLayer playerLayer;
@@ -34,12 +32,12 @@ public class GameRenderer {
         TiledMap tiledMap = this.gameModel.getBoard();
 
         // create camera
-        TILES_WIDE = tiledMap.getProperties().get("width", Integer.class);
-        TILES_HIGH = tiledMap.getProperties().get("height", Integer.class);
+        int tilesWide = tiledMap.getProperties().get("width", Integer.class);
+        int tilesHigh = tiledMap.getProperties().get("height", Integer.class);
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, TILES_WIDE + TILES_WIDE / 2f, TILES_HIGH);
-        camera.position.x = (float) TILES_WIDE / 2 + TILES_WIDE / 4f;
-        camera.position.y = (float) TILES_HIGH / 2;
+        camera.setToOrtho(false, tilesWide + tilesWide / 2f, tilesHigh);
+        camera.position.x = (float) tilesWide / 2 + tilesWide / 4f;
+        camera.position.y = (float) tilesHigh / 2;
         camera.update();
 
         loadTextures();

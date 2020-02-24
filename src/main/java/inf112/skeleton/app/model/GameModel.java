@@ -5,7 +5,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public class GameModel {
 
-    Robot robot;
+    private Robot robot;
     private TiledMap tiledMap;
     private Player player;
 
