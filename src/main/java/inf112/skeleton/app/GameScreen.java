@@ -38,7 +38,7 @@ public class GameScreen extends InputAdapter implements Screen {
     private Player player;
     private SpriteBatch batch;
     private BitmapFont font;
-
+    private boolean shiftIsPressed;
     public GameScreen(RoboRally game) {
         this.game = game;
     }
@@ -116,6 +116,9 @@ public class GameScreen extends InputAdapter implements Screen {
     @Override
     public boolean keyUp(int keycode) {
         log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = false;
+        }
         if (cardKeyCodes(keycode)) {
             return true;  // input has been handled
         }
@@ -137,6 +140,15 @@ public class GameScreen extends InputAdapter implements Screen {
         }
         update();
         return true; // the robot moved
+    }
+
+    @Override
+    public boolean keyDown (int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = true;
+            return true;
+        }
+        return false;
     }
 
     private void update() {
@@ -163,23 +175,44 @@ public class GameScreen extends InputAdapter implements Screen {
 
     private void renderFont() {
         batch.begin();
-        font.draw(batch, player.generateHandAsString(), 600, 550);
+        font.draw(batch, player.generateHandAsString(), 550, 550);
+        font.draw(batch, player.generateProgrammingSlotsAsString(), 550, 300);
         batch.end();
     }
 
     private boolean cardKeyCodes(int keycode) {
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-            IProgramCard card = player.playCard(keycode - 8);
-            if (card != null) {
-                playerLayer.setCell(robot.getX(), robot.getY(), null);
-                robot.execute(card);
-                return true; // input has been handled, no need to handle further
-            }
+        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
+            player.undoProgrammingSlotPlacement(keycode -8);
+            return true;
         }
-        if (keycode == Input.Keys.G) {
+        else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            player.placeCardFromHandToSlot(keycode -8);
+            return true; // input has been handled, no need to handle further
+        }
+        else if (keycode == Input.Keys.G) {
             player.genereateCardHand();
             return true;
         }
+        else if (keycode == Input.Keys.E) {
+            endTurn();
+            return true;
+        }
         return false;
+    }
+
+    private void endTurn() {
+        for (int i = 0; i < 5; i++) {
+            doPhase(i);
+        }
+        player.clearProgrammingSlots();
+        player.genereateCardHand();
+    }
+
+    private void doPhase(int i) {
+        IProgramCard card = player.getCardInProgrammingSlot(i);
+        if (card != null) {
+            playerLayer.setCell(robot.getX(), robot.getY(), null);
+            robot.execute(card);
+        }
     }
 }
