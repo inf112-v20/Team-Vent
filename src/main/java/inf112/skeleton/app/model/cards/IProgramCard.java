@@ -1,6 +1,6 @@
-package inf112.skeleton.app.cards;
+package inf112.skeleton.app.model.cards;
 
-import inf112.skeleton.app.board.Location;
+import inf112.skeleton.app.model.board.Location;
 
 public interface IProgramCard {
     /**

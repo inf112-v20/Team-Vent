@@ -1,4 +1,4 @@
-package inf112.skeleton.app.board;
+package inf112.skeleton.app.model.board;
 
 import org.junit.Before;
 import org.junit.Test;

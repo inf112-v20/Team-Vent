@@ -1,9 +1,10 @@
 package inf112.skeleton.app;
 
-import inf112.skeleton.app.board.Direction;
-import inf112.skeleton.app.board.Location;
-import inf112.skeleton.app.board.RVector2;
-import inf112.skeleton.app.cards.RotateLeftCard;
+import inf112.skeleton.app.model.Robot;
+import inf112.skeleton.app.model.board.Direction;
+import inf112.skeleton.app.model.board.Location;
+import inf112.skeleton.app.model.board.RVector2;
+import inf112.skeleton.app.model.cards.RotateLeftCard;
 import org.junit.Before;
 import org.junit.Test;
 

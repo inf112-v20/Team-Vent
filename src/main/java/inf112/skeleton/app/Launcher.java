@@ -11,6 +11,6 @@ public class Launcher {
         cfg.width = 800;
         cfg.height = 600;
         cfg.resizable = false;
-        new LwjglApplication(new RoboRally(), cfg);
+        new LwjglApplication(new RoboRallyGame(), cfg);
     }
 }

@@ -1,8 +1,8 @@
-package inf112.skeleton.app.board;
+package inf112.skeleton.app.model.board;
 
 import org.junit.Test;
 
-import static inf112.skeleton.app.board.Direction.*;
+import static inf112.skeleton.app.model.board.Direction.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 

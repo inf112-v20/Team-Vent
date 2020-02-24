@@ -1,19 +1,23 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.screens;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
+import inf112.skeleton.app.RoboRallyGame;
 
 public class GameOverScreen extends InputAdapter implements Screen {
     private static final Float FONT_SCALE = 1.0f;
-    private final RoboRally game;
+    private final RoboRallyGame game;
     private BitmapFont font;
     private SpriteBatch batch;
 
-    public GameOverScreen(RoboRally game) {
+    public GameOverScreen(RoboRallyGame game) {
         this.game = game;
     }
 
@@ -64,7 +68,7 @@ public class GameOverScreen extends InputAdapter implements Screen {
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.SPACE) {
-            game.setGameScreen();
+            game.setScreen(new GameScreen(this.game));
             return true;
         }
         return false;

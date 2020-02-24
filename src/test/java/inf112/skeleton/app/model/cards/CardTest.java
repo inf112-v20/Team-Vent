@@ -1,7 +1,7 @@
-package inf112.skeleton.app.cards;
+package inf112.skeleton.app.model.cards;
 
-import inf112.skeleton.app.board.Direction;
-import inf112.skeleton.app.board.Location;
+import inf112.skeleton.app.model.board.Direction;
+import inf112.skeleton.app.model.board.Location;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;

@@ -1,11 +1,12 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.model;
 
-import inf112.skeleton.app.board.Location;
-import inf112.skeleton.app.cards.IProgramCard;
+import inf112.skeleton.app.model.board.Direction;
+import inf112.skeleton.app.model.board.Location;
+import inf112.skeleton.app.model.cards.IProgramCard;
 
 public class Robot {
+    private final int MAX_DAMAGE = 1;
     private Location location;
-    private final int MAX_DAMAGE = 3;
     private int damage;
 
     public Robot(Location location) {
@@ -29,6 +30,10 @@ public class Robot {
         this.location = location;
     }
 
+    public Direction getDirection() {
+        return getLocation().getDirection();
+    }
+
     public int getX() {
         return (int) getLocation().getPosition().getVector().x;
     }
@@ -47,5 +52,9 @@ public class Robot {
 
     public String status() {
         return String.format("DAMAGE: %d/%d", this.damage, this.MAX_DAMAGE);
+    }
+
+    public void die() {
+        this.damage = MAX_DAMAGE;
     }
 }

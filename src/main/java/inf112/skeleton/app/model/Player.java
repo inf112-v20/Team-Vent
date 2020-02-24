@@ -1,9 +1,9 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.model;
 
-import inf112.skeleton.app.cards.IProgramCard;
-import inf112.skeleton.app.cards.MoveForwardCard;
-import inf112.skeleton.app.cards.RotateLeftCard;
-import inf112.skeleton.app.cards.RotateRightCard;
+import inf112.skeleton.app.model.cards.IProgramCard;
+import inf112.skeleton.app.model.cards.MoveForwardCard;
+import inf112.skeleton.app.model.cards.RotateLeftCard;
+import inf112.skeleton.app.model.cards.RotateRightCard;
 
 public class Player {
 

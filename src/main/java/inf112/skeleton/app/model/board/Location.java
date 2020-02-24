@@ -1,4 +1,4 @@
-package inf112.skeleton.app.board;
+package inf112.skeleton.app.model.board;
 
 public class Location {
     // Location objects are immutable
@@ -51,5 +51,13 @@ public class Location {
         Location location = (Location) o;
         return getPosition().equals(location.getPosition()) &&
                 getDirection() == location.getDirection();
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "position=" + position +
+                ", direction=" + direction +
+                '}';
     }
 }
