@@ -4,8 +4,8 @@ import inf112.skeleton.app.board.Location;
 import inf112.skeleton.app.cards.IProgramCard;
 
 public class Robot {
-    private Location location;
     private final int MAX_DAMAGE = 3;
+    private Location location;
     private int damage;
 
     public Robot(Location location) {

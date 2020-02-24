@@ -1,13 +1,14 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -33,12 +34,16 @@ public class GameScreen extends InputAdapter implements Screen {
     private TiledMapTileLayer.Cell playerCell;
     private Robot robot;
     private TiledMapTileLayer tileLayer;
-    private TiledMapTileLayer.Cell blackRobotCell;
+    private TiledMapTileLayer.Cell stillRobotCell;
     private TiledMapTileLayer.Cell redRobotCell;
     private Player player;
     private SpriteBatch batch;
     private BitmapFont font;
     private boolean shiftIsPressed;
+    //private Animation walk;
+    //private float elapsedTime = 0;
+    //private TextureAtlas textureAtlas;
+
     public GameScreen(RoboRally game) {
         this.game = game;
     }
@@ -63,14 +68,17 @@ public class GameScreen extends InputAdapter implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / PIXELS_PER_TILE);
         mapRenderer.setView(camera);
 
-        // create robot
+        // create robot, (robots under CC BY-SA 3.0, we will credit Skorpio in the coming credits
         robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
-        blackRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
-                new Texture("Player/floating-robot.png"))));
+        stillRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
+                new Texture("Player/Mechs/Mech5.psd"))));
         redRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
-                new Texture("Player/floating-robot-dead.png"))));
-        playerCell = blackRobotCell;
+                new Texture("Player/Mechs/Mech5.psd"))));
+        playerCell = stillRobotCell;
         Gdx.input.setInputProcessor(this);
+        //walking animation textureAtlas needs a spritesheet looking into converting psd to spritesheet
+        // textureAtlas = new TextureAtlas(Gdx.files.internal("Player/Mechs/Mech5.psd"));
+        // walk = new Animation(1/15f, textureAtlas.getRegions());
 
         player = new Player();
         player.genereateCardHand();
@@ -79,9 +87,7 @@ public class GameScreen extends InputAdapter implements Screen {
 
     @Override
     public void render(float v) {
-        //Clears screen between every render so removal of text gets updated correctly.
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         mapRenderer.render();
         renderFont();
@@ -159,7 +165,7 @@ public class GameScreen extends InputAdapter implements Screen {
             robot.takeDamage();
             playerCell = redRobotCell;
         } else {
-            playerCell = blackRobotCell;
+            playerCell = stillRobotCell;
         }
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
         if (!robot.alive()) {
@@ -184,12 +190,10 @@ public class GameScreen extends InputAdapter implements Screen {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
             player.undoProgrammingSlotPlacement(keycode -8);
             return true;
-        }
-        else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+        } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
             player.placeCardFromHandToSlot(keycode -8);
             return true; // input has been handled, no need to handle further
-        }
-        else if (keycode == Input.Keys.G) {
+        } else if (keycode == Input.Keys.G) {
             player.genereateCardHand();
             return true;
         }
