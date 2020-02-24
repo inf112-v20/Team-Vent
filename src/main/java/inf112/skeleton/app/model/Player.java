@@ -14,27 +14,22 @@ public class Player {
     // Boolean finishedPlacingCards = false;
 
     public boolean placeCardFromHandToSlot(int handSlot) {
-        if (cardHand[handSlot] != null) {
-            for (int i = 0; i < programmingSlots.length; i++) {
-                if (programmingSlots[i] == null) {
-                    programmingSlots[i] = cardHand[handSlot];
-                    cardHand[handSlot] = null;
-                    return true;
-                }
-            }
-        }
-        return false;
+        return findOpenSlot(handSlot, cardHand, programmingSlots);
     }
 
     public boolean undoProgrammingSlotPlacement(int programmingSlot) {
-        if (programmingSlots[programmingSlot] != null) {
-            for (int i = 0; i < cardHand.length; i++) {
-                if (cardHand[i] == null) {
-                    cardHand[i] = programmingSlots[programmingSlot];
-                    programmingSlots[programmingSlot] = null;
+        return findOpenSlot(programmingSlot, programmingSlots, cardHand);
+    }
+
+    private boolean findOpenSlot(int cardSlotInOriginArray, IProgramCard[] originArray, IProgramCard[] destinationArray) {
+        if (originArray[cardSlotInOriginArray] != null) {
+            for (int i = 0; i < destinationArray.length; i++) {
+                if (destinationArray[i] == null) {
+                    destinationArray[i] = originArray[cardSlotInOriginArray];
+                    originArray[cardSlotInOriginArray] = null;
+                    return true;
                 }
             }
-            return true;
         }
         return false;
     }

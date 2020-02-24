@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 
 public class PlayerTest {
 
+    Player testPlayer = new Player();
     @Test
     public void placingACardFromHandSlot0ToProgrammingSlot0() {
-        Player testPlayer = new Player();
         testPlayer.setCardinHand(0, new MoveForwardCard());
         IProgramCard testCard = testPlayer.getCardinHand(0);
         testPlayer.placeCardFromHandToSlot(0);
@@ -20,6 +20,18 @@ public class PlayerTest {
         assertEquals(testPlayer.getCardInProgrammingSlot(0), testCard);
         assertNotNull(testPlayer.getCardInProgrammingSlot(0));
         assertNull(testPlayer.getCardinHand(0));
+    }
+
+    @Test
+    public void placingACardFromProgrammingSlotToHandSlot() {
+        testPlayer.setCardinHand(0, new MoveForwardCard());
+        IProgramCard testCard = testPlayer.getCardinHand(0);
+        testPlayer.placeCardFromHandToSlot(0);
+        testPlayer.undoProgrammingSlotPlacement(0);
+
+        assertEquals(testPlayer.getCardinHand(0), testCard);
+        assertNull(testPlayer.getCardInProgrammingSlot(0));
+        assertNotNull(testPlayer.getCardinHand(0));
     }
 
 
