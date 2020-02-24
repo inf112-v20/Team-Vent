@@ -1,6 +1,5 @@
 package view;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,7 +16,6 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
 
 public class GameRenderer {
-    private static final int PIXELS_PER_TILE = 100;
     private GameModel gameModel;
     private OrthogonalTiledMapRenderer boardRenderer;
     private Batch spriteBatch;
@@ -33,6 +31,8 @@ public class GameRenderer {
         TiledMap tiledMap = this.gameModel.getBoard();
         int tilesWide = tiledMap.getProperties().get("width", Integer.class);
         int tilesHigh = tiledMap.getProperties().get("height", Integer.class);
+        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Tile");
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, tilesWide + tilesWide / 2f, tilesHigh);
         camera.position.x = (float) tilesWide / 2 + tilesWide / 4f;
@@ -40,9 +40,8 @@ public class GameRenderer {
         camera.update();
         loadTextures();
         loadFont();
-        boardRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / PIXELS_PER_TILE);
+        boardRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / tileLayer.getTileWidth());
         boardRenderer.setView(camera);
-        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         spriteBatch = new SpriteBatch();
     }
 
@@ -55,19 +54,22 @@ public class GameRenderer {
     }
 
     public void renderRobot(Robot robot) {
-        // This is bad - I know. I plan on fixing it soon by moving the robot to the object layer
+        // todo: this is bad - I know. I plan on fixing it soon by moving the robot to the object layer
         for (int i = 0; i < gameModel.getBoard().getProperties().get("width", Integer.class); i++) {
             for (int j = 0; j < gameModel.getBoard().getProperties().get("height", Integer.class); j++) {
                 playerLayer.setCell(i, j, null);
             }
         }
-
         TiledMapTileLayer.Cell cell;
         if (robot.getDirection() == Direction.NORTH) {
             cell = robotFacingUpCell;
-        } else {
+        } else if (robot.getDirection() == Direction.SOUTH) {
             cell = robotFacingDownCell;
-        } // todo: more directions
+        } else if (robot.getDirection() == Direction.EAST) {
+            cell = robotFacingDownCell; // todo: change
+        } else { // (robot.getDirection() == Direction.WEST) {
+            cell = robotFacingDownCell; // todo: change
+        }
         spriteBatch.begin();
         playerLayer.setCell(robot.getX(), robot.getY(), cell);
         spriteBatch.end();
@@ -91,9 +93,4 @@ public class GameRenderer {
         font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 550, 300);
         batch.end();
     }
-
-    private void log(String message) {
-        Gdx.app.log(GameRenderer.class.getName(), message);
-    }
-
 }

@@ -43,4 +43,8 @@ public class GameModel {
             robot.execute(card);
         }
     }
+
+    public boolean inTestMode() {
+        return true;
+    }
 }
