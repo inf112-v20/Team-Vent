@@ -39,6 +39,7 @@ public class GameScreen extends InputAdapter implements Screen {
         renderer.render();
     }
 
+
     @Override
     public void resize(int width, int height) {
         log(String.format("Resized to width=%d, height=%d", width, height));
@@ -67,6 +68,13 @@ public class GameScreen extends InputAdapter implements Screen {
     @Override
     public boolean keyUp(int keycode) {
         log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
+        // todo: if key is shift then set shiftPressed = false
         return controller.handleKeyUp(keycode);
     }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return controller.handleKeyDown(keycode);
+    }
+
 }

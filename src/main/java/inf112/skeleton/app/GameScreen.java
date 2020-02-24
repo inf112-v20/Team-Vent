@@ -1,31 +1,7 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import inf112.skeleton.app.board.Direction;
-import inf112.skeleton.app.board.Location;
-import inf112.skeleton.app.board.RVector2;
-import inf112.skeleton.app.cards.IProgramCard;
-import inf112.skeleton.app.cards.MoveForwardCard;
-import inf112.skeleton.app.cards.RotateLeftCard;
-import inf112.skeleton.app.cards.RotateRightCard;
-
-public class GameScreen extends InputAdapter implements Screen {
+public class GameScreen {
+    /*
     private static final int TILES_WIDE = 5;
     private static final int TILES_HIGH = 5;
     private static final int TILE_ID_HOLE = 6;
@@ -55,6 +31,7 @@ public class GameScreen extends InputAdapter implements Screen {
     }
 
     @Override
+    // DONE
     public void show() {
         // create camera
         OrthographicCamera camera = new OrthographicCamera();
@@ -73,7 +50,7 @@ public class GameScreen extends InputAdapter implements Screen {
         // create robot, (robots under CC BY-SA 3.0, we will credit Skorpio in the coming credits
         robot = new Robot(new Location(new RVector2(2, 2), Direction.NORTH));
         stillRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
-                new Texture("Player/Mechs/Mech5.psd"))));
+                new Texture("Player/Mechs/Mech5.psd")))); // todo: move
         redRobotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(new TextureRegion(
                 new Texture("Player/Mechs/Mech5.psd"))));
         playerCell = stillRobotCell;
@@ -83,11 +60,12 @@ public class GameScreen extends InputAdapter implements Screen {
         // walk = new Animation(1/15f, textureAtlas.getRegions());
 
         player = new Player();
-        player.genereateCardHand();
+        player.genereateCardHand(); // todo: move
         createFont();
     }
 
     @Override
+    // DONE
     public void render(float v) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         playerLayer.setCell(robot.getX(), robot.getY(), playerCell);
@@ -96,21 +74,25 @@ public class GameScreen extends InputAdapter implements Screen {
     }
 
     @Override
+    // DONE
     public void resize(int width, int height) {
         log(String.format("Resized to width=%d, height=%d", width, height));
     }
 
     @Override
+    // DONE
     public void pause() {
         log("Paused");
     }
 
     @Override
+    // DONE
     public void resume() {
         log("Resumed");
     }
 
     @Override
+    // DONE
     public void hide() {
         mapRenderer.dispose();
         batch.dispose();
@@ -118,10 +100,12 @@ public class GameScreen extends InputAdapter implements Screen {
     }
 
     @Override
+    // DONE
     public void dispose() {
     }
 
     @Override
+    // DONE
     public boolean keyUp(int keycode) {
         log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
         if (keycode == Input.Keys.SHIFT_LEFT) {
@@ -151,14 +135,16 @@ public class GameScreen extends InputAdapter implements Screen {
     }
 
     @Override
+    // DONE
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = true;
+            shiftIsPressed = true; // todo: move
             return true;
         }
         return false;
     }
 
+    // DONE?
     private void update() {
         // precondition: the robot has moved
         TiledMapTile tileUnderRobot = tileLayer.getCell(robot.getX(), robot.getY()).getTile();
@@ -175,12 +161,14 @@ public class GameScreen extends InputAdapter implements Screen {
         }
     }
 
+    // DONE
     private void createFont() {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
     }
 
+    // DONE
     private void renderFont() {
         batch.begin();
         font.draw(batch, player.generateHandAsString(), 550, 550);
@@ -188,6 +176,7 @@ public class GameScreen extends InputAdapter implements Screen {
         batch.end();
     }
 
+    // DONE
     private boolean cardKeyCodes(int keycode) {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
             player.undoProgrammingSlotPlacement(keycode - 8);
@@ -205,6 +194,7 @@ public class GameScreen extends InputAdapter implements Screen {
         return false;
     }
 
+    // DONE
     private void endTurn() {
         for (int i = 0; i < 5; i++) {
             doPhase(i);
@@ -213,6 +203,7 @@ public class GameScreen extends InputAdapter implements Screen {
         player.genereateCardHand();
     }
 
+    // DONE
     private void doPhase(int i) {
         IProgramCard card = player.getCardInProgrammingSlot(i);
         if (card != null) {
@@ -220,4 +211,5 @@ public class GameScreen extends InputAdapter implements Screen {
             robot.execute(card);
         }
     }
+     */
 }

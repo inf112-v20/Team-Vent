@@ -17,6 +17,7 @@ public class GameController {
     private final Robot robot;
     private final TiledMapTileLayer tileLayer;
     private RoboRallyGame game;
+    private boolean shiftIsPressed;
 
     public GameController(GameModel gameModel, RoboRallyGame game) {
         this.gameModel = gameModel;
@@ -25,10 +26,27 @@ public class GameController {
         this.game = game;
     }
 
+    private boolean cardKeyCodes(int keycode) {
+        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) {
+            gameModel.getPlayer().undoProgrammingSlotPlacement(keycode - 8);
+            return true;
+        } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            gameModel.getPlayer().placeCardFromHandToSlot(keycode - 8);
+            return true; // input has been handled, no need to handle further
+        } else if (keycode == Input.Keys.G) {
+            gameModel.getPlayer().genereateCardHand();
+            return true;
+        } else if (keycode == Input.Keys.E) {
+            gameModel.endTurn();
+            return true;
+        }
+        return false;
+    }
+
     public boolean handleKeyUp(int keycode) {
         // moving with cards
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-            IProgramCard card = gameModel.getPlayer().playCard(keycode - 8);
+            IProgramCard card = gameModel.getPlayer().playCardFromHand(keycode - 8);
             if (card != null) {
                 robot.execute(card);
                 updateRobotAfterMove();
@@ -84,5 +102,13 @@ public class GameController {
 
     private void log(String message) {
         Gdx.app.log(GameController.class.getName(), message);
+    }
+
+    public boolean handleKeyDown(int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = true; // todo: fix
+            return true;
+        }
+        return false;
     }
 }

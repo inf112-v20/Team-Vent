@@ -69,14 +69,14 @@ public class Player {
         }
     }
 
-    public String generateHandAsString() {
+    public String handAsString() {
         StringBuilder handAsString = new StringBuilder();
         cardArrayToString(handAsString, cardHand);
         handAsString.append("\nG  Generate New Hand");
         return handAsString.toString();
     }
 
-    public String generateProgrammingSlotsAsString() {
+    public String programmingSlotsAsString() {
         StringBuilder programmingSlotsAsString = new StringBuilder();
         programmingSlotsAsString.append("PROGRAMMING SLOTS: \n");
         cardArrayToString(programmingSlotsAsString, programmingSlots);

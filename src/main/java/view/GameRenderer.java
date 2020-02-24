@@ -1,5 +1,6 @@
 package view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,19 +20,17 @@ public class GameRenderer {
     private static final int PIXELS_PER_TILE = 100;
     private GameModel gameModel;
     private OrthogonalTiledMapRenderer boardRenderer;
-    private TiledMapTileLayer playerLayer;
     private Batch spriteBatch;
-    private TiledMapTileLayer.Cell robotFacingLeftCell;
-    private TiledMapTileLayer.Cell robotFacingRightCell;
     private SpriteBatch batch;
     private BitmapFont font;
+    private TiledMapTileLayer playerLayer;
+    private TiledMapTileLayer.Cell robotFacingUpCell;
+    private TiledMapTileLayer.Cell robotFacingDownCell;
 
 
     public GameRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
         TiledMap tiledMap = this.gameModel.getBoard();
-
-        // create camera
         int tilesWide = tiledMap.getProperties().get("width", Integer.class);
         int tilesHigh = tiledMap.getProperties().get("height", Integer.class);
         OrthographicCamera camera = new OrthographicCamera();
@@ -39,7 +38,6 @@ public class GameRenderer {
         camera.position.x = (float) tilesWide / 2 + tilesWide / 4f;
         camera.position.y = (float) tilesHigh / 2;
         camera.update();
-
         loadTextures();
         loadFont();
         boardRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / PIXELS_PER_TILE);
@@ -49,36 +47,36 @@ public class GameRenderer {
     }
 
     private void loadTextures() {
-        TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/floating-robot.png"));
-        TextureRegion robotFacingRight = new TextureRegion(robotFacingLeft);
-        robotFacingRight.flip(true, false);
-        robotFacingLeftCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingLeft));
-        robotFacingRightCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingRight));
+        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech5.psd"));
+        TextureRegion robotFacingDown = new TextureRegion(robotFacingUp);
+        robotFacingDown.flip(false, true);
+        robotFacingUpCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
+        robotFacingDownCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingDown));
     }
 
     public void renderRobot(Robot robot) {
-        spriteBatch.begin();
-        TiledMapTileLayer.Cell cell;
-        if (robot.getDirection() == Direction.WEST) {
-            cell = robotFacingLeftCell;
-        } else {
-            cell = robotFacingRightCell;
-        }
-
-        playerLayer.setCell(robot.getX(), robot.getY(), cell);
-        spriteBatch.end();
-    }
-
-    public void render() {
-        boardRenderer.render();
         // This is bad - I know. I plan on fixing it soon by moving the robot to the object layer
         for (int i = 0; i < gameModel.getBoard().getProperties().get("width", Integer.class); i++) {
             for (int j = 0; j < gameModel.getBoard().getProperties().get("height", Integer.class); j++) {
                 playerLayer.setCell(i, j, null);
             }
         }
+
+        TiledMapTileLayer.Cell cell;
+        if (robot.getDirection() == Direction.NORTH) {
+            cell = robotFacingUpCell;
+        } else {
+            cell = robotFacingDownCell;
+        } // todo: more directions
+        spriteBatch.begin();
+        playerLayer.setCell(robot.getX(), robot.getY(), cell);
+        spriteBatch.end();
+    }
+
+    public void render() {
         renderRobot(gameModel.getRobot());
         renderFont();
+        boardRenderer.render();
     }
 
     private void loadFont() {
@@ -89,8 +87,13 @@ public class GameRenderer {
 
     private void renderFont() {
         batch.begin();
-        font.draw(batch, gameModel.getPlayer().generateHandAsString(), 600, 550);
+        font.draw(batch, gameModel.getPlayer().handAsString(), 550, 550);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 550, 300);
         batch.end();
+    }
+
+    private void log(String message) {
+        Gdx.app.log(GameRenderer.class.getName(), message);
     }
 
 }

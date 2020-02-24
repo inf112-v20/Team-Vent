@@ -8,6 +8,7 @@ public class Robot {
     private final int MAX_DAMAGE = 1;
     private Location location;
     private int damage;
+    private Location lastLocation;
 
     public Robot(Location location) {
         this.location = location;
@@ -16,10 +17,13 @@ public class Robot {
 
     public Robot() {
         this(new Location());
+        this.lastLocation = location;
     }
 
     public void execute(IProgramCard card) {
+        this.lastLocation = this.location;
         this.location = card.instruction(this.location);
+        int x = 2; // todo
     }
 
     public Location getLocation() {
@@ -40,6 +44,10 @@ public class Robot {
 
     public int getY() {
         return (int) getLocation().getPosition().getVector().y;
+    }
+
+    public Location getLastLocation() {
+        return lastLocation;
     }
 
     public void takeDamage() {
