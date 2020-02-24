@@ -12,7 +12,6 @@ import view.GameRenderer;
 
 public class GameScreen extends InputAdapter implements Screen {
     private final RoboRallyGame game;
-    private GameModel gameModel;
     private GameRenderer renderer;
     private GameController controller;
 
@@ -26,7 +25,7 @@ public class GameScreen extends InputAdapter implements Screen {
 
     @Override
     public void show() {
-        this.gameModel = new GameModel();
+        GameModel gameModel = new GameModel();
         this.renderer = new GameRenderer(gameModel);
         this.controller = new GameController(gameModel, game);
         Gdx.input.setInputProcessor(this);
