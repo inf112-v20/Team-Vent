@@ -13,7 +13,7 @@ public class GameModel {
     public GameModel() {
         robot = new Robot();
         player = new Player();
-        player.genereateCardHand();
+        player.generateCardHand();
         tiledMap = new TmxMapLoader().load("demo.tmx");
     }
 
@@ -34,7 +34,7 @@ public class GameModel {
             doPhase(i);
         }
         player.clearProgrammingSlots();
-        player.genereateCardHand();
+        player.generateCardHand();
     }
 
     private void doPhase(int i) {

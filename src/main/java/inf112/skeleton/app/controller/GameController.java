@@ -6,7 +6,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
-import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.cards.RotateLeftCard;
 import inf112.skeleton.app.model.cards.RotateRightCard;
@@ -17,7 +16,7 @@ public class GameController {
     private final Robot robot;
     private final TiledMapTileLayer tileLayer;
     private RoboRallyGame game;
-    private boolean shiftIsPressed;
+    private boolean shiftIsPressed = false;
 
     public GameController(GameModel gameModel, RoboRallyGame game) {
         this.gameModel = gameModel;
@@ -34,7 +33,7 @@ public class GameController {
             gameModel.getPlayer().placeCardFromHandToSlot(keycode - 8);
             return true; // input has been handled, no need to handle further
         } else if (keycode == Input.Keys.G) {
-            gameModel.getPlayer().genereateCardHand();
+            gameModel.getPlayer().generateCardHand();
             return true;
         } else if (keycode == Input.Keys.E) {
             gameModel.endTurn();
@@ -44,21 +43,11 @@ public class GameController {
     }
 
     public boolean handleKeyUp(int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT) {
+            shiftIsPressed = false;
+        }
         // moving with cards
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-            IProgramCard card = gameModel.getPlayer().playCardFromHand(keycode - 8);
-            if (card != null) {
-                robot.execute(card);
-                updateRobotAfterMove();
-                return true; // game model has changed
-            }
-        }
-
-        // generating a new hand of cards
-        if (keycode == Input.Keys.G) {
-            gameModel.getPlayer().genereateCardHand();
-            return true; // game model has changed
-        }
+        cardKeyCodes(keycode);
 
         // moving with arrows (useful when testing)
         switch (keycode) {
@@ -106,7 +95,7 @@ public class GameController {
 
     public boolean handleKeyDown(int keycode) {
         if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = true; // todo: fix
+            shiftIsPressed = true;
             return true;
         }
         return false;

@@ -57,7 +57,7 @@ public class Player {
 
     //Methods below are for testing purposes atm, should be removed/moved to other classes later.
 
-    public void genereateCardHand() {
+    public void generateCardHand() {
         for (int i = 0; i < 9; i++) {
             if (i < 3) {
                 cardHand[i] = new MoveForwardCard();
