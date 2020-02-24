@@ -1,6 +1,9 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -36,9 +39,9 @@ public class GameScreen extends InputAdapter implements Screen {
     private Player player;
     private SpriteBatch batch;
     private BitmapFont font;
-    private Animation walk;
-    private float elapsedTime =0;
-    private TextureAtlas textureAtlas;
+    //private Animation walk;
+    //private float elapsedTime = 0;
+    //private TextureAtlas textureAtlas;
 
     public GameScreen(RoboRally game) {
         this.game = game;
@@ -73,8 +76,8 @@ public class GameScreen extends InputAdapter implements Screen {
         playerCell = StillRobotCell;
         Gdx.input.setInputProcessor(this);
         //walking animation textureAtlas needs a spritesheet looking into converting psd to spritesheet
-       // textureAtlas = new TextureAtlas(Gdx.files.internal("Player/Mechs/Mech5.psd"));
-       // walk = new Animation(1/15f, textureAtlas.getRegions());
+        // textureAtlas = new TextureAtlas(Gdx.files.internal("Player/Mechs/Mech5.psd"));
+        // walk = new Animation(1/15f, textureAtlas.getRegions());
 
         player = new Player();
         player.genereateCardHand();
