@@ -3,7 +3,7 @@ package inf112.skeleton.app.model.board;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import inf112.skeleton.app.model.tiles.TileDirections;
+import inf112.skeleton.app.model.tiles.TileInformation;
 
 //TODO: Create tests when map can be loaded without starting the application
 public class MapHandler {
@@ -44,11 +44,11 @@ public class MapHandler {
         int nextLocationWallID = getTileID(nextLocation.getPosition(), "Wall");
         // Checks if there is any walls in either the current tile or the next one forward
         if (currentLocationWallID == -1 && nextLocationWallID == -1) { return false; }
-        Direction currentLocationWallDirection = TileDirections.getDirection(currentLocationWallID);
+        Direction currentLocationWallDirection = TileInformation.getDirection(currentLocationWallID);
         boolean wallBlockingCurrentPath = currentLocationWallDirection == location.getDirection();
         if (wallBlockingCurrentPath) { return true; }
 
-        Direction nextLocationWallDirection = TileDirections.getDirection(nextLocationWallID);
+        Direction nextLocationWallDirection = TileInformation.getDirection(nextLocationWallID);
         boolean wallBlockingNextPath = nextLocationWallDirection == nextLocation.getDirection().left().left();
         return wallBlockingNextPath;
 
