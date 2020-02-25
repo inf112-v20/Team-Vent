@@ -18,6 +18,10 @@ public class Location {
         return new Location(this.position.add(this.direction.unitVector()), this.direction);
     }
 
+    public Location moveDirection(Direction moveDirection){
+        return new Location(this.position.add(moveDirection.unitVector()), this.direction);
+    }
+
     /**
      * @return return a new Location that is rotated to the left (no change in position)
      */

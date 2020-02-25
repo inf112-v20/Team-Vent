@@ -32,6 +32,13 @@ public class MapHandler {
         return getTileID((int) vector.getVector().x, (int) vector.getVector().y, layerName);
     }
 
+    public String getTileType(int x, int y,String layerName){
+        return TileInformation.getType(getTileID(x, y, layerName));
+    }
+
+    public String getTileType(RVector2 vector, String layerName){
+        return getTileType((int) vector.getVector().x, (int) vector.getVector().y, layerName);
+    }
     /**
      * Checks if there is a wall in the path of a location
      * @param location Location of the entity

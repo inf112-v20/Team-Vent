@@ -47,12 +47,17 @@ public class TileInformation {
         TypeMap.put(13, "conveyor_express");
         TypeMap.put(20, "conveyor_express");
         TypeMap.put(21, "conveyor_express");
+        // Clockwise gear
+        TypeMap.put(53, "gear_clockwise");
+        // Counterclockwise gear
+        TypeMap.put(52, "gear_counterclockwise");
     }
     public static Direction getDirection(int ID){
         return DirectionMap.get(ID);
     }
 
     public static String getType(int ID) {
+        if (TypeMap.get(ID) == null){ return "other"; }
         return TypeMap.get(ID);
     }
 }

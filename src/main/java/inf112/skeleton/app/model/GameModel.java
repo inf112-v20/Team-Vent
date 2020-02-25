@@ -1,9 +1,11 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
+import inf112.skeleton.app.model.tiles.TileInformation;
 
 public class GameModel {
 
@@ -45,6 +47,28 @@ public class GameModel {
             if (!(card instanceof MoveForwardCard) || !(tiledMapHandler.wallInPath(robot.getLocation().copy()))){
                 robot.execute(card);
             }
+        }
+        int currentTileID = tiledMapHandler.getTileID(robot.getLocation().getPosition(), "Tile");
+        String currentTileType = tiledMapHandler.getTileType(robot.getLocation().getPosition(), "Tile");
+
+        switch(currentTileType){
+            case("conveyor_normal"):
+                robot.moveInDirection(TileInformation.getDirection(currentTileID));
+                break;
+            case("conveyor_express"):
+                robot.moveInDirection(TileInformation.getDirection(currentTileID));
+                String newTileType = tiledMapHandler.getTileType(robot.getLocation().getPosition(), "Tile");
+                if (newTileType.equals("conveyor_express")) {
+                    robot.moveInDirection(TileInformation.getDirection(currentTileID));
+                }
+                break;
+            case("gear_clockwise"):
+                robot.setLocation(new Location(robot.getLocation().getPosition(), robot.getDirection().right()));
+                break;
+            case("gear_counterclockwise"):
+                robot.setLocation(new Location(robot.getLocation().getPosition(), robot.getDirection().left()));
+                break;
+            default:
         }
     }
 
