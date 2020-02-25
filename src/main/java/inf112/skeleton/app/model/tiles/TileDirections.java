@@ -29,8 +29,7 @@ public class TileDirections {
         IDMap.put(20, Direction.SOUTH);
         IDMap.put(21, Direction.WEST);
     }
-
-    static Direction getDirection(int ID){
+    public static Direction getDirection(int ID){
         return IDMap.get(ID);
     }
 }

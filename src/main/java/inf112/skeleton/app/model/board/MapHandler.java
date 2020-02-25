@@ -3,7 +3,9 @@ package inf112.skeleton.app.model.board;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import inf112.skeleton.app.model.tiles.TileDirections;
 
+//TODO: Create tests when map can be loaded without starting the application
 public class MapHandler {
     private TiledMap tiledMap;
 
@@ -20,5 +22,19 @@ public class MapHandler {
 
     public int getTileID(RVector2 vector, String layerName){
         return getTileID((int) vector.getVector().x, (int) vector.getVector().y, layerName);
+    }
+
+    public boolean wallInPath(Location location){
+        int currentLocationWallID = getTileID(location.getPosition(), "Wall");
+        Direction currentLocationWallDirection = TileDirections.getDirection(currentLocationWallID);
+        boolean wallBlockingCurrentPath = currentLocationWallDirection == location.getDirection();
+        if (wallBlockingCurrentPath) { return true; }
+
+        Location nextLocation = location.forward();
+        int nextLocationWallID = getTileID(nextLocation.getPosition(), "Wall");
+        Direction nextLocationWallDirection = TileDirections.getDirection(currentLocationWallID);
+        boolean wallBlockingNextPath = currentLocationWallDirection.left().left() == nextLocation.getDirection();
+        return wallBlockingNextPath;
+
     }
 }
