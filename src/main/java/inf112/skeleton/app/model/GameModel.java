@@ -1,20 +1,22 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
 
 public class GameModel {
 
     private Robot robot;
-    private TiledMap tiledMap;
+    private MapHandler tiledMapHandler;
     private Player player;
+    private int phaseNumber;
 
     public GameModel() {
         robot = new Robot();
         player = new Player();
         player.generateCardHand();
-        tiledMap = new TmxMapLoader().load("demo.tmx");
+        tiledMapHandler = new MapHandler("demo.tmx");
+        phaseNumber = 0;
     }
 
     public Robot getRobot() {
@@ -22,7 +24,7 @@ public class GameModel {
     }
 
     public TiledMap getBoard() {
-        return this.tiledMap;
+        return this.tiledMapHandler.getBoard();
     }
 
     public Player getPlayer() {
@@ -31,14 +33,14 @@ public class GameModel {
 
     public void endTurn() {
         for (int i = 0; i < 5; i++) {
-            doPhase(i);
+            doPhase();
         }
         player.clearProgrammingSlots();
         player.generateCardHand();
     }
 
-    private void doPhase(int i) {
-        IProgramCard card = player.getCardInProgrammingSlot(i);
+    private void doPhase() {
+        IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         if (card != null) {
             robot.execute(card);
         }
