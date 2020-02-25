@@ -1,4 +1,4 @@
-package view;
+package inf112.skeleton.app.view;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;

@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
 import inf112.skeleton.app.model.GameModel;
-import view.GameRenderer;
+import inf112.skeleton.app.view.GameRenderer;
 
 public class GameScreen extends InputAdapter implements Screen {
     private final RoboRallyGame game;
