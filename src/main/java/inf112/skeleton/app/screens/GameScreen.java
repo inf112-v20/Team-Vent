@@ -25,7 +25,7 @@ public class GameScreen extends InputAdapter implements Screen {
 
     @Override
     public void show() {
-        GameModel gameModel = new GameModel();
+        GameModel gameModel = new GameModel("demo.tmx");
         this.renderer = new GameRenderer(gameModel);
         this.controller = new GameController(gameModel, game);
         Gdx.input.setInputProcessor(this);

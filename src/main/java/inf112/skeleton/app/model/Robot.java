@@ -1,27 +1,39 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.maps.MapObject;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.IProgramCard;
 
-public class Robot {
+public class Robot extends MapObject {
     private final int MAX_DAMAGE = 1;
     private Location location;
     private int damage;
-    private Location lastLocation;
 
-    public Robot(Location location) {
-        this.location = location;
+    public Robot(String name, Location location) {
         this.damage = 0;
+        this.location = location;
+        this.setName(name);
     }
 
+    /**
+     * Initialize a robot with no identifier/name. The name helps find the robot in the list of MapObjects.
+     */
+    public Robot(Location location) {
+        this.damage = 0;
+        this.location = location;
+    }
+
+    /**
+     * Initialize with standard values.
+     */
     public Robot() {
-        this(new Location());
-        this.lastLocation = location;
+        this.damage = 0;
+        this.location = new Location(new RVector2(0, 0), Direction.EAST);
     }
 
     public void execute(IProgramCard card) {
-        this.lastLocation = this.location;
         this.location = card.instruction(this.location);
     }
 
@@ -43,10 +55,6 @@ public class Robot {
 
     public int getY() {
         return (int) getLocation().getPosition().getVector().y;
-    }
-
-    public Location getLastLocation() {
-        return lastLocation;
     }
 
     public void takeDamage() {

@@ -16,19 +16,19 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
 
 public class GameRenderer {
-    private GameModel gameModel;
-    private OrthogonalTiledMapRenderer boardRenderer;
-    private Batch spriteBatch;
+    private final GameModel gameModel;
+    private final OrthogonalTiledMapRenderer boardRenderer;
+    private final Batch spriteBatch;
     private SpriteBatch batch;
     private BitmapFont font;
-    private TiledMapTileLayer playerLayer;
+    private final TiledMapTileLayer playerLayer;
     private TiledMapTileLayer.Cell robotFacingUpCell;
     private TiledMapTileLayer.Cell robotFacingDownCell;
 
 
     public GameRenderer(GameModel gameModel) {
         this.gameModel = gameModel;
-        TiledMap tiledMap = this.gameModel.getBoard();
+        TiledMap tiledMap = this.gameModel.getBoard().getTiledMap();
         int tilesWide = tiledMap.getProperties().get("width", Integer.class);
         int tilesHigh = tiledMap.getProperties().get("height", Integer.class);
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
@@ -55,8 +55,8 @@ public class GameRenderer {
 
     public void renderRobot(Robot robot) {
         // todo: this is bad - I know. I plan on fixing it soon by moving the robot to the object layer
-        for (int i = 0; i < gameModel.getBoard().getProperties().get("width", Integer.class); i++) {
-            for (int j = 0; j < gameModel.getBoard().getProperties().get("height", Integer.class); j++) {
+        for (int i = 0; i < gameModel.getBoard().getTiledMap().getProperties().get("width", Integer.class); i++) {
+            for (int j = 0; j < gameModel.getBoard().getTiledMap().getProperties().get("height", Integer.class); j++) {
                 playerLayer.setCell(i, j, null);
             }
         }

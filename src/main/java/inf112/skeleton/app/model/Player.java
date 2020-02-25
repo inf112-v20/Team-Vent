@@ -9,29 +9,28 @@ import java.util.Arrays;
 
 public class Player {
 
-    private IProgramCard[] cardHand = new IProgramCard[9];
-    private IProgramCard[] programmingSlots = new IProgramCard[5];
+    private final IProgramCard[] cardHand = new IProgramCard[9];
+    private final IProgramCard[] programmingSlots = new IProgramCard[5];
     // Boolean finishedPlacingCards = false;
 
-    public boolean placeCardFromHandToSlot(int handSlot) {
-        return findOpenSlot(handSlot, cardHand, programmingSlots);
+    public void placeCardFromHandToSlot(int handSlot) {
+        findOpenSlot(handSlot, cardHand, programmingSlots);
     }
 
-    public boolean undoProgrammingSlotPlacement(int programmingSlot) {
-        return findOpenSlot(programmingSlot, programmingSlots, cardHand);
+    public void undoProgrammingSlotPlacement(int programmingSlot) {
+        findOpenSlot(programmingSlot, programmingSlots, cardHand);
     }
 
-    private boolean findOpenSlot(int cardSlotInOriginArray, IProgramCard[] originArray, IProgramCard[] destinationArray) {
+    private void findOpenSlot(int cardSlotInOriginArray, IProgramCard[] originArray, IProgramCard[] destinationArray) {
         if (originArray[cardSlotInOriginArray] != null) {
             for (int i = 0; i < destinationArray.length; i++) {
                 if (destinationArray[i] == null) {
                     destinationArray[i] = originArray[cardSlotInOriginArray];
                     originArray[cardSlotInOriginArray] = null;
-                    return true;
+                    return;
                 }
             }
         }
-        return false;
     }
 
     public void clearProgrammingSlots() {
@@ -90,12 +89,12 @@ public class Player {
         }
     }
 
-    public IProgramCard playCardFromHand(int handSlot) {
+    /*public IProgramCard playCardFromHand(int handSlot) {
         if (cardHand[handSlot] != null) {
             IProgramCard playCard = cardHand[handSlot];
             cardHand[handSlot] = null;
             return playCard;
         }
         return null;
-    }
+    }*/
 }
