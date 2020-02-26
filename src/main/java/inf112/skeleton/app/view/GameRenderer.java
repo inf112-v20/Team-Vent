@@ -24,6 +24,8 @@ public class GameRenderer {
     private TiledMapTileLayer playerLayer;
     private TiledMapTileLayer.Cell robotFacingUpCell;
     private TiledMapTileLayer.Cell robotFacingDownCell;
+    private TiledMapTileLayer.Cell robotFacingRightCell;
+    private TiledMapTileLayer.Cell robotFacingLeftCell;
 
 
     public GameRenderer(GameModel gameModel) {
@@ -46,11 +48,14 @@ public class GameRenderer {
     }
 
     private void loadTextures() {
-        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech5.psd"));
-        TextureRegion robotFacingDown = new TextureRegion(robotFacingUp);
-        robotFacingDown.flip(false, true);
+        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/robot_north.png"));
+        TextureRegion robotFacingRight = new TextureRegion(new Texture("Player/robot_east.png"));
+        TextureRegion robotFacingDown = new TextureRegion(new Texture("Player/robot_south.png"));
+        TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/robot_west.png"));
         robotFacingUpCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
+        robotFacingRightCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingRight));
         robotFacingDownCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingDown));
+        robotFacingLeftCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingLeft));
     }
 
     public void renderRobot(Robot robot) {
@@ -66,9 +71,11 @@ public class GameRenderer {
         } else if (robot.getDirection() == Direction.SOUTH) {
             cell = robotFacingDownCell;
         } else if (robot.getDirection() == Direction.EAST) {
-            cell = robotFacingDownCell; // todo: change
-        } else { // (robot.getDirection() == Direction.WEST) {
-            cell = robotFacingDownCell; // todo: change
+            cell = robotFacingRightCell;
+        } else if (robot.getDirection() == Direction.WEST) {
+            cell = robotFacingLeftCell; // todo: change
+        } else {
+            cell = robotFacingUpCell;
         }
         spriteBatch.begin();
         playerLayer.setCell(robot.getX(), robot.getY(), cell);

@@ -64,4 +64,9 @@ public class Robot {
     public void die() {
         this.damage = MAX_DAMAGE;
     }
+
+    public void moveInDirection(Direction moveDirection){
+        this.lastLocation = this.location;
+        this.location = this.location.moveDirection(moveDirection);
+    }
 }
