@@ -28,7 +28,8 @@ public class TestBoard {
 
     @Test
     public void addHole() {
-        int x = 4, y = 4;
+        int x = 4;
+        int y = 4;
         assertNotEquals(TileType.HOLE, board.getTile(x, y));
         board.setTile(x, y, TileType.HOLE);
         assertEquals(TileType.HOLE, board.getTile(x, y));
