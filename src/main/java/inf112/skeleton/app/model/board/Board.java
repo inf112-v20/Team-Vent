@@ -2,18 +2,19 @@ package inf112.skeleton.app.model.board;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayers;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.utils.Array;
 import inf112.skeleton.app.model.Robot;
 
 import java.util.HashMap;
 
 public class Board {
     private final String TILE_LAYER_ID = "Tile";
+    private final String ROBOT_LAYER_ID = "Player";  // todo: change map layer name for consistency
     private final TiledMap tiledMap;
     private HashMap<Integer, TileType> tileTypeHashMap;
 
@@ -28,19 +29,8 @@ public class Board {
         tiledMap.getProperties().put("width", width);
         tiledMap.getProperties().put("height", height);
         MapLayers layers = tiledMap.getLayers();
-        TiledMapTileLayer tileLayer = new TiledMapTileLayer(width, height, 100, 100);
-        tileLayer.setName(TILE_LAYER_ID);
-        TiledMapTileLayer.Cell cell;
-        layers.add(tileLayer);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                cell = new TiledMapTileLayer.Cell();
-                TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
-                tile.setId(TileType.BASE_TILE.id());
-                cell.setTile(tile);
-                getTileLayer().setCell(i, j, cell);
-            }
-        }
+        addTileLayer(width, height, layers);
+        addRobotLayer(width, height, layers);
         this.tileTypeHashMap = TileType.tileIdHashMap();
     }
 
@@ -49,36 +39,59 @@ public class Board {
         this.tileTypeHashMap = TileType.tileIdHashMap();
     }
 
-    private int getWidth() {
+    private void addTileLayer(int width, int height, MapLayers layers) {
+        TiledMapTileLayer tileLayer = new TiledMapTileLayer(width, height, 100, 100);
+        tileLayer.setName(TILE_LAYER_ID);
+        layers.add(tileLayer);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                setTile(i, j, TileType.BASE_TILE);
+            }
+        }
+    }
+
+    private void addRobotLayer(int width, int height, MapLayers layers) {
+        TiledMapTileLayer robotLayer = new TiledMapTileLayer(width, height, 100, 100);
+        robotLayer.setName(ROBOT_LAYER_ID);
+        layers.add(robotLayer);
+    }
+
+    public int getWidth() {
         return (int) this.tiledMap.getProperties().get("width");
     }
 
-    private int getHeight() {
+    public int getHeight() {
         return (int) this.tiledMap.getProperties().get("height");
+    }
+
+    public TiledMap getTiledMap() {
+        return this.tiledMap;
     }
 
     public TiledMapTileLayer getTileLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(TILE_LAYER_ID);
     }
 
-    public void setTile(int x, int y, TileType tileType) {
-        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
-        tile.setId(tileType.id());
-        cell.setTile(tile);
-        getTileLayer().setCell(x, y, cell);
+    public TiledMapTileLayer getRobotLayer() {
+        return (TiledMapTileLayer) tiledMap.getLayers().get(ROBOT_LAYER_ID);
     }
 
-    public void addObject(MapObject object) {
-        getTileLayer().getObjects().add(object);
+    public void setTile(int x, int y, TileType tileType) {
+        TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
+        tile.setId(tileType.id());
+        getTileLayer().setCell(x, y, new TiledMapTileLayer.Cell().setTile(tile));
+    }
+
+    public void addRobot(Robot robot) {
+        getRobotLayer().getObjects().add(robot);
     }
 
     public Robot getRobotByName(String name) {
-        return (Robot) getTileLayer().getObjects().get(name);
+        return (Robot) getRobotLayer().getObjects().get(name);
     }
 
-    public TiledMap getTiledMap() {
-        return this.tiledMap;
+    public Array<Robot> getRobots() {
+        return getRobotLayer().getObjects().getByType(Robot.class);
     }
 
     /**

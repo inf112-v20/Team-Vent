@@ -55,9 +55,6 @@ public class Location {
 
     @Override
     public String toString() {
-        return "Location{" +
-                "position=" + position +
-                ", direction=" + direction +
-                '}';
+        return String.format("%s heading %s", position, direction);
     }
 }

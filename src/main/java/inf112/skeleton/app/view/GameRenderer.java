@@ -21,7 +21,7 @@ public class GameRenderer {
     private final Batch spriteBatch;
     private SpriteBatch batch;
     private BitmapFont font;
-    private final TiledMapTileLayer playerLayer;
+    private final TiledMapTileLayer robotLayer;
     private TiledMapTileLayer.Cell robotFacingUpCell;
     private TiledMapTileLayer.Cell robotFacingDownCell;
 
@@ -31,7 +31,7 @@ public class GameRenderer {
         TiledMap tiledMap = this.gameModel.getBoard().getTiledMap();
         int tilesWide = tiledMap.getProperties().get("width", Integer.class);
         int tilesHigh = tiledMap.getProperties().get("height", Integer.class);
-        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        robotLayer = gameModel.getBoard().getRobotLayer();
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Tile");
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, tilesWide + tilesWide / 2f, tilesHigh);
@@ -57,7 +57,7 @@ public class GameRenderer {
         // todo: this is bad - I know. I plan on fixing it soon by moving the robot to the object layer
         for (int i = 0; i < gameModel.getBoard().getTiledMap().getProperties().get("width", Integer.class); i++) {
             for (int j = 0; j < gameModel.getBoard().getTiledMap().getProperties().get("height", Integer.class); j++) {
-                playerLayer.setCell(i, j, null);
+                robotLayer.setCell(i, j, null);
             }
         }
         TiledMapTileLayer.Cell cell;
@@ -71,7 +71,7 @@ public class GameRenderer {
             cell = robotFacingDownCell; // todo: change
         }
         spriteBatch.begin();
-        playerLayer.setCell(robot.getX(), robot.getY(), cell);
+        robotLayer.setCell(robot.getX(), robot.getY(), cell);
         spriteBatch.end();
     }
 

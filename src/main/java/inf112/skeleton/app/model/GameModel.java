@@ -71,14 +71,12 @@ public class GameModel {
     public void applyCardToRobot(IProgramCard card, Robot robot) {
         robot.execute(card);
         TileType tileType = board.getTile(robot.getX(), robot.getY());
-        log(String.format("Robot location: %s", robot.getLocation().toString()));
+        log(String.format("Robot is standing on a %s at %s", tileType, robot.getLocation()));
         if (tileType == null) {
-            log("Robot fell outside the board");
+            log("TileType is null. Robot died.");
             robot.die();
         } else if (tileType == TileType.HOLE) {
             robot.die();
-        } else {
-            log("Robot fell into a hole.");
         }
     }
 }
