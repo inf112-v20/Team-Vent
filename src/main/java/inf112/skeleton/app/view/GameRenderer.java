@@ -48,10 +48,10 @@ public class GameRenderer {
     }
 
     private void loadTextures() {
-        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/robot_north.png"));
-        TextureRegion robotFacingRight = new TextureRegion(new Texture("Player/robot_east.png"));
-        TextureRegion robotFacingDown = new TextureRegion(new Texture("Player/robot_south.png"));
-        TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/robot_west.png"));
+        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A.png"));
+        TextureRegion robotFacingRight = new TextureRegion(new Texture("Player/Mechs/Mech1A_east.png"));
+        TextureRegion robotFacingDown = new TextureRegion(new Texture("Player/Mechs/Mech1A_south.png"));
+        TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/Mechs/Mech1A_west.png"));
         robotFacingUpCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
         robotFacingRightCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingRight));
         robotFacingDownCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingDown));
