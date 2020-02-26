@@ -5,7 +5,7 @@ import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
-import inf112.skeleton.app.model.tiles.TileInformation;
+import inf112.skeleton.app.model.tiles.TileInformationUtils;
 
 public class GameModel {
 
@@ -44,7 +44,7 @@ public class GameModel {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         // TODO: Find a more elegant solution
         if (card != null) {
-            if (!(card instanceof MoveForwardCard) || !(tiledMapHandler.wallInPath(robot.getLocation().copy()))){
+            if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(robot.getLocation().copy()))){
                 robot.execute(card);
             }
         }
@@ -53,13 +53,13 @@ public class GameModel {
 
         switch(currentTileType){
             case("conveyor_normal"):
-                robot.moveInDirection(TileInformation.getDirection(currentTileID));
+                robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 break;
             case("conveyor_express"):
-                robot.moveInDirection(TileInformation.getDirection(currentTileID));
+                robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 String newTileType = tiledMapHandler.getTileType(robot.getLocation().getPosition(), "Tile");
-                if (newTileType.equals("conveyor_express")) {
-                    robot.moveInDirection(TileInformation.getDirection(currentTileID));
+                if ("conveyor_express".equals(newTileType)) {
+                    robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 }
                 break;
             case("gear_clockwise"):

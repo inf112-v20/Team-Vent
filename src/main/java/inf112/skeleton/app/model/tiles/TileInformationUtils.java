@@ -4,7 +4,7 @@ import inf112.skeleton.app.model.board.Direction;
 
 import java.util.HashMap;
 
-public class TileInformation {
+public class TileInformationUtils {
     private static final HashMap<Integer, Direction> DirectionMap;
     private static final HashMap<Integer, String> TypeMap;
     static {

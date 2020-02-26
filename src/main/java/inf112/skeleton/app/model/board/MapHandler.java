@@ -3,7 +3,7 @@ package inf112.skeleton.app.model.board;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import inf112.skeleton.app.model.tiles.TileInformation;
+import inf112.skeleton.app.model.tiles.TileInformationUtils;
 
 //TODO: Create tests when map can be loaded without starting the application
 public class MapHandler {
@@ -33,7 +33,7 @@ public class MapHandler {
     }
 
     public String getTileType(int x, int y,String layerName){
-        return TileInformation.getType(getTileID(x, y, layerName));
+        return TileInformationUtils.getType(getTileID(x, y, layerName));
     }
 
     public String getTileType(RVector2 vector, String layerName){
@@ -51,11 +51,11 @@ public class MapHandler {
         int nextLocationWallID = getTileID(nextLocation.getPosition(), "Wall");
         // Checks if there is any walls in either the current tile or the next one forward
         if (currentLocationWallID == -1 && nextLocationWallID == -1) { return false; }
-        Direction currentLocationWallDirection = TileInformation.getDirection(currentLocationWallID);
+        Direction currentLocationWallDirection = TileInformationUtils.getDirection(currentLocationWallID);
         boolean wallBlockingCurrentPath = currentLocationWallDirection == location.getDirection();
         if (wallBlockingCurrentPath) { return true; }
 
-        Direction nextLocationWallDirection = TileInformation.getDirection(nextLocationWallID);
+        Direction nextLocationWallDirection = TileInformationUtils.getDirection(nextLocationWallID);
         boolean wallBlockingNextPath = nextLocationWallDirection == nextLocation.getDirection().left().left();
         return wallBlockingNextPath;
 
