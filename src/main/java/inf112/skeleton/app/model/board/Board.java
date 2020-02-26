@@ -34,8 +34,10 @@ public class Board {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 cell = new TiledMapTileLayer.Cell();
-                tileLayer.setCell(i, j, cell);
-                cell.setTile(new StaticTiledMapTile(new TextureRegion()));
+                TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
+                tile.setId(TileType.BASE_TILE.id());
+                cell.setTile(tile);
+                getTileLayer().setCell(i, j, cell);
             }
         }
         layers.add(tileLayer);
@@ -86,6 +88,6 @@ public class Board {
         if (x < 0 || x >= getWidth() || y < 0 || y >= getHeight()) {
             return null;
         }
-        return tileTypeHashMap.get(getTileLayer().getCell(x, y).getTile().getId());
+        return tileTypeHashMap.getOrDefault(getTileLayer().getCell(x, y).getTile().getId(), TileType.BASE_TILE);
     }
 }

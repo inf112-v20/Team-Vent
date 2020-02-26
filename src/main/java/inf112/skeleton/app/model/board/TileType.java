@@ -3,7 +3,7 @@ package inf112.skeleton.app.model.board;
 import java.util.HashMap;
 
 public enum TileType {
-    TILE {
+    BASE_TILE {
         @Override
         public int id() {
             return 5;
