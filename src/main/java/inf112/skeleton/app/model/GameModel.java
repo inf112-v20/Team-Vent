@@ -1,6 +1,7 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
@@ -13,11 +14,23 @@ public class GameModel {
     private MapHandler tiledMapHandler;
     private Player player;
 
+    private Timer a;
+    private Timer.Task b;
+    private int phase = 0;
+
     public GameModel() {
         robot = new Robot();
         player = new Player();
         player.generateCardHand();
         tiledMapHandler = new MapHandler("demo.tmx");
+
+        a = new Timer();
+        b = new Timer.Task() {
+            @Override
+            public void run() {
+                doPhase(phase);
+            }
+        };
     }
 
     public Robot getRobot() {
@@ -33,15 +46,14 @@ public class GameModel {
     }
 
     public void endTurn() {
-        for (int i = 0; i < 5; i++) {
-            doPhase(i);
-        }
-        player.clearProgrammingSlots();
+        a.scheduleTask(b,0,1,4);
+        //player.clearProgrammingSlots();
         player.generateCardHand();
     }
 
     private void doPhase(int phaseNumber) {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
+        player.setCardinProgrammingSlot(phaseNumber, null);
         // TODO: Find a more elegant solution
         if (card != null) {
             if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(robot.getLocation().copy()))){
@@ -70,6 +82,8 @@ public class GameModel {
                 break;
             default:
         }
+        phase++;
+        if (phase == 5) {phase = 0;}
     }
 
 

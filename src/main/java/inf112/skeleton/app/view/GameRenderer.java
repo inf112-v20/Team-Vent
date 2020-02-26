@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
@@ -27,8 +28,16 @@ public class GameRenderer {
     private TiledMapTileLayer.Cell robotFacingRightCell;
     private TiledMapTileLayer.Cell robotFacingLeftCell;
 
+    private Timer robotTimer = new Timer();
+    private Timer.Task renderRobotTimed = new Timer.Task() {
+        @Override
+        public void run() {
+            renderRobot(gameModel.getRobot());
+        }
+    };
 
-    public GameRenderer(GameModel gameModel) {
+
+    public GameRenderer(final GameModel gameModel) {
         this.gameModel = gameModel;
         TiledMap tiledMap = this.gameModel.getBoard();
         int tilesWide = tiledMap.getProperties().get("width", Integer.class);
@@ -86,6 +95,9 @@ public class GameRenderer {
         renderRobot(gameModel.getRobot());
         renderFont();
         boardRenderer.render();
+        //if (robotTimer.isEmpty()) {
+        //    robotTimer.scheduleTask(renderRobotTimed, 1);
+        //}
     }
 
     private void loadFont() {
