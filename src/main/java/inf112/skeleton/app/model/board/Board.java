@@ -31,6 +31,7 @@ public class Board {
         TiledMapTileLayer tileLayer = new TiledMapTileLayer(width, height, 100, 100);
         tileLayer.setName(TILE_LAYER_ID);
         TiledMapTileLayer.Cell cell;
+        layers.add(tileLayer);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 cell = new TiledMapTileLayer.Cell();
@@ -40,7 +41,6 @@ public class Board {
                 getTileLayer().setCell(i, j, cell);
             }
         }
-        layers.add(tileLayer);
         this.tileTypeHashMap = TileType.tileIdHashMap();
     }
 
