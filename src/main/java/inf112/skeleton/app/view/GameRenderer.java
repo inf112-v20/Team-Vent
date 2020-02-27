@@ -45,9 +45,7 @@ public class GameRenderer {
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Tile");
         OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, tilesWide + tilesWide / 2f, tilesHigh);
-        camera.position.x = (float) tilesWide / 2 + tilesWide / 4f;
-        camera.position.y = (float) tilesHigh / 2;
+        camera.setToOrtho(false, tilesWide + tilesWide / 3f, tilesHigh);
         camera.update();
         loadTextures();
         loadFont();
@@ -57,7 +55,7 @@ public class GameRenderer {
     }
 
     private void loadTextures() {
-        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A.png"));
+        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
         TextureRegion robotFacingRight = new TextureRegion(new Texture("Player/Mechs/Mech1A_east.png"));
         TextureRegion robotFacingDown = new TextureRegion(new Texture("Player/Mechs/Mech1A_south.png"));
         TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/Mechs/Mech1A_west.png"));
@@ -104,12 +102,15 @@ public class GameRenderer {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
+        font.getData().setScale(1.2f);
+        // Changes filtering to bilinear which reduces pixelization
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 
     private void renderFont() {
         batch.begin();
-        font.draw(batch, gameModel.getPlayer().handAsString(), 550, 550);
-        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 550, 300);
+        font.draw(batch, gameModel.getPlayer().handAsString(), 950, 550);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 950, 300);
         batch.end();
     }
 }

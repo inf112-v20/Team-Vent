@@ -37,6 +37,7 @@ public class GameModel {
                 robot.setLocation(phaseSteps.remove());
             }
         };
+        tiledMapHandler = new MapHandler("map-1.tmx");
     }
 
     public Robot getRobot() {
