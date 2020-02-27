@@ -59,7 +59,8 @@ public class GameModel {
                 robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 String newTileType = tiledMapHandler.getTileType(robot.getLocation().getPosition(), "Tile");
                 if ("conveyor_express".equals(newTileType)) {
-                    robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
+                    int newTileID = tiledMapHandler.getTileID(robot.getLocation().getPosition(), "Tile");
+                    robot.moveInDirection(TileInformationUtils.getDirection(newTileID));
                 }
                 break;
             case("gear_clockwise"):
