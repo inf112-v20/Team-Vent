@@ -45,7 +45,6 @@ public class MapHandler {
         TiledMapTileLayer tileLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
         tileLayer.setName(TILE_LAYER_NAME);
         layers.add(tileLayer);
-        TiledMapTile tile;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 tileLayer.setCell(i, j, new TiledMapTileLayer.Cell());

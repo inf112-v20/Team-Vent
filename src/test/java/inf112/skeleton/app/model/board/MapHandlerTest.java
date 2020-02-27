@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MapHandlerTest {
-    MapHandler mapHandler;
+    private MapHandler mapHandler;
 
     @Before
     public void setUp() {
