@@ -48,7 +48,7 @@ public class GameRenderer {
     }
 
     private void loadTextures() {
-        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A.png"));
+        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
         TextureRegion robotFacingRight = new TextureRegion(new Texture("Player/Mechs/Mech1A_east.png"));
         TextureRegion robotFacingDown = new TextureRegion(new Texture("Player/Mechs/Mech1A_south.png"));
         TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/Mechs/Mech1A_west.png"));
