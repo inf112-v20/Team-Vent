@@ -3,11 +3,11 @@ package inf112.skeleton.app.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Timer;
+import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
-import inf112.skeleton.app.model.tiles.TileInformationUtils;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -60,7 +60,7 @@ public class GameModel {
 
     private Deque<Location> doPhase(int phaseNumber, Deque<Location> phaseSteps) {
         Gdx.app.log(GameModel.class.getName(), Integer.toString(phaseNumber));
-        Location loc = phaseSteps.getLast();
+        Location loc = phaseSteps.getLast().copy();
         if (phaseNumber == 5) {
             return phaseSteps;
         }
@@ -68,23 +68,25 @@ public class GameModel {
         player.setCardinProgrammingSlot(phaseNumber, null);
         if (card != null) {
             if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(loc.copy()))){
-                 phaseSteps.add(card.instruction(loc).copy());
+                 phaseSteps.add(card.instruction(loc.copy()));
             }
         }
-        loc = phaseSteps.getLast();
-        int currentTileID = tiledMapHandler.getTileID(loc.getPosition(), "Tile");
-        String currentTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
-        switch(currentTileType){
+        loc = phaseSteps.getLast().copy();
+
+        String currentTileType =  tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+        Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
+
+        switch(currentTileType != null ? currentTileType: "none"){
             case("conveyor_normal"):
-                phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
+                phaseSteps.add(loc.moveDirection(currentTileDirection));
                 break;
             case("conveyor_express"):
-                phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
-                String newTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
-                currentTileID = tiledMapHandler.getTileID(loc.getPosition(), "Tile");
-                loc = phaseSteps.getLast();
-                if ("conveyor_express".equals(newTileType)) {
-                    phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
+                phaseSteps.add(loc.moveDirection(currentTileDirection));
+                loc = phaseSteps.getLast().copy();
+                String nextTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+                Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
+                if ("conveyor_express".equals(nextTileType)) {
+                    phaseSteps.add(loc.moveDirection(nextTileDirection));
                 }
                 break;
             case("gear_clockwise"):
