@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
@@ -28,7 +29,7 @@ public class GameRenderer {
     private TiledMapTileLayer.Cell robotFacingLeftCell;
 
 
-    public GameRenderer(GameModel gameModel) {
+    public GameRenderer(final GameModel gameModel) {
         this.gameModel = gameModel;
         TiledMap tiledMap = this.gameModel.getBoard();
         int tilesWide = tiledMap.getProperties().get("width", Integer.class);
@@ -91,7 +92,6 @@ public class GameRenderer {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(1.2f);
-        // Changes filtering to bilinear which reduces pixelization
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 

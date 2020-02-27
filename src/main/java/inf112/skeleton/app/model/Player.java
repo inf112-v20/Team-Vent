@@ -38,6 +38,10 @@ public class Player {
         Arrays.fill(programmingSlots, null);
     }
 
+    public void setCardinProgrammingSlot(int programmingSlot, IProgramCard programCard) {
+        programmingSlots[programmingSlot] = programCard;
+    }
+
     public IProgramCard getCardInProgrammingSlot(int slot) {
         return programmingSlots[slot];
     }
