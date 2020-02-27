@@ -1,11 +1,8 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Timer;
-import inf112.skeleton.app.controller.GameController;
-import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
@@ -74,8 +71,6 @@ public class GameModel {
         if (card != null) {
             if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(loc.copy()))){
                  phaseSteps.add(card.instruction(loc).copy());
-                //phaseSteps.add(card.instruction(robot.getLocation()));
-                //robot.execute(card);
             }
         }
         loc = phaseSteps.getLast();
@@ -90,7 +85,10 @@ public class GameModel {
                 phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
                 //robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 String newTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+                currentTileID = tiledMapHandler.getTileID(loc.getPosition(), "Tile");
+                loc = phaseSteps.getLast();
                 if ("conveyor_express".equals(newTileType)) {
+                    phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
                     //robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 }
                 break;
