@@ -17,7 +17,7 @@ public class GameModel {
         robot = new Robot();
         player = new Player();
         player.generateCardHand();
-        tiledMapHandler = new MapHandler("demo.tmx");
+        tiledMapHandler = new MapHandler("map-1.tmx");
     }
 
     public Robot getRobot() {
