@@ -30,6 +30,7 @@ public class Robot {
     }
 
     public void setLocation(Location location) {
+        this.lastLocation = this.location;
         this.location = location;
     }
 
