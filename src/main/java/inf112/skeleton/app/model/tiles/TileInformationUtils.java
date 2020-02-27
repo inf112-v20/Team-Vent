@@ -23,7 +23,7 @@ public class TileInformationUtils {
             case(3):
                 return Direction.WEST;
             default:
-                return Direction.NORTH;
+                return null;
         }
     }
 }

@@ -27,7 +27,6 @@ public class GameModel {
         robot = new Robot();
         player = new Player();
         player.generateCardHand();
-        tiledMapHandler = new MapHandler("demo.tmx");
         timer = new Timer();
         task = new Timer.Task() {
             @Override
@@ -44,7 +43,7 @@ public class GameModel {
     }
 
     public TiledMap getBoard() {
-        return this.tiledMapHandler.getBoard();
+        return this.tiledMapHandler.getMap();
     }
 
     public Player getPlayer() {
