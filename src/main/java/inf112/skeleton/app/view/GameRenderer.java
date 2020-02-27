@@ -66,7 +66,7 @@ public class GameRenderer {
     }
 
     public void renderRobot(Robot robot) {
-        // todo: this is bad - I know. I plan on fixing it soon by moving the robot to the object layer
+        // todo: We plan on moving the robot to the object layer
         for (int i = 0; i < gameModel.getBoard().getProperties().get("width", Integer.class); i++) {
             for (int j = 0; j < gameModel.getBoard().getProperties().get("height", Integer.class); j++) {
                 playerLayer.setCell(i, j, null);
@@ -80,7 +80,7 @@ public class GameRenderer {
         } else if (robot.getDirection() == Direction.EAST) {
             cell = robotFacingRightCell;
         } else if (robot.getDirection() == Direction.WEST) {
-            cell = robotFacingLeftCell; // todo: change
+            cell = robotFacingLeftCell;
         } else {
             cell = robotFacingUpCell;
         }
