@@ -14,13 +14,13 @@ public class MapHandler {
 
     public TiledMap getBoard() { return this.tiledMap; }
 
-    private TiledMapTileLayer.Cell getTile(int x, int y, String layerName){
+    public TiledMapTileLayer.Cell getTile(int x, int y, String layerName){
         TiledMapTileLayer tiledLayer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
         try { return tiledLayer.getCell(x, y); }
         catch (NullPointerException e){ return null; }
     }
 
-    private TiledMapTileLayer.Cell getTile(RVector2 vector, String layerName) {
+    public TiledMapTileLayer.Cell getTile(RVector2 vector, String layerName) {
         return getTile((int) vector.getVector().x, (int) vector.getVector().y, layerName);
     }
 
