@@ -28,14 +28,6 @@ public class GameRenderer {
     private TiledMapTileLayer.Cell robotFacingRightCell;
     private TiledMapTileLayer.Cell robotFacingLeftCell;
 
-    private Timer robotTimer = new Timer();
-    private Timer.Task renderRobotTimed = new Timer.Task() {
-        @Override
-        public void run() {
-            renderRobot(gameModel.getRobot());
-        }
-    };
-
 
     public GameRenderer(final GameModel gameModel) {
         this.gameModel = gameModel;
@@ -93,9 +85,6 @@ public class GameRenderer {
         renderRobot(gameModel.getRobot());
         renderFont();
         boardRenderer.render();
-        //if (robotTimer.isEmpty()) {
-        //    robotTimer.scheduleTask(renderRobotTimed, 1);
-        //}
     }
 
     private void loadFont() {
@@ -103,7 +92,6 @@ public class GameRenderer {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
         font.getData().setScale(1.2f);
-        // Changes filtering to bilinear which reduces pixelization
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 

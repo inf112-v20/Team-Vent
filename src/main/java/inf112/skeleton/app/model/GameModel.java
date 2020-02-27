@@ -21,7 +21,6 @@ public class GameModel {
 
     private Timer timer;
     private Timer.Task task;
-    private int phase = 0;
     private Deque<Location> phaseSteps = new LinkedList<>();
 
     public GameModel() {
