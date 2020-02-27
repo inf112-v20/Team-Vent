@@ -56,7 +56,6 @@ public class GameModel {
         phaseSteps.add(robot.getLocation().copy());
         phaseSteps = doPhase(0, phaseSteps);
         timer.scheduleTask(task, 0, 1, phaseSteps.size() - 1);
-        //player.clearProgrammingSlots();
         player.generateCardHand();
     }
 
@@ -68,7 +67,6 @@ public class GameModel {
         }
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-        // TODO: Find a more elegant solution
         if (card != null) {
             if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(loc.copy()))){
                  phaseSteps.add(card.instruction(loc).copy());
@@ -79,26 +77,21 @@ public class GameModel {
         String currentTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
         switch(currentTileType){
             case("conveyor_normal"):
-                //robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
                 break;
             case("conveyor_express"):
                 phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
-                //robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 String newTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
                 currentTileID = tiledMapHandler.getTileID(loc.getPosition(), "Tile");
                 loc = phaseSteps.getLast();
                 if ("conveyor_express".equals(newTileType)) {
                     phaseSteps.add(loc.moveDirection(TileInformationUtils.getDirection(currentTileID)).copy());
-                    //robot.moveInDirection(TileInformationUtils.getDirection(currentTileID));
                 }
                 break;
             case("gear_clockwise"):
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().right()));
-                //robot.setLocation(new Location(robot.getLocation().getPosition(), robot.getDirection().right()));
                 break;
             case("gear_counterclockwise"):
-                //robot.setLocation(new Location(robot.getLocation().getPosition(), robot.getDirection().left()));
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().left()));
                 break;
             default:
