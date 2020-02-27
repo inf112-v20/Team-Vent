@@ -89,6 +89,7 @@ public class GameController {
         TiledMapTileLayer.Cell cellUnderRobot = tileLayer.getCell(robot.getX(), robot.getY());
         if (cellUnderRobot == null) {
             robot.die();
+            this.game.setScreen(new GameOverScreen(this.game));
             return;
         }
         final int TILE_ID_HOLE = 6;
