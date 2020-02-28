@@ -26,7 +26,7 @@ public class Robot {
     }
 
     public Location getLocation() {
-        return this.location;
+        return this.location.copy();
     }
 
     public void setLocation(Location location) {
