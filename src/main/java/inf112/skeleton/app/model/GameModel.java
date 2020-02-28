@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
+import inf112.skeleton.app.model.board.TileType;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 
@@ -53,23 +54,32 @@ public class GameModel {
         String currentTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
         Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
 
-        switch (currentTileType != null ? currentTileType : "none") {
-            case ("conveyor_normal"):
+        TileType current = TileType.getEnum(currentTileType);
+
+        // Treat all unknown tile types as base tiles
+        if (current == null) {
+            Gdx.app.log(GameModel.class.getName(), String.format("Unknown tile type %s", currentTileType));
+            current = TileType.BASE_TILE;
+        }
+
+        switch (current) {
+            case CONVEYOR_NORMAL:
                 phaseSteps.add(loc.moveDirection(currentTileDirection));
                 break;
-            case ("conveyor_express"):
+            case CONVEYOR_EXPRESS:
                 phaseSteps.add(loc.moveDirection(currentTileDirection));
                 loc = phaseSteps.getLast().copy();
-                String nextTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+                String nextTileTypeString = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
-                if ("conveyor_express".equals(nextTileType)) {
+                if (current.toString().equals(nextTileTypeString)) {
                     phaseSteps.add(loc.moveDirection(nextTileDirection));
                 }
                 break;
-            case ("gear_clockwise"):
+            case GEAR_CLOCKWISE:
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().right()));
                 break;
-            case ("gear_counterclockwise"):
+            case GEAR_COUNTERCLOCKWISE:
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().left()));
                 break;
             default:
