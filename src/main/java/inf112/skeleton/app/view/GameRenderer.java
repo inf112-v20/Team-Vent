@@ -77,6 +77,7 @@ public class GameRenderer {
         }
         spriteBatch.begin();
         playerLayer.setCell(robot.getX(), robot.getY(), cell);
+        assert playerLayer.getCell(robot.getX(), robot.getY()).equals(cell);
         spriteBatch.end();
     }
 

@@ -95,20 +95,21 @@ public class MapHandler {
         return getDirection((int) vector.getVector().x, (int) vector.getVector().y, layerName);
     }
 
-    public String getTileType(int x, int y, String layerName){
+    public String getTileType(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
         return TileInformationUtils.getType(cell);
     }
 
-    public String getTileType(RVector2 vector, String layerName){
+    public String getTileType(RVector2 vector, String layerName) {
         return getTileType((int) vector.getVector().x, (int) vector.getVector().y, layerName);
     }
 
     /**
      * Checks if there is a wall in the path of a location
+     *
      * @param location Location of the entity
      * @return true if there is wall in the direction the entity is facing
-     *         or if there is a wall facing the other direction, one tile forward
+     * or if there is a wall facing the other direction, one tile forward
      */
     public boolean wallInPath(Location location) {
         Location nextLocation = location.copy().forward();
