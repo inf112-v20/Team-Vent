@@ -8,8 +8,7 @@ import inf112.skeleton.app.model.cards.RotateLeftCard;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class RobotTest {
 
@@ -43,6 +42,7 @@ public class RobotTest {
     @Test
     public void getLocation() {
         assertEquals(originalLocation, robot.getLocation());
+        assertNotSame(robot.getLocation(), robot.getLocation()); // assert location immutable
     }
 
     @Test

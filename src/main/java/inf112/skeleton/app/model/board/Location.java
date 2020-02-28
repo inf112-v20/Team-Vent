@@ -1,25 +1,24 @@
 package inf112.skeleton.app.model.board;
 
 public class Location {
-    // Location objects are immutable
     private final RVector2 position;
     private final Direction direction;
 
     public Location(RVector2 position, Direction direction) {
-        this.position = position;
+        this.position = position.cpy();
         this.direction = direction;
     }
 
     public Location() {
-        this(new RVector2(0, 0), Direction.NORTH);
+        this(new RVector2(0, 0), Direction.EAST);
     }
 
     public Location forward() {
-        return new Location(this.position.add(this.direction.unitVector()), this.direction);
+        return new Location(getPosition().add(this.direction.unitVector()), this.direction);
     }
 
     public Location moveDirection(Direction moveDirection){
-        return new Location(this.position.add(moveDirection.unitVector()), this.direction);
+        return new Location(this.position.cpy().add(moveDirection.unitVector()), this.direction);
     }
 
     /**
