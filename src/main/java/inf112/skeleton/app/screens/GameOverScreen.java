@@ -1,25 +1,17 @@
 package inf112.skeleton.app.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
-import inf112.skeleton.app.RoboRallyGame;
 
-public class GameOverScreen extends InputAdapter implements Screen {
+public class GameOverScreen implements Screen {
     private static final Float FONT_SCALE = 1.0f;
-    private final RoboRallyGame game;
     private BitmapFont font;
     private SpriteBatch batch;
-
-    public GameOverScreen(RoboRallyGame game) {
-        this.game = game;
-    }
 
     @Override
     public void show() {
@@ -27,7 +19,6 @@ public class GameOverScreen extends InputAdapter implements Screen {
         font = new BitmapFont();
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         font.getData().setScale(FONT_SCALE);
-        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -52,7 +43,6 @@ public class GameOverScreen extends InputAdapter implements Screen {
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -63,14 +53,5 @@ public class GameOverScreen extends InputAdapter implements Screen {
 
     @Override
     public void dispose() {
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.SPACE) {
-            game.setScreen(new GameScreen(this.game));
-            return true;
-        }
-        return false;
     }
 }
