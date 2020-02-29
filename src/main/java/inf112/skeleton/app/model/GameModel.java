@@ -5,9 +5,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
-import inf112.skeleton.app.model.board.TileType;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
+import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.Deque;
 
@@ -51,11 +51,11 @@ public class GameModel {
         }
         loc = phaseSteps.getLast().copy();
 
-        String currentTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+        String currentTileType = tiledMapHandler.getTileTypeString(loc.getPosition(), "Tile");
         Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
 
-        TileType current = TileType.getEnum(currentTileType);
 
+        TileType current = TileType.toTileType(currentTileType);
         // Treat all unknown tile types as base tiles
         if (current == null) {
             Gdx.app.log(GameModel.class.getName(), String.format("Unknown tile type %s", currentTileType));
@@ -69,7 +69,7 @@ public class GameModel {
             case CONVEYOR_EXPRESS:
                 phaseSteps.add(loc.moveDirection(currentTileDirection));
                 loc = phaseSteps.getLast().copy();
-                String nextTileTypeString = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
+                String nextTileTypeString = tiledMapHandler.getTileTypeString(loc.getPosition(), "Tile");
 
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
                 if (current.toString().equals(nextTileTypeString)) {
@@ -81,6 +81,9 @@ public class GameModel {
                 break;
             case GEAR_COUNTERCLOCKWISE:
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().left()));
+                break;
+            case HOLE:
+                getRobot().die();
                 break;
             default:
         }
