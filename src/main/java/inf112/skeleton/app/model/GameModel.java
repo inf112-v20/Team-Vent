@@ -79,7 +79,7 @@ public class GameModel {
             case HOLE:
                 phaseSteps.add(null); // the robot died, so it has no position
                 return phaseSteps; // end the phase early
-            case BASE_TILE:
+            default:
                 break;
         }
         return doPhase(phaseNumber + 1, phaseSteps);

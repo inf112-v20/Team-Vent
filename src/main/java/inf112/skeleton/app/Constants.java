@@ -1,6 +1,9 @@
 package inf112.skeleton.app;
 
-public class Constants {
+public final class Constants {
+    private Constants() { // do not instantiate
+    }
+
     // Names of the tile layers in the tiled map
     public static final String WALL_LAYER = "Wall";
     public static final String ROBOT_LAYER = "Robot";
