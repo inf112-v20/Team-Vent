@@ -18,12 +18,12 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
 
 public class GameRenderer {
-    private GameModel gameModel;
-    private OrthogonalTiledMapRenderer boardRenderer;
-    private Batch spriteBatch;
+    private final GameModel gameModel;
+    private final OrthogonalTiledMapRenderer boardRenderer;
+    private final Batch spriteBatch;
     private SpriteBatch batch;
     private BitmapFont font;
-    private TiledMapTileLayer playerLayer;
+    private final TiledMapTileLayer playerLayer;
     private TiledMapTileLayer.Cell robotFacingUpCell;
     private TiledMapTileLayer.Cell robotFacingDownCell;
     private TiledMapTileLayer.Cell robotFacingRightCell;

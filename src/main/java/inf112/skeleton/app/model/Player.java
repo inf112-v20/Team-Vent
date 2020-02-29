@@ -9,16 +9,16 @@ import java.util.Arrays;
 
 public class Player {
 
-    private IProgramCard[] cardHand = new IProgramCard[9];
-    private IProgramCard[] programmingSlots = new IProgramCard[5];
+    private final IProgramCard[] cardHand = new IProgramCard[9];
+    private final IProgramCard[] programmingSlots = new IProgramCard[5];
     // Boolean finishedPlacingCards = false;
 
-    public boolean placeCardFromHandToSlot(int handSlot) {
-        return findOpenSlot(handSlot, cardHand, programmingSlots);
+    public void placeCardFromHandToSlot(int handSlot) {
+        findOpenSlot(handSlot, cardHand, programmingSlots);
     }
 
-    public boolean undoProgrammingSlotPlacement(int programmingSlot) {
-        return findOpenSlot(programmingSlot, programmingSlots, cardHand);
+    public void undoProgrammingSlotPlacement(int programmingSlot) {
+        findOpenSlot(programmingSlot, programmingSlots, cardHand);
     }
 
     private boolean findOpenSlot(int cardSlotInOriginArray, IProgramCard[] originArray, IProgramCard[] destinationArray) {

@@ -13,7 +13,7 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.tiles.TileType;
 
 public class MapHandler {
-    private TiledMap tiledMap;
+    private final TiledMap tiledMap;
 
     /**
      * Load a map from a file. This will only work while the application is running

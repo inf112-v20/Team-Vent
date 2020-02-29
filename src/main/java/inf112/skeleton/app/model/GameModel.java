@@ -1,6 +1,5 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -14,9 +13,9 @@ import java.util.Deque;
 
 public class GameModel {
 
-    private Robot robot;
-    private MapHandler tiledMapHandler;
-    private Player player;
+    private final Robot robot;
+    private final MapHandler tiledMapHandler;
+    private final Player player;
 
     public GameModel() {
         robot = new Robot();
@@ -38,7 +37,7 @@ public class GameModel {
     }
 
     public Deque<Location> doPhase(int phaseNumber, Deque<Location> phaseSteps) {
-        Gdx.app.log(GameModel.class.getName(), Integer.toString(phaseNumber));
+        //Gdx.app.log(GameModel.class.getName(), Integer.toString(phaseNumber));
         if (phaseNumber == 5) return phaseSteps;
         Location loc = phaseSteps.getLast().copy();
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);

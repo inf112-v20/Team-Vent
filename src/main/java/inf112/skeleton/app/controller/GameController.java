@@ -19,10 +19,10 @@ import java.util.LinkedList;
 
 public class GameController extends InputAdapter {
     private GameModel gameModel;
-    private RoboRallyGame game;
+    private final RoboRallyGame game;
     private boolean shiftIsPressed = false;
-    private Timer.Task task;
-    private Timer timer;
+    private final Timer.Task task;
+    private final Timer timer;
     private Deque<Location> phaseSteps = new LinkedList<>();
 
     public GameController(RoboRallyGame game) {
@@ -32,7 +32,6 @@ public class GameController extends InputAdapter {
         task = new Timer.Task() {
             @Override
             public void run() {
-                System.out.println(phaseSteps.toString());
                 Location nextLocation = phaseSteps.remove();
                 if (nextLocation != null) {
                     gameModel.getRobot().setLocation(nextLocation);
@@ -83,7 +82,6 @@ public class GameController extends InputAdapter {
 
     @Override
     public boolean keyUp(int keycode) {
-        //log(String.format("%s up", Input.Keys.toString(keycode).toUpperCase()));
         if (game.getScreen() instanceof GameOverScreen && keycode == Input.Keys.SPACE) {
             this.gameModel = new GameModel();
             game.setScreen(new GameScreen(new GameRenderer(this.gameModel)));
