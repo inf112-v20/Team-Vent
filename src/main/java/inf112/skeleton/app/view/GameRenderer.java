@@ -1,6 +1,8 @@
 package inf112.skeleton.app.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -82,6 +84,8 @@ public class GameRenderer {
     }
 
     public void render() {
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderRobot(gameModel.getRobot());
         renderFont();
         boardRenderer.render();
