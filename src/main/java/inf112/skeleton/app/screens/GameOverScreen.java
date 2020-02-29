@@ -1,14 +1,14 @@
 package inf112.skeleton.app.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 
-public class GameOverScreen implements Screen {
+public class GameOverScreen extends ScreenAdapter {
     private static final Float FONT_SCALE = 1.0f;
     private BitmapFont font;
     private SpriteBatch batch;
@@ -32,26 +32,8 @@ public class GameOverScreen implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
     public void hide() {
         font.dispose();
         batch.dispose();
-    }
-
-    @Override
-    public void dispose() {
     }
 }
