@@ -1,20 +1,21 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
+import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.Deque;
 
 public class GameModel {
 
-    private Robot robot;
-    private MapHandler tiledMapHandler;
-    private Player player;
+    private final Robot robot;
+    private final MapHandler tiledMapHandler;
+    private final Player player;
 
     public GameModel() {
         robot = new Robot();
@@ -36,49 +37,51 @@ public class GameModel {
     }
 
     public Deque<Location> doPhase(int phaseNumber, Deque<Location> phaseSteps) {
-        Gdx.app.log(GameModel.class.getName(), Integer.toString(phaseNumber));
+        //Gdx.app.log(GameModel.class.getName(), Integer.toString(phaseNumber));
+        if (phaseNumber == 5) return phaseSteps;
         Location loc = phaseSteps.getLast().copy();
-        if (phaseNumber == 5) {
-            return phaseSteps;
-        }
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
-        player.setCardinProgrammingSlot(phaseNumber, null);
-        if (card != null) {
-            if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(loc.copy()))) {
-                phaseSteps.add(card.instruction(loc.copy()));
-            }
+        player.setCardinProgrammingSlot(phaseNumber, null); // empty the slot
+        if (card != null && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(loc.copy()))) {
+            phaseSteps.add(card.instruction(loc.copy()));
         }
         loc = phaseSteps.getLast().copy();
 
-        String currentTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
-        Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
+        // Check if the location is outside the map
+        if (loc.getPosition().getX() < 0 || loc.getPosition().getX() >= tiledMapHandler.getWidth() ||
+                loc.getPosition().getY() < 0 || loc.getPosition().getY() >= tiledMapHandler.getHeight()) {
+            phaseSteps.add(null); // the robot died, so it has no position
+            return phaseSteps; // end the phase early
+        }
 
-        switch (currentTileType != null ? currentTileType : "none") {
-            case ("conveyor_normal"):
+        // Calculate next steps based on current position
+        TileType currentTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+        Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
+        switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
+            case CONVEYOR_NORMAL:
                 phaseSteps.add(loc.moveDirection(currentTileDirection));
                 break;
-            case ("conveyor_express"):
+            case CONVEYOR_EXPRESS:
                 phaseSteps.add(loc.moveDirection(currentTileDirection));
                 loc = phaseSteps.getLast().copy();
-                String nextTileType = tiledMapHandler.getTileType(loc.getPosition(), "Tile");
-                Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), "Tile");
-                if ("conveyor_express".equals(nextTileType)) {
+                String nextTileTypeString = tiledMapHandler.getTileTypeString(loc.getPosition(), Constants.TILE_LAYER);
+                Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
+                if (currentTileType.toString().equals(nextTileTypeString)) {
                     phaseSteps.add(loc.moveDirection(nextTileDirection));
                 }
                 break;
-            case ("gear_clockwise"):
+            case GEAR_CLOCKWISE:
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().right()));
                 break;
-            case ("gear_counterclockwise"):
+            case GEAR_COUNTERCLOCKWISE:
                 phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().left()));
                 break;
+            case HOLE:
+                phaseSteps.add(null); // the robot died, so it has no position
+                return phaseSteps; // end the phase early
             default:
+                break;
         }
         return doPhase(phaseNumber + 1, phaseSteps);
-    }
-
-
-    public boolean inTestMode() {
-        return true;
     }
 }

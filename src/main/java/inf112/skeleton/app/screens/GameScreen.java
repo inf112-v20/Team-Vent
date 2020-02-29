@@ -4,7 +4,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import inf112.skeleton.app.view.GameRenderer;
 
 public class GameScreen extends ScreenAdapter {
-    private GameRenderer renderer;
+    private final GameRenderer renderer;
 
     public GameScreen(GameRenderer renderer) {
         this.renderer = renderer;

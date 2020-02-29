@@ -35,11 +35,11 @@ public class Robot {
     }
 
     public int getX() {
-        return (int) getLocation().getPosition().getVector().x;
+        return getLocation().getPosition().getX();
     }
 
     public int getY() {
-        return (int) getLocation().getPosition().getVector().y;
+        return getLocation().getPosition().getY();
     }
 
     public void takeDamage() {

@@ -30,6 +30,14 @@ public class RVector2 {
         return this;
     }
 
+    public int getX() {
+        return (int) vector.x;
+    }
+
+    public int getY() {
+        return (int) vector.y;
+    }
+
     /**
      * @throws IllegalStateException if x, y are not integers
      */
