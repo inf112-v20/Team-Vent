@@ -39,7 +39,7 @@ public class MapHandler {
         // create the tile layer and fill it with base tiles
         int tileSize = 100;
         TiledMapTileLayer tileLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
-        tileLayer.setName(Constants.TILE_LAYER_NAME);
+        tileLayer.setName(Constants.TILE_LAYER);
         layers.add(tileLayer);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -49,7 +49,7 @@ public class MapHandler {
         }
         // create the object layer
         TiledMapTileLayer robotLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
-        robotLayer.setName(Constants.ROBOT_LAYER_NAME);
+        robotLayer.setName(Constants.ROBOT_LAYER);
         layers.add(robotLayer);
     }
 
@@ -101,11 +101,11 @@ public class MapHandler {
     }
 
     public TileType getTileType(int x, int y, String layerName) {
-        return TileType.valueOf(getTileTypeString(x, y, layerName));
+        return TileType.asTileType(getTileTypeString(x, y, layerName));
     }
 
     public TileType getTileType(RVector2 vector, String layerName) {
-        return TileType.valueOf(getTileTypeString(vector.getX(), vector.getY(), layerName));
+        return TileType.asTileType(getTileTypeString(vector.getX(), vector.getY(), layerName));
     }
 
     /**
@@ -117,13 +117,13 @@ public class MapHandler {
      */
     public boolean wallInPath(Location location) {
         Location nextLocation = location.copy().forward();
-        Direction currentLocationWallDirection = getDirection(location.getPosition(), Constants.WALL_LAYER_NAME);
+        Direction currentLocationWallDirection = getDirection(location.getPosition(), Constants.WALL_LAYER);
         boolean wallBlockingCurrentPath = currentLocationWallDirection == location.getDirection();
         if (wallBlockingCurrentPath) {
             return true;
         }
 
-        Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER_NAME);
+        Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
 
@@ -141,15 +141,15 @@ public class MapHandler {
     }
 
     public MapLayer getRobotLayer() {
-        return tiledMap.getLayers().get(Constants.ROBOT_LAYER_NAME);
+        return tiledMap.getLayers().get(Constants.ROBOT_LAYER);
     }
 
     public TiledMapTileLayer getTileLayer() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER_NAME);
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER);
     }
 
     public TiledMapTileLayer getWallLayer() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER_NAME);
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
     }
 
     //public TiledMapTileLayer getLaserLayer() {

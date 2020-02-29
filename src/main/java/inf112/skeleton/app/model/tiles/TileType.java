@@ -11,7 +11,7 @@ public enum TileType {
     GEAR_CLOCKWISE,
     GEAR_COUNTERCLOCKWISE;
 
-    public static TileType toTileType(String name) {
+    public static TileType asTileType(String name) {
         try {
             return valueOf(TileType.class, name.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e2) {
