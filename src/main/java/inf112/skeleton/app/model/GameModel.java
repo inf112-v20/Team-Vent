@@ -21,9 +21,12 @@ public class GameModel {
     private Player player;
     private int phaseNumber;
     private Timer timer;
+
     private Timer.Task doCardTimed;
     private Timer.Task doTilesTimed;
     private Timer.Task updatePhaseNumber;
+
+
     private ArrayList<Deque<Location>> cardSteps = new ArrayList<>();
     private ArrayList<Deque<Location>> tileSteps = new ArrayList<>();
 
@@ -35,25 +38,6 @@ public class GameModel {
         player.generateCardHand();
         timer = new Timer();
         phaseNumber = 0;
-
-        doCardTimed = new Timer.Task() {
-            @Override
-            public void run() {
-                robot.setLocation(cardSteps.get(phaseNumber).remove());
-            }
-        };
-        doTilesTimed = new Timer.Task() {
-            @Override
-            public void run() {
-                robot.setLocation(tileSteps.get(phaseNumber).remove());
-            }
-        };
-        updatePhaseNumber = new Timer.Task() {
-            @Override
-            public void run() {
-                phaseNumber++;
-            }
-        };
         tiledMapHandler = new MapHandler("map-1.tmx");
     }
 
@@ -80,25 +64,24 @@ public class GameModel {
         tileSteps.set(0, doTiles(0, tileSteps.get(0), loc));
         loc = updateLastLoc(loc, tileSteps.get(0));
 
-
         for (int i = 1; i < 5; i++) {
             cardSteps.add(new LinkedList<>());
             cardSteps.set(i,doCard(i, cardSteps.get(i), loc));
             loc = updateLastLoc(loc, cardSteps.get(i));
 
             tileSteps.add(new LinkedList<>());
-            tileSteps.set(i, doTiles(i, tileSteps.get(i), cardSteps.get(i).getLast()));
+            tileSteps.set(i, doTiles(i, tileSteps.get(i), loc));
             loc = updateLastLoc(loc, tileSteps.get(i));
 
         }
         int delay = 0;
         for (int i = 0; i < 5; i++) {
-            timer.scheduleTask(doCardTimed,delay,1,cardSteps.get(i).size()-1);
+            scheduleDoCardTimed(delay, i);
             delay += cardSteps.get(i).size();
-            timer.scheduleTask(doTilesTimed, delay, 1, tileSteps.get(i).size()-1);
+            scheduleDoTilesTimed(delay, i);
             delay += tileSteps.get(i).size();
-            timer.scheduleTask(updatePhaseNumber,delay);
-            delay++;
+            scheduleUpdatePhaseNumber(delay);
+            delay += 1;
         }
         player.generateCardHand();
     }
@@ -136,17 +119,51 @@ public class GameModel {
         player.setCardinProgrammingSlot(phaseNumber, null);
         if (card != null) {
             if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(initialLoc))){
-                cardSteps.add(card.instruction(initialLoc));
+                cardSteps.add(card.instruction(initialLoc.copy()));
             }
         }
         return cardSteps;
 
     }
 
+    public Timer.Task scheduleDoCardTimed(int delay, int phase) {
+        if (cardSteps.get(phase).size() == 0) {return null;}
+        doCardTimed = new Timer.Task() {
+            @Override
+            public void run() {
+                robot.setLocation(cardSteps.get(phase).remove());
+            }
+        };
+        Timer.instance().scheduleTask(doCardTimed, delay, 1, cardSteps.get(phase).size() - 1);
+        return doCardTimed;
+    }
+
+    public  Timer.Task scheduleDoTilesTimed(int delay, int phase) {
+        if (tileSteps.get(phase).size() == 0) {return null;}
+        doTilesTimed = new Timer.Task() {
+            @Override
+            public void run() {
+                robot.setLocation(tileSteps.get(phase).remove());
+            }
+        };
+        Timer.instance().scheduleTask(doTilesTimed, delay, 1, tileSteps.get(phase).size()-1);
+        return doTilesTimed;
+    }
+
+    public Timer.Task scheduleUpdatePhaseNumber(int delay) {
+        updatePhaseNumber = new Timer.Task() {
+            @Override
+            public void run() {
+                phaseNumber++;
+            }
+        };
+        Timer.instance().scheduleTask(updatePhaseNumber, delay, 1, 0);
+        return updatePhaseNumber;
+    }
+
     private  Location updateLastLoc (Location loc, Deque<Location> locations) {
-        if (locations.pollLast() != null) {
-            return locations.pollLast();
-        }
+        //System.out.println(locations.pollLast().toString());
+        if (locations.peekLast() != null) { System.out.println("asdasd"); return locations.pollLast();}
         return loc;
     }
 
