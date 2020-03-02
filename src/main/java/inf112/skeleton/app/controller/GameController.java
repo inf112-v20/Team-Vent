@@ -25,7 +25,7 @@ public class GameController extends InputAdapter {
     private final Timer timer;
     private Deque<Location> phaseSteps = new LinkedList<>();
 
-    public GameController(RoboRallyGame game) {
+    public GameController(final RoboRallyGame game) {
         this.gameModel = new GameModel();
         this.game = game;
         game.setScreen(new GameScreen(new GameRenderer(this.gameModel)));
