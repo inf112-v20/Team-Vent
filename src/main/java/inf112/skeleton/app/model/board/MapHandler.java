@@ -1,7 +1,6 @@
 package inf112.skeleton.app.model.board;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -140,8 +139,8 @@ public class MapHandler {
         return getRobotLayer().getObjects();
     }
 
-    public MapLayer getRobotLayer() {
-        return tiledMap.getLayers().get(Constants.ROBOT_LAYER);
+    public TiledMapTileLayer getRobotLayer() {
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.ROBOT_LAYER);
     }
 
     public TiledMapTileLayer getTileLayer() {

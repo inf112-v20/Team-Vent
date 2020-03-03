@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -17,26 +16,24 @@ import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
 
+import java.util.IdentityHashMap;
+
 public class GameRenderer {
     private final GameModel gameModel;
     private final OrthogonalTiledMapRenderer boardRenderer;
-    private final Batch spriteBatch;
+    private final TiledMapTileLayer playerLayer;
     private SpriteBatch batch;
     private BitmapFont font;
-    private final TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer.Cell robotFacingUpCell;
-    private TiledMapTileLayer.Cell robotFacingDownCell;
-    private TiledMapTileLayer.Cell robotFacingRightCell;
-    private TiledMapTileLayer.Cell robotFacingLeftCell;
-
+    TextureRegion robotFacingUp;
+    private IdentityHashMap<Robot, TiledMapTileLayer.Cell> robotsToCellsHashMap;
 
     public GameRenderer(final GameModel gameModel) {
         this.gameModel = gameModel;
-        TiledMap tiledMap = this.gameModel.getBoard();
-        int tilesWide = tiledMap.getProperties().get("width", Integer.class);
-        int tilesHigh = tiledMap.getProperties().get("height", Integer.class);
-        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Tile");
+        TiledMap tiledMap = this.gameModel.getTiledMapHandler().getMap();
+        int tilesWide = gameModel.getTiledMapHandler().getWidth();
+        int tilesHigh = gameModel.getTiledMapHandler().getHeight();
+        playerLayer = gameModel.getTiledMapHandler().getRobotLayer();
+        TiledMapTileLayer tileLayer = gameModel.getTiledMapHandler().getTileLayer();
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, tilesWide + tilesWide / 3f, tilesHigh);
         camera.update();
@@ -44,49 +41,56 @@ public class GameRenderer {
         loadFont();
         boardRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / tileLayer.getTileWidth());
         boardRenderer.setView(camera);
-        spriteBatch = new SpriteBatch();
     }
 
     private void loadTextures() {
-        TextureRegion robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
-        TextureRegion robotFacingRight = new TextureRegion(new Texture("Player/Mechs/Mech1A_east.png"));
-        TextureRegion robotFacingDown = new TextureRegion(new Texture("Player/Mechs/Mech1A_south.png"));
-        TextureRegion robotFacingLeft = new TextureRegion(new Texture("Player/Mechs/Mech1A_west.png"));
-        robotFacingUpCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
-        robotFacingRightCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingRight));
-        robotFacingDownCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingDown));
-        robotFacingLeftCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingLeft));
+        robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
+        TiledMapTileLayer.Cell robotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
+        robotsToCellsHashMap = new IdentityHashMap<>();
+        // associate robots with cells for the robot layer of the map
+        robotsToCellsHashMap.put(gameModel.getRobot(), robotCell);
     }
 
-    public void renderRobot(Robot robot) {
-        // todo: We plan on moving the robot to the object layer
-        for (int i = 0; i < gameModel.getBoard().getProperties().get("width", Integer.class); i++) {
-            for (int j = 0; j < gameModel.getBoard().getProperties().get("height", Integer.class); j++) {
+    public void renderRobots() {
+        clearRobotsFromMap();
+        for (Robot robot : gameModel.getRobots()) {
+            // get the cell for that robot or use the default robot texture to create a new cell
+            TiledMapTileLayer.Cell cell = robotsToCellsHashMap.getOrDefault(robot, new TiledMapTileLayer.Cell().
+                    setTile(new StaticTiledMapTile(robotFacingUp)));
+            rotateCellToMatchRobot(robot, cell);
+            playerLayer.setCell(robot.getX(), robot.getY(), cell);
+        }
+    }
+
+    private void clearRobotsFromMap() {
+        for (int i = 0; i < gameModel.getTiledMapHandler().getWidth(); i++) {
+            for (int j = 0; j < gameModel.getTiledMapHandler().getWidth(); j++) {
                 playerLayer.setCell(i, j, null);
             }
         }
-        TiledMapTileLayer.Cell cell;
-        if (robot.getDirection() == Direction.NORTH) {
-            cell = robotFacingUpCell;
-        } else if (robot.getDirection() == Direction.SOUTH) {
-            cell = robotFacingDownCell;
-        } else if (robot.getDirection() == Direction.EAST) {
-            cell = robotFacingRightCell;
-        } else if (robot.getDirection() == Direction.WEST) {
-            cell = robotFacingLeftCell;
+    }
+
+    private void rotateCellToMatchRobot(Robot robot, TiledMapTileLayer.Cell cell) {
+        // assuming the texture in the cell is facing north when rotation is 0
+        Direction direction = robot.getDirection();
+        new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
+        if (direction == Direction.NORTH) {
+            cell.setRotation(0);
+        } else if (direction == Direction.WEST) {
+            cell.setRotation(1);
+        } else if (direction == Direction.SOUTH) {
+            cell.setRotation(2);
+        } else if (direction == Direction.EAST) {
+            cell.setRotation(3);
         } else {
-            cell = robotFacingUpCell;
+            throw new IllegalArgumentException("Unexpected fifth direction");
         }
-        spriteBatch.begin();
-        playerLayer.setCell(robot.getX(), robot.getY(), cell);
-        assert playerLayer.getCell(robot.getX(), robot.getY()).equals(cell);
-        spriteBatch.end();
     }
 
     public void render() {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderRobot(gameModel.getRobot());
+        renderRobots();
         renderFont();
         boardRenderer.render();
     }
