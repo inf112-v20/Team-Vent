@@ -12,7 +12,6 @@ import inf112.skeleton.app.model.cards.RotateLeftCard;
 import inf112.skeleton.app.model.cards.RotateRightCard;
 import inf112.skeleton.app.screens.GameOverScreen;
 import inf112.skeleton.app.screens.GameScreen;
-import inf112.skeleton.app.view.GameRenderer;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -28,7 +27,7 @@ public class GameController extends InputAdapter {
     public GameController(RoboRallyGame game) {
         this.gameModel = new GameModel();
         this.game = game;
-        game.setScreen(new GameScreen(new GameRenderer(this.gameModel)));
+        game.setScreen(new GameScreen(gameModel));
         task = new Timer.Task() {
             @Override
             public void run() {
@@ -84,7 +83,7 @@ public class GameController extends InputAdapter {
     public boolean keyUp(int keycode) {
         if (game.getScreen() instanceof GameOverScreen && keycode == Input.Keys.SPACE) {
             this.gameModel = new GameModel();
-            game.setScreen(new GameScreen(new GameRenderer(this.gameModel)));
+            game.setScreen(new GameScreen(this.gameModel));
             return true;
         }
         if (keycode == Input.Keys.SHIFT_LEFT) {
