@@ -79,7 +79,7 @@ public class Player {
         StringBuilder programmingSlotsAsString = new StringBuilder();
         programmingSlotsAsString.append("PROGRAMMING SLOTS: \n");
         cardArrayToString(programmingSlotsAsString, programmingSlots);
-        programmingSlotsAsString.append("\nE  End Turn (Execute order 66)");
+        programmingSlotsAsString.append("\nE  Execute (order 66)");
         return programmingSlotsAsString.toString();
     }
 

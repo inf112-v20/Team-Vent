@@ -1,17 +1,55 @@
 package inf112.skeleton.app.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import inf112.skeleton.app.view.GameRenderer;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.view.BoardRenderer;
 
 public class GameScreen extends ScreenAdapter {
-    private final GameRenderer renderer;
+    private final BoardRenderer boardRenderer;
+    private final GameModel gameModel;
+    SpriteBatch batch;
+    BitmapFont font;
 
-    public GameScreen(GameRenderer renderer) {
-        this.renderer = renderer;
+    public GameScreen(GameModel gameModel) {
+        this.gameModel = gameModel;
+        int tilesWide = gameModel.getTiledMapHandler().getWidth();
+        int tilesHigh = gameModel.getTiledMapHandler().getHeight();
+        OrthographicCamera camera = new OrthographicCamera();
+        camera.setToOrtho(false, tilesWide + tilesWide / 3f, tilesHigh);
+        camera.update();
+        boardRenderer = new BoardRenderer(gameModel);
+        boardRenderer.setView(camera);
+        loadFont();
+        float mapWidth = gameModel.getTiledMapHandler().getTileLayer().getTileWidth() * gameModel.getTiledMapHandler().getWidth();
     }
 
     @Override
     public void render(float delta) {
-        renderer.render();
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        boardRenderer.render();
+        renderFont();
+    }
+
+    private void loadFont() {
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(1.2f);
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+    }
+
+    private void renderFont() {
+        batch.begin();
+        font.draw(batch, gameModel.getPlayer().handAsString(), 950, 550);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 950, 300);
+        batch.end();
     }
 }
