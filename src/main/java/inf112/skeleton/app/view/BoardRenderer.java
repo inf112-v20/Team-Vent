@@ -2,7 +2,6 @@ package inf112.skeleton.app.view;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
@@ -17,8 +16,9 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private TextureRegion robotFacingUp;
     private IdentityHashMap<Robot, TiledMapTileLayer.Cell> robotsToCellsHashMap;
 
-    public BoardRenderer(TiledMap map, float unitScale, GameModel gameModel) {
-        super(map, unitScale);
+    public BoardRenderer(GameModel gameModel) {
+        super(gameModel.getTiledMapHandler().getMap(), 1 / gameModel.getTiledMapHandler().getTileLayer().
+                getTileWidth());
         this.gameModel = gameModel;
         loadTextures();
     }
