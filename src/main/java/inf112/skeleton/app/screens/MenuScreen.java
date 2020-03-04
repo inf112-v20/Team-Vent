@@ -13,8 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
-import inf112.skeleton.app.model.GameModel;
-import inf112.skeleton.app.view.GameRenderer;
 
 public class MenuScreen extends ScreenAdapter {
     private RoboRallyGame game;
