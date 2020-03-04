@@ -21,24 +21,33 @@ public class MenuScreen extends ScreenAdapter {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-
         Table table = new Table();
         table.setFillParent(true);
         Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
 
+        // Menu background
+        Texture backgroundTexture = new Texture(Gdx.files.internal("background.png"));
+        Image background = new Image(backgroundTexture);
 
         // RoboRally logo
         Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
         Image logo = new Image(logoTexture);
-        table.add(logo);
-        table.row();
+
+        //Resolution selector
+        Label resolutionLabel = new Label("Resolution: ", skin);
+        resolutionLabel.setFontScale(1.3f);
+        SelectBox resolutionBox = new SelectBox(skin);
+        String[] resolutionOptions = {"1024x576", "1280x720", "1366x768", "1600x900", "1920x1080"};
+        resolutionBox.setItems(resolutionOptions);
 
         // Play button
         Button playButton = new TextButton("Play", skin);
         playButton.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button){
-                Gdx.graphics.setWindowedMode(1280, 720);
+                String selected = (String) resolutionBox.getSelected();
+                String resolutions[] = selected.split("x");
+                Gdx.graphics.setWindowedMode(Integer.parseInt(resolutions[0]), Integer.parseInt(resolutions[1]));
                 new GameController(game, "map-1.tmx");
             }
 
@@ -47,8 +56,6 @@ public class MenuScreen extends ScreenAdapter {
                 return true;
             }
         });
-        table.add(playButton).prefHeight(50).prefWidth(200).expandY();
-        table.row();
 
         // Exit button
         Button exitButton = new TextButton("Exit", skin);
@@ -64,9 +71,20 @@ public class MenuScreen extends ScreenAdapter {
             return true;
         }
     });
-        table.add(exitButton).prefHeight(50).prefWidth(200).expandY();
+        stage.addActor(background);
 
-        table.setDebug(true);
+        table.top();
+        table.add(logo).top().colspan(2).padBottom(100).padTop(50);
+        table.row().padBottom(25);
+        table.add(playButton).prefHeight(50).prefWidth(200).colspan(2);
+        table.row().padBottom(25);
+        table.add(resolutionLabel).right();
+        table.add(resolutionBox).left();
+        table.row().padBottom(25);
+        table.add(exitButton).prefHeight(50).prefWidth(200).colspan(2);
+
+        table.setFillParent(true);
+        table.setDebug(false);
         stage.addActor(table);
     }
 

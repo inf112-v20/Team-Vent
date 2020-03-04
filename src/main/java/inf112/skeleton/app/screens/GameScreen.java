@@ -56,7 +56,7 @@ public class GameScreen extends ScreenAdapter {
 
     private void renderFont() {
         batch.begin();
-        font.draw(batch, gameModel.getPlayer().handAsString(), width * 0.8f, height * 0.8f);
+        font.draw(batch, gameModel.getPlayer().handAsString(), width * 0.8f, height * 0.9f);
         font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), width * 0.8f, height * 0.4f);
         batch.end();
     }
