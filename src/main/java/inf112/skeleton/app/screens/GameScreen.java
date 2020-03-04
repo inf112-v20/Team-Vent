@@ -14,8 +14,8 @@ import inf112.skeleton.app.view.BoardRenderer;
 public class GameScreen extends ScreenAdapter {
     private final BoardRenderer boardRenderer;
     private final GameModel gameModel;
-    SpriteBatch batch;
-    BitmapFont font;
+    private SpriteBatch batch;
+    private BitmapFont font;
 
     public GameScreen(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -27,7 +27,6 @@ public class GameScreen extends ScreenAdapter {
         boardRenderer = new BoardRenderer(gameModel);
         boardRenderer.setView(camera);
         loadFont();
-        float mapWidth = gameModel.getTiledMapHandler().getTileLayer().getTileWidth() * gameModel.getTiledMapHandler().getWidth();
     }
 
     @Override
