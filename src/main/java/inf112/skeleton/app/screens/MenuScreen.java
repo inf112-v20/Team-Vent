@@ -3,13 +3,11 @@ package inf112.skeleton.app.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
@@ -28,11 +26,19 @@ public class MenuScreen extends ScreenAdapter {
         table.setFillParent(true);
         Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
 
+
+        // RoboRally logo
+        Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
+        Image logo = new Image(logoTexture);
+        table.add(logo);
+        table.row();
+
         // Play button
         Button playButton = new TextButton("Play", skin);
         playButton.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button){
+                Gdx.graphics.setWindowedMode(1280, 720);
                 new GameController(game, "map-1.tmx");
             }
 
@@ -60,7 +66,7 @@ public class MenuScreen extends ScreenAdapter {
     });
         table.add(exitButton).prefHeight(50).prefWidth(200).expandY();
 
-        table.setDebug(false);
+        table.setDebug(true);
         stage.addActor(table);
     }
 
