@@ -8,4 +8,5 @@ when the java version used is >8. This has no effect on function or performance,
 
 ## Resources
 The [robot icon](https://commons.wikimedia.org/wiki/File:Robot-icon.svg) is licenced under Wikimedia Commons.  
-The tiles are provided by [yeoldewebsiteknight](http://www.yeoldewebsiteknight.co.uk/roborally​).
+The tiles are provided by [yeoldewebsiteknight](http://www.yeoldewebsiteknight.co.uk/roborally​).  
+Skin resources by [***Raymond "Raeleus" Buckley***](http://www.badlogicgames.com/forum/viewtopic.php?f=22&t=21568) [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
