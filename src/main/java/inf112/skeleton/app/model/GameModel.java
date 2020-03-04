@@ -1,6 +1,5 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
@@ -10,15 +9,20 @@ import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GameModel {
 
-    private final Robot robot;
+    private final Robot robot; // todo: soon: switch to a list of robots
     private final MapHandler tiledMapHandler;
     private final Player player;
+    private List<Robot> robots;
 
     public GameModel() {
+        robots = new LinkedList<>();
         robot = new Robot();
+        robots.add(robot);
         player = new Player();
         player.generateCardHand();
         tiledMapHandler = new MapHandler("map-1.tmx");
@@ -28,8 +32,8 @@ public class GameModel {
         return this.robot;
     }
 
-    public TiledMap getBoard() {
-        return this.tiledMapHandler.getMap();
+    public MapHandler getTiledMapHandler() {
+        return this.tiledMapHandler;
     }
 
     public Player getPlayer() {
@@ -83,5 +87,9 @@ public class GameModel {
                 break;
         }
         return doPhase(phaseNumber + 1, phaseSteps);
+    }
+
+    public List<Robot> getRobots() {
+        return robots;
     }
 }

@@ -30,10 +30,6 @@ public enum TileType {
         }
     }
 
-    public String toString() {
-        return this.name().toLowerCase();
-    }
-
     public static Direction getDirection(TiledMapTileLayer.Cell cell) {
         int directionNumber = (int) cell.getTile().getProperties().get("direction");
         switch (directionNumber) {
@@ -48,5 +44,9 @@ public enum TileType {
             default:
                 return null;
         }
+    }
+
+    public String toString() {
+        return this.name().toLowerCase();
     }
 }

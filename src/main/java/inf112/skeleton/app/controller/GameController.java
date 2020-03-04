@@ -18,11 +18,11 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class GameController extends InputAdapter {
-    private GameModel gameModel;
     private final RoboRallyGame game;
-    private boolean shiftIsPressed = false;
     private final Timer.Task task;
     private final Timer timer;
+    private GameModel gameModel;
+    private boolean shiftIsPressed = false;
     private Deque<Location> phaseSteps = new LinkedList<>();
 
     public GameController(final RoboRallyGame game) {
