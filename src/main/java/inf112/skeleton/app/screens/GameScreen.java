@@ -1,79 +1,54 @@
 package inf112.skeleton.app.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import inf112.skeleton.app.RoboRallyGame;
-import inf112.skeleton.app.controller.GameController;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import inf112.skeleton.app.model.GameModel;
-import inf112.skeleton.app.view.GameRenderer;
+import inf112.skeleton.app.view.BoardRenderer;
 
-public class GameScreen extends InputAdapter implements Screen {
-    private final RoboRallyGame game;
-    private GameRenderer renderer;
-    private GameController controller;
+public class GameScreen extends ScreenAdapter {
+    private final BoardRenderer boardRenderer;
+    private final GameModel gameModel;
+    private SpriteBatch batch;
+    private BitmapFont font;
 
-    public GameScreen(RoboRallyGame game) {
-        this.game = game;
-    }
-
-    private static void log(String message) {
-        Gdx.app.log(GameScreen.class.getName(), message);
-    }
-
-    @Override
-    public void show() {
-        GameModel gameModel = new GameModel();
-        this.renderer = new GameRenderer(gameModel);
-        this.controller = new GameController(gameModel, game);
-        Gdx.input.setInputProcessor(this);
+    public GameScreen(GameModel gameModel) {
+        this.gameModel = gameModel;
+        int tilesWide = gameModel.getTiledMapHandler().getWidth();
+        int tilesHigh = gameModel.getTiledMapHandler().getHeight();
+        OrthographicCamera camera = new OrthographicCamera();
+        camera.setToOrtho(false, tilesWide + tilesWide / 3f, tilesHigh);
+        camera.update();
+        boardRenderer = new BoardRenderer(gameModel);
+        boardRenderer.setView(camera);
+        loadFont();
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //controller.update(delta);
-        renderer.render();
+        boardRenderer.render();
+        renderFont();
     }
 
-
-    @Override
-    public void resize(int width, int height) {
-        log(String.format("Resized to width=%d, height=%d", width, height));
+    private void loadFont() {
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(1.2f);
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 
-    @Override
-    public void pause() {
-        log("Paused");
+    private void renderFont() {
+        batch.begin();
+        font.draw(batch, gameModel.getPlayer().handAsString(), 950, 550);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 950, 300);
+        batch.end();
     }
-
-    @Override
-    public void resume() {
-        log("Resumed");
-    }
-
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-    }
-
-    @Override
-    public void dispose() {
-        Gdx.input.setInputProcessor(null);
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        log(String.format("Input: %s released", Input.Keys.toString(keycode).toUpperCase()));
-        return controller.handleKeyUp(keycode);
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        return controller.handleKeyDown(keycode);
-    }
-
 }

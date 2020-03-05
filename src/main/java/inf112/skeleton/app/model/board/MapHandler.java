@@ -1,7 +1,6 @@
 package inf112.skeleton.app.model.board;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,15 +8,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import inf112.skeleton.app.model.tiles.TileInformationUtils;
+import inf112.skeleton.app.Constants;
+import inf112.skeleton.app.model.tiles.TileType;
 
 public class MapHandler {
-    private TiledMap tiledMap;
-    private String WALL_LAYER_NAME = "Wall";
-    private String ROBOT_LAYER_NAME = "Robot";
-    private String TILE_LAYER_NAME = "Tile";
-    //private String LASER_LAYER_NAME = "Laser";
-    //private String FLAG_LAYER_NAME = "Flag";
+    private final TiledMap tiledMap;
 
     /**
      * Load a map from a file. This will only work while the application is running
@@ -43,7 +38,7 @@ public class MapHandler {
         // create the tile layer and fill it with base tiles
         int tileSize = 100;
         TiledMapTileLayer tileLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
-        tileLayer.setName(TILE_LAYER_NAME);
+        tileLayer.setName(Constants.TILE_LAYER);
         layers.add(tileLayer);
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -53,7 +48,7 @@ public class MapHandler {
         }
         // create the object layer
         TiledMapTileLayer robotLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
-        robotLayer.setName(ROBOT_LAYER_NAME);
+        robotLayer.setName(Constants.ROBOT_LAYER);
         layers.add(robotLayer);
     }
 
@@ -79,46 +74,55 @@ public class MapHandler {
     }
 
     public TiledMapTileLayer.Cell getTileCell(RVector2 vector, String layerName) {
-        return getTileCell((int) vector.getVector().x, (int) vector.getVector().y, layerName);
+        return getTileCell(vector.getX(), vector.getY(), layerName);
     }
 
     public Direction getDirection(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
         try {
-            return TileInformationUtils.getDirection(cell);
+            return TileType.getDirection(cell);
         } catch (NullPointerException e) {
             return null;
         }
     }
 
     public Direction getDirection(RVector2 vector, String layerName) {
-        return getDirection((int) vector.getVector().x, (int) vector.getVector().y, layerName);
+        return getDirection(vector.getX(), vector.getY(), layerName);
     }
 
-    public String getTileType(int x, int y, String layerName){
+    public String getTileTypeString(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
-        return TileInformationUtils.getType(cell);
+        return TileType.getType(cell);
     }
 
-    public String getTileType(RVector2 vector, String layerName){
-        return getTileType((int) vector.getVector().x, (int) vector.getVector().y, layerName);
+    public String getTileTypeString(RVector2 vector, String layerName) {
+        return getTileTypeString((int) vector.getVector().x, (int) vector.getVector().y, layerName);
+    }
+
+    public TileType getTileType(int x, int y, String layerName) {
+        return TileType.asTileType(getTileTypeString(x, y, layerName));
+    }
+
+    public TileType getTileType(RVector2 vector, String layerName) {
+        return TileType.asTileType(getTileTypeString(vector.getX(), vector.getY(), layerName));
     }
 
     /**
      * Checks if there is a wall in the path of a location
+     *
      * @param location Location of the entity
      * @return true if there is wall in the direction the entity is facing
-     *         or if there is a wall facing the other direction, one tile forward
+     * or if there is a wall facing the other direction, one tile forward
      */
     public boolean wallInPath(Location location) {
         Location nextLocation = location.copy().forward();
-        Direction currentLocationWallDirection = getDirection(location.getPosition(), WALL_LAYER_NAME);
+        Direction currentLocationWallDirection = getDirection(location.getPosition(), Constants.WALL_LAYER);
         boolean wallBlockingCurrentPath = currentLocationWallDirection == location.getDirection();
         if (wallBlockingCurrentPath) {
             return true;
         }
 
-        Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), WALL_LAYER_NAME);
+        Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
 
@@ -135,23 +139,23 @@ public class MapHandler {
         return getRobotLayer().getObjects();
     }
 
-    public MapLayer getRobotLayer() {
-        return tiledMap.getLayers().get(ROBOT_LAYER_NAME);
+    public TiledMapTileLayer getRobotLayer() {
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.ROBOT_LAYER);
     }
 
     public TiledMapTileLayer getTileLayer() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get(TILE_LAYER_NAME);
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER);
     }
 
     public TiledMapTileLayer getWallLayer() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get(WALL_LAYER_NAME);
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
     }
 
     //public TiledMapTileLayer getLaserLayer() {
-    //    return (TiledMapTileLayer) tiledMap.getLayers().get(LASER_LAYER_NAME);
+    //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.LASER_LAYER_NAME);
     //}
 
     //public TiledMapTileLayer getFlagLayer() {
-    //    return (TiledMapTileLayer) tiledMap.getLayers().get(FLAG_LAYER_NAME);
+    //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.FLAG_LAYER_NAME);
     //}
 }

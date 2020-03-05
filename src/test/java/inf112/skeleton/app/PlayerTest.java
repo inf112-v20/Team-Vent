@@ -10,7 +10,8 @@ import static org.junit.Assert.*;
 
 public class PlayerTest {
 
-    private Player testPlayer = new Player();
+    private final Player testPlayer = new Player();
+
     @Test
     public void placingACardFromHandSlot0ToProgrammingSlot0() {
         testPlayer.setCardinHand(0, new MoveForwardCard());

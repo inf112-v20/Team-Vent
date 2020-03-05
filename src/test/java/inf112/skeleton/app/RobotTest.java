@@ -47,8 +47,8 @@ public class RobotTest {
 
     @Test
     public void getXY() {
-        assertEquals((int) originalLocation.getPosition().getVector().x, robot.getX());
-        assertEquals((int) originalLocation.getPosition().getVector().y, robot.getY());
+        assertEquals(originalLocation.getPosition().getX(), robot.getX());
+        assertEquals(originalLocation.getPosition().getY(), robot.getY());
     }
 
     @Test
