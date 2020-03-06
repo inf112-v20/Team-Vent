@@ -13,11 +13,9 @@ import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
 
 public class MenuScreen extends ScreenAdapter {
-    private RoboRallyGame game;
     private Stage stage;
 
     public MenuScreen(RoboRallyGame game){
-        this.game = game;
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -71,7 +69,7 @@ public class MenuScreen extends ScreenAdapter {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button){
                 Gdx.app.exit();
-                System.exit(-1);
+                System.exit(0);
             }
 
             @Override
