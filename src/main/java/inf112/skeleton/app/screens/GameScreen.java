@@ -16,6 +16,8 @@ public class GameScreen extends ScreenAdapter {
     private final GameModel gameModel;
     private SpriteBatch batch;
     private BitmapFont font;
+    private int width;
+    private int height;
 
     public GameScreen(GameModel gameModel) {
         this.gameModel = gameModel;
@@ -37,6 +39,13 @@ public class GameScreen extends ScreenAdapter {
         renderFont();
     }
 
+    @Override
+    public void resize(int width, int height){
+        this.width = width;
+        this.height = height;
+
+    }
+
     private void loadFont() {
         batch = new SpriteBatch();
         font = new BitmapFont();
@@ -47,8 +56,8 @@ public class GameScreen extends ScreenAdapter {
 
     private void renderFont() {
         batch.begin();
-        font.draw(batch, gameModel.getPlayer().handAsString(), 950, 550);
-        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), 950, 300);
+        font.draw(batch, gameModel.getPlayer().handAsString(), width * 0.8f, height * 0.9f);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), width * 0.8f, height * 0.4f);
         batch.end();
     }
 }
