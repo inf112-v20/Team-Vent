@@ -23,10 +23,6 @@ public class MenuScreen extends ScreenAdapter {
         table.setFillParent(true);
         Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
 
-        // Menu background
-        Texture backgroundTexture = new Texture(Gdx.files.internal("background.png"));
-        Image background = new Image(backgroundTexture);
-
         // RoboRally logo
         Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
         Image logo = new Image(logoTexture);
@@ -35,7 +31,7 @@ public class MenuScreen extends ScreenAdapter {
         Label resolutionLabel = new Label("Resolution: ", skin);
         resolutionLabel.setFontScale(1.3f);
         SelectBox resolutionBox = new SelectBox(skin);
-        String[] resolutionOptions = {"1024x576", "1280x720", "1366x768", "1600x900", "1920x1080"};
+        String[] resolutionOptions = {"1366x768"};
         resolutionBox.setItems(resolutionOptions);
 
         // Map selector
@@ -53,7 +49,7 @@ public class MenuScreen extends ScreenAdapter {
             public void touchUp (InputEvent event, float x, float y, int pointer, int button){
                 String selectedResolution = (String) resolutionBox.getSelected();
                 String resolutions[] = selectedResolution.split("x");
-                Gdx.graphics.setWindowedMode(Integer.parseInt(resolutions[0]), Integer.parseInt(resolutions[1]));
+                //Gdx.graphics.setWindowedMode(Integer.parseInt(resolutions[0]), Integer.parseInt(resolutions[1]));
                 new GameController(game, (String) mapSelectorBox.getSelected());
             }
 
@@ -77,8 +73,6 @@ public class MenuScreen extends ScreenAdapter {
             return true;
         }
     });
-        stage.addActor(background);
-
         table.top();
         table.add(logo).top().colspan(2).padBottom(100).padTop(50);
         table.row().padBottom(25);
