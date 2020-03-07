@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
-import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.cards.RotateLeftCard;
 import inf112.skeleton.app.model.cards.RotateRightCard;

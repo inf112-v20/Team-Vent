@@ -101,6 +101,7 @@ public class GameModel {
             case HOLE:
                 tileSteps.add(null); // the robot died, so it has no position
                 //return tileSteps; // end the phase early
+                break;
             default:
                 break;
         }
