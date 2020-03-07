@@ -16,7 +16,6 @@ public class GameController extends InputAdapter {
     private final RoboRallyGame game;
     private GameModel gameModel;
     private boolean shiftIsPressed = false;
-    private Deque<Location> phaseSteps = new LinkedList<>();
     private String map_filename;
 
     public GameController(RoboRallyGame game, String map_filename) {
