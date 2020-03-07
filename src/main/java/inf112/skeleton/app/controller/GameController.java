@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.cards.RotateLeftCard;
 import inf112.skeleton.app.model.cards.RotateRightCard;
@@ -15,9 +16,12 @@ public class GameController extends InputAdapter {
     private final RoboRallyGame game;
     private GameModel gameModel;
     private boolean shiftIsPressed = false;
+    private Deque<Location> phaseSteps = new LinkedList<>();
+    private String map_filename;
 
-    public GameController(RoboRallyGame game) {
-        this.gameModel = new GameModel();
+    public GameController(RoboRallyGame game, String map_filename) {
+        this.map_filename = map_filename;
+        this.gameModel = new GameModel(map_filename);
         this.game = game;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
@@ -59,7 +63,7 @@ public class GameController extends InputAdapter {
     @Override
     public boolean keyUp(int keycode) {
         if (game.getScreen() instanceof GameOverScreen && keycode == Input.Keys.SPACE) {
-            this.gameModel = new GameModel();
+            this.gameModel = new GameModel(map_filename);
             game.setScreen(new GameScreen(this.gameModel));
             return true;
         }

@@ -27,7 +27,7 @@ public class GameModel {
 
 
 
-    public GameModel() {
+    public GameModel(String map_filename) {
         robots = new LinkedList<>();
         robot = new Robot();
         robots.add(robot);
@@ -38,6 +38,7 @@ public class GameModel {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
         }
+        tiledMapHandler = new MapHandler(map_filename);
     }
 
     public Robot getRobot() {
