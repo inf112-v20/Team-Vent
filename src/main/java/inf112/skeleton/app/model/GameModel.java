@@ -94,6 +94,7 @@ public class GameModel {
             case GEAR_CLOCKWISE:
                 Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
                 tileSteps.get(phaseNumber).add(new MoveInstruction(turnRight, robot));
+                break;
             case GEAR_COUNTERCLOCKWISE:
                 Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
                 tileSteps.get(phaseNumber).add(new MoveInstruction(turnLeft, robot));
