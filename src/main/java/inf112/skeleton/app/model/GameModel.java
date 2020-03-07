@@ -56,13 +56,7 @@ public class GameModel {
     public void endTurn() {
         Location loc = robot.getLocation();
 
-        doCard(0, loc);
-        loc = updateLastLoc(loc, cardSteps.get(0));
-
-        doTiles(0, loc);
-        loc = updateLastLoc(loc, tileSteps.get(0));
-
-        for (int i = 1; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             doCard(i, loc);
             loc = updateLastLoc(loc, cardSteps.get(i));
             doTiles(i, loc);
