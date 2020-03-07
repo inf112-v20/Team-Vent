@@ -1,7 +1,6 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.utils.Timer;
-import com.sun.org.apache.xml.internal.security.Init;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
