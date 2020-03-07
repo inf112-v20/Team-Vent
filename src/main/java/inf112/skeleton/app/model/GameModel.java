@@ -1,6 +1,7 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.utils.Timer;
+import com.sun.org.apache.xml.internal.security.Init;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
@@ -74,28 +75,28 @@ public class GameModel {
     }
 
     private void doTiles(int phaseNumber, Location initialLoc) {
-
+        Location loc = initialLoc;
         // Calculate next steps based on current position
-        TileType currentTileType = tiledMapHandler.getTileType(initialLoc.getPosition(), Constants.TILE_LAYER);
-        Direction currentTileDirection = tiledMapHandler.getDirection(initialLoc.getPosition(), Constants.TILE_LAYER);
+        TileType currentTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+        Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
         switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
             case CONVEYOR_NORMAL:
-                tileSteps.get(phaseNumber).add(new MoveInstruction(initialLoc.moveDirection(currentTileDirection), robot));
+                tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(currentTileDirection), robot));
                 break;
             case CONVEYOR_EXPRESS:
-                tileSteps.get(phaseNumber).add(new MoveInstruction(initialLoc.moveDirection(currentTileDirection), robot));
-                initialLoc = tileSteps.get(phaseNumber).getLast().location;
-                TileType nextTileType = tiledMapHandler.getTileType(initialLoc.getPosition(), Constants.TILE_LAYER);
-                Direction nextTileDirection = tiledMapHandler.getDirection(initialLoc.getPosition(), Constants.TILE_LAYER);
+                tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(currentTileDirection), robot));
+                loc = tileSteps.get(phaseNumber).getLast().location;
+                TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+                Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.toString().equals(nextTileType.toString())) {
-                    tileSteps.get(phaseNumber).add(new MoveInstruction(initialLoc.moveDirection(nextTileDirection), robot));
+                    tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(nextTileDirection), robot));
                 }
                 break;
             case GEAR_CLOCKWISE:
-                Location turnRight = new Location(initialLoc.getPosition(), initialLoc.getDirection().right());
+                Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
                 tileSteps.get(phaseNumber).add(new MoveInstruction(turnRight, robot));
             case GEAR_COUNTERCLOCKWISE:
-                Location turnLeft = new Location(initialLoc.getPosition(), initialLoc.getDirection().left());
+                Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
                 tileSteps.get(phaseNumber).add(new MoveInstruction(turnLeft, robot));
                 break;
             case HOLE:
@@ -109,11 +110,9 @@ public class GameModel {
     private void doCard (int phaseNumber, Location initialLoc) {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-        if (card != null) {
-            if (!(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(initialLoc))) {
+            if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(initialLoc))) {
                 cardSteps.get(phaseNumber).add(new MoveInstruction(card.instruction(initialLoc.copy()), robot));
             }
-        }
     }
 
     public void scheduleDoCardTimed(int delay, int phase) {
