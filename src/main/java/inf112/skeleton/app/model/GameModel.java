@@ -19,13 +19,13 @@ public class GameModel {
     private final Player player;
     private List<Robot> robots;
 
-    public GameModel() {
+    public GameModel(String map_filename) {
         robots = new LinkedList<>();
         robot = new Robot();
         robots.add(robot);
         player = new Player();
         player.generateCardHand();
-        tiledMapHandler = new MapHandler("map-1.tmx");
+        tiledMapHandler = new MapHandler(map_filename);
     }
 
     public Robot getRobot() {

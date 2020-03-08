@@ -23,9 +23,11 @@ public class GameController extends InputAdapter {
     private GameModel gameModel;
     private boolean shiftIsPressed = false;
     private Deque<Location> phaseSteps = new LinkedList<>();
+    private String map_filename;
 
-    public GameController(final RoboRallyGame game) {
-        this.gameModel = new GameModel();
+    public GameController(RoboRallyGame game, String map_filename) {
+        this.map_filename = map_filename;
+        this.gameModel = new GameModel(map_filename);
         this.game = game;
         game.setScreen(new GameScreen(gameModel));
         task = new Timer.Task() {
@@ -82,7 +84,7 @@ public class GameController extends InputAdapter {
     @Override
     public boolean keyUp(int keycode) {
         if (game.getScreen() instanceof GameOverScreen && keycode == Input.Keys.SPACE) {
-            this.gameModel = new GameModel();
+            this.gameModel = new GameModel(map_filename);
             game.setScreen(new GameScreen(this.gameModel));
             return true;
         }
