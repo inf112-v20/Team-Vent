@@ -33,7 +33,6 @@ public class GameModel {
         robots.add(robot);
         player = new Player();
         player.generateCardHand();
-        tiledMapHandler = new MapHandler("map-1.tmx");
         for (int i = 0; i < 5; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
