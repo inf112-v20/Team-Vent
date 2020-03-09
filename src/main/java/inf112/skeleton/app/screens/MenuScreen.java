@@ -41,6 +41,8 @@ public class MenuScreen extends ScreenAdapter {
         String[] mapSelectorOptions = {"map-1.tmx", "demo.tmx"};
         mapSelectorBox.setItems(mapSelectorOptions);
 
+        // Host checkbox
+        CheckBox hostCheckBox = new CheckBox("Host", skin);
 
         // Play button
         Button playButton = new TextButton("Play", skin);
@@ -77,6 +79,7 @@ public class MenuScreen extends ScreenAdapter {
         table.add(logo).top().colspan(2).padBottom(100).padTop(50);
         table.row().padBottom(25);
         table.add(playButton).prefHeight(50).prefWidth(200).colspan(2);
+        table.add(hostCheckBox);
         table.row().padBottom(25);
         table.add(mapSelectorLabel).right();
         table.add(mapSelectorBox).left();

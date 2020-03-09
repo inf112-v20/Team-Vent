@@ -21,7 +21,13 @@ public class GameClient {
         output = new PrintWriter(clientSocket.getOutputStream(), true);
         input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
-    public String sendAndReceiveMessage(String message){
+
+    public String[] getPlayersInLobby(){
+        String response = sendAndReceiveMessage("REF_P");
+        return response.split("-");
+    }
+
+    String sendAndReceiveMessage(String message){
         System.out.println(message);
         output.println(message);
         String response;
