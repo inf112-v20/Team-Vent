@@ -3,17 +3,21 @@ package inf112.skeleton.app.network;
 import com.badlogic.gdx.net.Socket;
 
 import java.io.*;
+import java.net.SocketException;
 
 public class Server implements Runnable {
     private Socket connectedSocket;
     private GameHost gameHost;
     private int index;
+    private String clientAddress;
+    private boolean connected = true;
 
     public Server(GameHost gameHost, Socket connectedSocket, int index) {
         this.connectedSocket = connectedSocket;
         this.gameHost = gameHost;
         this.index = index;
-        gameHost.connectionList[index] = connectedSocket.getRemoteAddress();
+        clientAddress = connectedSocket.getRemoteAddress();
+        gameHost.connectionList[index] = clientAddress;
     }
 
     private String[] parseMessage(String message){
@@ -21,7 +25,6 @@ public class Server implements Runnable {
     }
 
     private String PING(){
-        System.out.println("Recieve ping from " + connectedSocket.getRemoteAddress());
         return "PONG";
     }
 
@@ -34,13 +37,21 @@ public class Server implements Runnable {
         return response.toString();
     }
 
+    private void closeConnection(){
+        gameHost.connectionList[index] = "";
+        System.out.println("Closed connection with: " + clientAddress);
+        connectedSocket.dispose();
+        Thread.currentThread().interrupt();
+        connected = false;
+    }
+
     @Override
-    public void run() {
+    public void run()  {
         InputStream inputStream = connectedSocket.getInputStream();
         BufferedReader bufferedInputStream = new BufferedReader(new InputStreamReader(inputStream));
         DataOutputStream outputStream = new DataOutputStream(connectedSocket.getOutputStream());
         String message;
-        while (true) {
+        while (connected) {
             try {
                 message = bufferedInputStream.readLine();
                 String[] commands = parseMessage(message);
@@ -61,19 +72,23 @@ public class Server implements Runnable {
                         break;
                     case "STOP":
                         response = "STOP";
-                        gameHost.connectionList[index] = "";
-                        connectedSocket.dispose();
-                        Thread.currentThread().interrupt();
+                        closeConnection();
                         break;
                     default:
                         response = "ERR-Invalid command";
                         break;
                 }
+                System.out.println("Got " + command + " command from " + clientAddress);
+                System.out.println("Response: " + response);
                 outputStream.writeBytes(response + "\n\r");
                 outputStream.flush();
             } catch (IOException e){
-                e.printStackTrace();
-                return;
+                if (e instanceof SocketException){
+                    closeConnection();
+                } else {
+                    e.printStackTrace();
+                    return;
+                }
             }
         }
     }
