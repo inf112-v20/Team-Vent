@@ -8,7 +8,8 @@ public class ManualClientTest implements ApplicationListener {
 
     @Override
     public void create() {
-        GameClient gameClient = new GameClient();
+        GameClient gameClient = new GameClient("10.111.27.181");
+        System.out.println(gameClient.sendAndReceiveMessage("PING"));
     }
 
     @Override

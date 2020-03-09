@@ -8,9 +8,10 @@ public class ManualServerTest implements ApplicationListener {
 
     @Override
     public void create() {
-        GameServer gameServer = new GameServer();
-        System.out.println(gameServer.connectionList);
-
+        Thread gameHostThread = new Thread(() -> {
+            GameHost gameHost = new GameHost("10.111.27.181");
+        });
+        gameHostThread.start();
     }
 
     @Override
