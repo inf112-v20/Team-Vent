@@ -22,7 +22,7 @@ public class Server implements Runnable {
 
     private String PING(){
         System.out.println("Recieve ping from " + connectedSocket.getRemoteAddress());
-        return "pong";
+        return "PONG";
     }
 
     private String REF_P(){
@@ -57,7 +57,7 @@ public class Server implements Runnable {
                         response = ""; //TODO
                         break;
                     case "REF_P":
-                        response = ""; //TODO
+                        response = REF_P();
                         break;
                     case "STOP":
                         response = "STOP";
@@ -69,7 +69,7 @@ public class Server implements Runnable {
                         response = "ERR-Invalid command";
                         break;
                 }
-                outputStream.writeBytes(response);
+                outputStream.writeBytes(response + "\n\r");
                 outputStream.flush();
             } catch (IOException e){
                 e.printStackTrace();
