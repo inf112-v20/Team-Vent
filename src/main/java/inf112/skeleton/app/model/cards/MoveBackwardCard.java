@@ -10,7 +10,7 @@ public class MoveBackwardCard implements IProgramCard {
 
     @Override
     public String toString() {
-        return "MOVE Backwards";
+        return "MOVE BACKWARDS";
     }
 
     public int value() {
