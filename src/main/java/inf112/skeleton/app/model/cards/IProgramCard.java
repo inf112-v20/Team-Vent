@@ -8,4 +8,5 @@ public interface IProgramCard {
      * @return the new location after following the instruction
      */
     Location instruction(Location start);
+
 }
