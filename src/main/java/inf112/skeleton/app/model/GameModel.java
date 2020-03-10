@@ -1,23 +1,31 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
+import inf112.skeleton.app.model.board.MoveInstruction;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
 public class GameModel {
 
-    private final Robot robot; // todo: soon: switch to a list of robots
-    private final MapHandler tiledMapHandler;
-    private final Player player;
-    private List<Robot> robots;
+    private LinkedList<Robot> robots;
+    private Robot robot;
+    private MapHandler tiledMapHandler;
+    private Player player;
+
+    private ArrayList<Deque<MoveInstruction>> cardSteps = new ArrayList<>();
+    private ArrayList<Deque<MoveInstruction>> tileSteps = new ArrayList<>();
+
+
 
     public GameModel(String map_filename) {
         robots = new LinkedList<>();
@@ -25,6 +33,10 @@ public class GameModel {
         robots.add(robot);
         player = new Player();
         player.generateCardHand();
+        for (int i = 0; i < 5; i++) {
+            cardSteps.add(new LinkedList<>());
+            tileSteps.add(new LinkedList<>());
+        }
         tiledMapHandler = new MapHandler(map_filename);
     }
 
@@ -40,55 +52,103 @@ public class GameModel {
         return this.player;
     }
 
-    public Deque<Location> doPhase(int phaseNumber, Deque<Location> phaseSteps) {
-        //Gdx.app.log(GameModel.class.getName(), Integer.toString(phaseNumber));
-        if (phaseNumber == 5) return phaseSteps;
-        Location loc = phaseSteps.getLast().copy();
-        IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
-        player.setCardinProgrammingSlot(phaseNumber, null); // empty the slot
-        if (card != null && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(loc.copy()))) {
-            phaseSteps.add(card.instruction(loc.copy()));
-        }
-        loc = phaseSteps.getLast().copy();
+    public void endTurn() {
+        Location loc = robot.getLocation();
 
-        // Check if the location is outside the map
-        if (loc.getPosition().getX() < 0 || loc.getPosition().getX() >= tiledMapHandler.getWidth() ||
-                loc.getPosition().getY() < 0 || loc.getPosition().getY() >= tiledMapHandler.getHeight()) {
-            phaseSteps.add(null); // the robot died, so it has no position
-            return phaseSteps; // end the phase early
+        for (int i = 0; i < 5; i++) {
+            doCard(i, loc);
+            loc = updateLastLoc(loc, cardSteps.get(i));
+            doTiles(i, loc);
+            loc = updateLastLoc(loc, tileSteps.get(i));
         }
 
+        int delay = 0;
+        for (int i = 0; i < 5; i++) {
+            scheduleDoCardTimed(delay, i);
+            delay += cardSteps.get(i).size();
+            scheduleDoTilesTimed(delay, i);
+            delay += tileSteps.get(i).size();
+        }
+        player.generateCardHand();
+    }
+
+    private void doTiles(int phaseNumber, Location initialLoc) {
+        Location loc = initialLoc;
         // Calculate next steps based on current position
         TileType currentTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
         Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
         switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
             case CONVEYOR_NORMAL:
-                phaseSteps.add(loc.moveDirection(currentTileDirection));
+                tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(currentTileDirection), robot));
                 break;
             case CONVEYOR_EXPRESS:
-                phaseSteps.add(loc.moveDirection(currentTileDirection));
-                loc = phaseSteps.getLast().copy();
-                String nextTileTypeString = tiledMapHandler.getTileTypeString(loc.getPosition(), Constants.TILE_LAYER);
+                tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(currentTileDirection), robot));
+                loc = tileSteps.get(phaseNumber).getLast().location;
+                TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
-                if (currentTileType.toString().equals(nextTileTypeString)) {
-                    phaseSteps.add(loc.moveDirection(nextTileDirection));
+                if (currentTileType.toString().equals(nextTileType.toString())) {
+                    tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(nextTileDirection), robot));
                 }
                 break;
             case GEAR_CLOCKWISE:
-                phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().right()));
+                Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
+                tileSteps.get(phaseNumber).add(new MoveInstruction(turnRight, robot));
                 break;
             case GEAR_COUNTERCLOCKWISE:
-                phaseSteps.add(new Location(loc.getPosition(), loc.getDirection().left()));
+                Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
+                tileSteps.get(phaseNumber).add(new MoveInstruction(turnLeft, robot));
                 break;
             case HOLE:
-                phaseSteps.add(null); // the robot died, so it has no position
-                return phaseSteps; // end the phase early
+                tileSteps.add(null); // the robot died, so it has no position
+                //return tileSteps; // end the phase early
+                break;
             default:
                 break;
         }
-        return doPhase(phaseNumber + 1, phaseSteps);
     }
 
+    private void doCard (int phaseNumber, Location initialLoc) {
+        IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
+        player.setCardinProgrammingSlot(phaseNumber, null);
+            if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(initialLoc))) {
+                cardSteps.get(phaseNumber).add(new MoveInstruction(card.instruction(initialLoc.copy()), robot));
+            }
+    }
+
+    public void scheduleDoCardTimed(int delay, int phase) {
+        if (cardSteps.get(phase).size() != 0) {
+            Timer.Task doCardTimed = new Timer.Task() {
+                @Override
+                public void run() {
+                    MoveInstruction moveInstruction = cardSteps.get(phase).remove();
+                    moveInstruction.robot.setLocation(moveInstruction.location);
+                }
+            };
+            Timer.instance().scheduleTask(doCardTimed, delay, 1, cardSteps.get(phase).size() - 1);
+        }
+    }
+
+    public  void scheduleDoTilesTimed(int delay, int phase) {
+        if (tileSteps.get(phase).size() != 0) {
+            Timer.Task doTilesTimed = new Timer.Task() {
+                @Override
+                public void run() {
+                    MoveInstruction moveInstruction = tileSteps.get(phase).remove();
+                    moveInstruction.robot.setLocation(moveInstruction.location);
+                }
+            };
+            Timer.instance().scheduleTask(doTilesTimed, delay, 1, tileSteps.get(phase).size() - 1);
+        }
+    }
+
+    private  Location updateLastLoc (Location loc, Deque<MoveInstruction> locations) {
+        if (locations.peekLast() != null) {return locations.peekLast().location;}
+        return loc;
+    }
+
+    public boolean inTestMode() {
+        return true;
+    }
     public List<Robot> getRobots() {
         return robots;
     }
