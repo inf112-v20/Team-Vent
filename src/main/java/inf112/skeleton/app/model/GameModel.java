@@ -86,7 +86,7 @@ public class GameModel {
                 loc = tileSteps.get(phaseNumber).getLast().location;
                 TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
-                if (currentTileType.toString().equals(nextTileType.toString())) {
+                if (currentTileType.equals(nextTileType)) {
                     tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(nextTileDirection), robot));
                 }
                 break;
