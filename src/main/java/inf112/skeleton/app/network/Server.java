@@ -32,7 +32,7 @@ public class Server implements Runnable {
         StringBuilder response = new StringBuilder();
         for(String connection : gameHost.connectionList){
             response.append(connection);
-            response.append("-");
+            response.append(" -");
         }
         return response.toString();
     }

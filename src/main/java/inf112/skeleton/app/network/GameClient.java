@@ -34,7 +34,7 @@ public class GameClient {
         try{
             response = input.readLine();
         } catch (IOException e) {
-            response = null;
+            response = "";
             e.printStackTrace();
         }
         return response;
