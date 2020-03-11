@@ -10,6 +10,13 @@ public class Player {
     private final IProgramCard[] cardHand = new IProgramCard[9];
     private final IProgramCard[] programmingSlots = new IProgramCard[5];
     private final HashMap<Integer, IProgramCard> cardH = new HashMap<Integer, IProgramCard>();
+    private int playerLife;
+    private int playerHP;
+
+    public Player() {
+        this.playerLife = 3;
+        this.playerHP = 9;
+    }
 
     // Boolean finishedPlacingCards = false;
 
@@ -121,4 +128,31 @@ public class Player {
         }
         return null;
     }
+
+    public int getPlayerLife() {
+        return playerLife;
+    }
+    public int getPlayerHP() {
+        return playerHP;
+    }
+    public void setPlayerLife(int playerLife) {
+        this.playerLife = playerLife;
+    }
+    public void setPlayerHP(int playerLife) {
+        this.playerHP = playerHP;
+    }
+
+    public String playerLifeAsString(int args) {
+        String p = "playerLife: " + Integer.toString(args) + "\n";
+        return p;
+    }
+
+    public String playerHPAsString(int args) {
+        String p = "playerHP: " + Integer.toString(args) + "\n";
+        return p;
+    }
+
+
+
+
 }
