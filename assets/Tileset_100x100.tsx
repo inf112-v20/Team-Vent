@@ -28,7 +28,7 @@
  <tile id="4">
   <properties>
    <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
+   <property name="type" value="base_tile"/>
   </properties>
  </tile>
  <tile id="5">
