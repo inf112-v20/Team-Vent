@@ -10,6 +10,7 @@ import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -22,8 +23,8 @@ public class GameModel {
     private MapHandler tiledMapHandler;
     private Player player;
 
-    private ArrayList<Deque<MoveInstruction>> cardSteps = new ArrayList<>();
-    private ArrayList<Deque<MoveInstruction>> tileSteps = new ArrayList<>();
+    private ArrayList<Deque<StateInfo>> cardSteps = new ArrayList<>();
+    private ArrayList<Deque<StateInfo>> tileSteps = new ArrayList<>();
 
 
 
@@ -53,13 +54,13 @@ public class GameModel {
     }
 
     public void endTurn() {
-        Location loc = robot.getLocation();
+        StateInfo state = robot.getState();
 
         for (int i = 0; i < 5; i++) {
-            doCard(i, loc);
-            loc = updateLastLoc(loc, cardSteps.get(i));
-            doTiles(i, loc);
-            loc = updateLastLoc(loc, tileSteps.get(i));
+            doCard(i, state);
+            state = updateLastState(state, cardSteps.get(i));
+            doTiles(i, state);
+            state = updateLastState(state, tileSteps.get(i));
         }
 
         int delay = 0;
@@ -72,31 +73,31 @@ public class GameModel {
         player.generateCardHand();
     }
 
-    private void doTiles(int phaseNumber, Location initialLoc) {
-        Location loc = initialLoc;
+    private void doTiles(int phaseNumber, StateInfo initialState) {
+        Location loc = initialState.location.copy();
         // Calculate next steps based on current position
         TileType currentTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
         Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
         switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
             case CONVEYOR_NORMAL:
-                tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(currentTileDirection), robot));
+                tileSteps.get(phaseNumber).add(initialState.updateLocation(loc.moveDirection(currentTileDirection)));
                 break;
             case CONVEYOR_EXPRESS:
-                tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(currentTileDirection), robot));
-                loc = tileSteps.get(phaseNumber).getLast().location;
+                tileSteps.get(phaseNumber).add(initialState.updateLocation(loc.moveDirection(currentTileDirection)));
+                loc = tileSteps.get(phaseNumber).getLast().location.copy();
                 TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.equals(nextTileType)) {
-                    tileSteps.get(phaseNumber).add(new MoveInstruction(loc.moveDirection(nextTileDirection), robot));
+                    tileSteps.get(phaseNumber).add(initialState.updateLocation(loc.moveDirection(currentTileDirection)));
                 }
                 break;
             case GEAR_CLOCKWISE:
                 Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
-                tileSteps.get(phaseNumber).add(new MoveInstruction(turnRight, robot));
+                tileSteps.get(phaseNumber).add(initialState.updateLocation(turnRight));
                 break;
             case GEAR_COUNTERCLOCKWISE:
                 Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
-                tileSteps.get(phaseNumber).add(new MoveInstruction(turnLeft, robot));
+                tileSteps.get(phaseNumber).add(initialState.updateLocation(turnLeft));
                 break;
             case HOLE:
                 tileSteps.add(null); // the robot died, so it has no position
@@ -107,11 +108,11 @@ public class GameModel {
         }
     }
 
-    private void doCard (int phaseNumber, Location initialLoc) {
+    private void doCard (int phaseNumber, StateInfo stateinfo) {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-            if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(initialLoc))) {
-                cardSteps.get(phaseNumber).add(new MoveInstruction(card.instruction(initialLoc.copy()), robot));
+            if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateinfo.location))) {
+                cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(stateinfo.location.copy())));
             }
     }
 
@@ -120,8 +121,8 @@ public class GameModel {
             Timer.Task doCardTimed = new Timer.Task() {
                 @Override
                 public void run() {
-                    MoveInstruction moveInstruction = cardSteps.get(phase).remove();
-                    moveInstruction.robot.setLocation(moveInstruction.location);
+                    StateInfo stateInfo = cardSteps.get(phase).remove();
+                    stateInfo.robot.updateState(stateInfo);
                 }
             };
             Timer.instance().scheduleTask(doCardTimed, delay, 1, cardSteps.get(phase).size() - 1);
@@ -133,17 +134,17 @@ public class GameModel {
             Timer.Task doTilesTimed = new Timer.Task() {
                 @Override
                 public void run() {
-                    MoveInstruction moveInstruction = tileSteps.get(phase).remove();
-                    moveInstruction.robot.setLocation(moveInstruction.location);
+                    StateInfo stateInfo = cardSteps.get(phase).remove();
+                    stateInfo.robot.updateState(stateInfo);
                 }
             };
             Timer.instance().scheduleTask(doTilesTimed, delay, 1, tileSteps.get(phase).size() - 1);
         }
     }
 
-    private  Location updateLastLoc (Location loc, Deque<MoveInstruction> locations) {
-        if (locations.peekLast() != null) {return locations.peekLast().location;}
-        return loc;
+    private StateInfo updateLastState (StateInfo state, Deque<StateInfo> states) {
+        if (states.peekLast() != null) {return states.peekLast();}
+        return state;
     }
 
     public boolean inTestMode() {
