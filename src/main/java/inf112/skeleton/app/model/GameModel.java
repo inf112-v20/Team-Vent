@@ -5,12 +5,10 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
-import inf112.skeleton.app.model.board.MoveInstruction;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -113,7 +111,7 @@ public class GameModel {
         player.setCardinProgrammingSlot(phaseNumber, null);
             if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateinfo.location))) {
                 Location loc = stateinfo.location.copy();
-                cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(loc).copy()));
+                cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(loc)));
             }
     }
 
