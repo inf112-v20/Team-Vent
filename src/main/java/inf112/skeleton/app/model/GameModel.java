@@ -88,7 +88,7 @@ public class GameModel {
                 TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.equals(nextTileType)) {
-                    tileSteps.get(phaseNumber).add(initialState.updateLocation(loc.moveDirection(currentTileDirection)));
+                    tileSteps.get(phaseNumber).add(initialState.updateLocation(loc.moveDirection(nextTileDirection)));
                 }
                 break;
             case GEAR_CLOCKWISE:
@@ -100,7 +100,7 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(initialState.updateLocation(turnLeft));
                 break;
             case HOLE:
-                tileSteps.add(null); // the robot died, so it has no position
+                tileSteps.get(phaseNumber).add(initialState.updateLifeStates(true)); // the robot died, so it has no position
                 //return tileSteps; // end the phase early
                 break;
             default:
@@ -112,7 +112,8 @@ public class GameModel {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
             if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateinfo.location))) {
-                cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(stateinfo.location.copy())));
+                Location loc = stateinfo.location.copy();
+                cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(loc).copy()));
             }
     }
 
@@ -134,7 +135,7 @@ public class GameModel {
             Timer.Task doTilesTimed = new Timer.Task() {
                 @Override
                 public void run() {
-                    StateInfo stateInfo = cardSteps.get(phase).remove();
+                    StateInfo stateInfo = tileSteps.get(phase).remove();
                     stateInfo.robot.updateState(stateInfo);
                 }
             };

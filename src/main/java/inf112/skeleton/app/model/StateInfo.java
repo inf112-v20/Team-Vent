@@ -15,18 +15,15 @@ public class StateInfo {
     }
 
     public StateInfo updateLocation(Location loc) {
-        location = loc.copy();
-        return new StateInfo(robot, location, damage, dead);
+        return new StateInfo(robot, loc.copy(), damage, dead);
     }
 
     public StateInfo updateDamage(int dmg) {
-        this.damage = dmg;
-        return new StateInfo(robot, location, damage, dead);
+        return new StateInfo(robot, location.copy(), dmg, dead);
     }
 
     public StateInfo updateLifeStates(boolean dead) {
-        this.dead = dead;
-        return new StateInfo(robot, location, damage, dead);
+        return new StateInfo(robot, location.copy(), damage, dead);
     }
 
 }
