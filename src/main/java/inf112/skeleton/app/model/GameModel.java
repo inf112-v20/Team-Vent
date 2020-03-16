@@ -3,6 +3,7 @@ package inf112.skeleton.app.model;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
+import inf112.skeleton.app.model.board.Laser;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
@@ -59,6 +60,8 @@ public class GameModel {
             state = updateLastState(state, cardSteps.get(i));
             doTiles(i, state);
             state = updateLastState(state, tileSteps.get(i));
+            System.out.println("test do laser: "+ i + state);
+            doLaser(i, state);
         }
 
         int delay = 0;
@@ -144,6 +147,12 @@ public class GameModel {
     private StateInfo updateLastState (StateInfo state, Deque<StateInfo> states) {
         if (states.peekLast() != null) {return states.peekLast();}
         return state;
+    }
+
+    private void doLaser(int phaseNumber, StateInfo state) {
+        Laser p = new Laser(phaseNumber, state, robots);
+        System.out.println("test nullpoint: " + robots.size());
+        p.move();
     }
 
     public boolean inTestMode() {

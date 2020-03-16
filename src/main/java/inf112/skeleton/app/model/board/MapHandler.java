@@ -9,7 +9,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Constants;
+import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.tiles.TileType;
+
+import java.util.LinkedList;
 
 public class MapHandler {
     private final TiledMap tiledMap;
@@ -126,6 +129,19 @@ public class MapHandler {
         Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
+    public boolean robotInPath(Location location,LinkedList<Robot> robots) {
+        Location nextLocation = location.copy().forward();
+
+        boolean robotBlockingCurrentPath = false;
+        for (int i =0; i < robots.size(); i++) {
+           location = location.forward();
+            if (robots.get(i).getLocation().equals(location)){
+                robotBlockingCurrentPath = true;
+            }
+        }
+            return robotBlockingCurrentPath;
+        }
+
 
     public void setTile(int x, int y, String type) {
         TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
