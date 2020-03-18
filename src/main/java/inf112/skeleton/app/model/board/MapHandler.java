@@ -167,6 +167,13 @@ public class MapHandler {
     public TiledMapTileLayer getWallLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
     }
+    public boolean outOfBounds(Location loc){
+        if (loc.getPosition().getX() > getWidth() || loc.getPosition().getY() > getHeight()){
+            return true;
+        } else{
+            return false;
+        }
+    }
 
     //public TiledMapTileLayer getLaserLayer() {
     //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.LASER_LAYER_NAME);

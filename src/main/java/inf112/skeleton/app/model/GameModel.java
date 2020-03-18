@@ -3,7 +3,6 @@ package inf112.skeleton.app.model;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
-import inf112.skeleton.app.model.board.Laser;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.cards.IProgramCard;
@@ -24,7 +23,7 @@ public class GameModel {
 
     private ArrayList<Deque<StateInfo>> cardSteps = new ArrayList<>();
     private ArrayList<Deque<StateInfo>> tileSteps = new ArrayList<>();
-
+    private ArrayList<Deque<StateInfo>> laserSteps = new ArrayList<>();
 
 
     public GameModel(String map_filename) {
@@ -36,6 +35,7 @@ public class GameModel {
         for (int i = 0; i < 5; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
+            laserSteps.add(new LinkedList<>());
         }
         tiledMapHandler = new MapHandler(map_filename);
     }
@@ -61,6 +61,7 @@ public class GameModel {
             doTiles(i, state);
             state = updateLastState(state, tileSteps.get(i));
             System.out.println("test do laser: "+ i + state);
+            state = updateLastState(state, laserSteps.get(i));
             doLaser(i, state);
         }
 
@@ -149,10 +150,19 @@ public class GameModel {
         return state;
     }
 
-    private void doLaser(int phaseNumber, StateInfo state) {
-        Laser p = new Laser(phaseNumber, state, robots);
-        System.out.println("test nullpoint: " + robots.size());
-        p.move();
+    private void doLaser (int phaseNumber, StateInfo state) {
+
+            while (!tiledMapHandler.wallInPath(state.location.forward()) &&
+                    !tiledMapHandler.outOfBounds(state.location.forward())) {
+                System.out.println("Test før if");
+                state.location = state.location.forward();
+                if (tiledMapHandler.robotInPath(state.location, robots)) {
+                    state.updateDamage(1);
+                    break;
+                }
+
+
+            }
     }
 
     public boolean inTestMode() {
