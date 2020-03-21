@@ -74,4 +74,7 @@ public class Robot {
     public void moveInDirection(Direction moveDirection) {
         this.location = this.location.moveDirection(moveDirection);
     }
+
+    public Robot copy() {return new Robot(this.location.copy());}
 }
+

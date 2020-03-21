@@ -151,12 +151,13 @@ public class GameModel {
     }
 
     private void doLaser (int phaseNumber, StateInfo state) {
-
-            while (!tiledMapHandler.wallInPath(state.location.forward()) &&
-                    !tiledMapHandler.outOfBounds(state.location.forward())) {
+        StateInfo copy = state.copy();
+            while (!tiledMapHandler.wallInPath(copy.location.forward()) &&
+                    !tiledMapHandler.outOfBounds(copy.location.forward())) {
                 System.out.println("Test før if");
-                state.location = state.location.forward();
-                if (tiledMapHandler.robotInPath(state.location, robots)) {
+                copy.location = copy.location.forward();
+                if (tiledMapHandler.robotInPath(copy.location, robots)) {
+                    System.out.println("Du blir skutt av laseren og tar 1dmg");
                     state.updateDamage(1);
                     break;
                 }
