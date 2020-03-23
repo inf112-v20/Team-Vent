@@ -130,12 +130,12 @@ public class MapHandler {
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
     public boolean robotInPath(Location location,LinkedList<Robot> robots) {
-        Location nextLocation = location.copy().forward();
+        Location nextLocation = location.copy();
 
         boolean robotBlockingCurrentPath = false;
         for (int i =0; i < robots.size(); i++) {
-           location = location.forward();
-            if (robots.get(i).getLocation().equals(location)){
+           nextLocation = nextLocation.forward();
+            if (robots.get(i).getLocation().equals(nextLocation)){
                 robotBlockingCurrentPath = true;
             }
         }
@@ -163,6 +163,8 @@ public class MapHandler {
     public TiledMapTileLayer getTileLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER);
     }
+
+
 
     public TiledMapTileLayer getWallLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);

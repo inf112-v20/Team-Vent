@@ -1,5 +1,6 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -60,7 +61,7 @@ public class GameModel {
             state = updateLastState(state, cardSteps.get(i));
             doTiles(i, state);
             state = updateLastState(state, tileSteps.get(i));
-            System.out.println("test do laser: "+ i + state);
+            System.out.println("test do laser i phase "+ i + state);
             state = updateLastState(state, laserSteps.get(i));
             doLaser(i, state);
         }
@@ -149,15 +150,16 @@ public class GameModel {
         if (states.peekLast() != null) {return states.peekLast();}
         return state;
     }
-
+    //Lage getLaser som finner hvor alle laserene er så if robotInPath ta damage istedenfor, phase
     private void doLaser (int phaseNumber, StateInfo state) {
         StateInfo copy = state.copy();
+
             while (!tiledMapHandler.wallInPath(copy.location.forward()) &&
                     !tiledMapHandler.outOfBounds(copy.location.forward())) {
-                System.out.println("Test før if");
+
                 copy.location = copy.location.forward();
                 if (tiledMapHandler.robotInPath(copy.location, robots)) {
-                    System.out.println("Du blir skutt av laseren og tar 1dmg");
+                    System.out.println("you get shot by a laser take 1dmg");
                     state.updateDamage(1);
                     break;
                 }
