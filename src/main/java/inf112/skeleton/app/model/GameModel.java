@@ -16,8 +16,8 @@ import java.util.List;
 
 public class GameModel {
 
+    private final int PHASES = 5;
     private LinkedList<Robot> robots;
-    private Robot robot;
     private MapHandler tiledMapHandler;
     private Player player;
 
@@ -28,20 +28,15 @@ public class GameModel {
 
     public GameModel(String map_filename) {
         robots = new LinkedList<>();
-        robot = new Robot();
-        robots.add(robot);
+        robots.add(new Robot());
         player = new Player();
         player.generateCardHand();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < PHASES; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
             laserSteps.add(new LinkedList<>());
         }
         tiledMapHandler = new MapHandler(map_filename);
-    }
-
-    public Robot getRobot() {
-        return this.robot;
     }
 
     public MapHandler getTiledMapHandler() {
@@ -53,9 +48,9 @@ public class GameModel {
     }
 
     public void endTurn() {
-        StateInfo state = robot.getState();
+        StateInfo state = getRobots().get(0).getState(); // fixme: change to support multi-player
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < PHASES; i++) {
             doCard(i, state);
             state = updateLastState(state, cardSteps.get(i));
             doTiles(i, state);
@@ -65,7 +60,7 @@ public class GameModel {
         }
 
         int delay = 0;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < PHASES; i++) {
             scheduleDoCardTimed(delay, i);
             delay += cardSteps.get(i).size();
             scheduleDoTilesTimed(delay, i);

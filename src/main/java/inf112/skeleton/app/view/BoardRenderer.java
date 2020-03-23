@@ -13,7 +13,6 @@ import java.util.IdentityHashMap;
 
 public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private final GameModel gameModel;
-    private TextureRegion robotFacingUp;
     private IdentityHashMap<Robot, TiledMapTileLayer.Cell> robotsToCellsHashMap;
 
     public BoardRenderer(GameModel gameModel) {
@@ -31,19 +30,20 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     }
 
     private void loadTextures() {
-        robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
-        TiledMapTileLayer.Cell robotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
+        TextureRegion robotFacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
+        TiledMapTileLayer.Cell robotCell;
         robotsToCellsHashMap = new IdentityHashMap<>();
         // associate robots with cells for the robot layer of the map
-        robotsToCellsHashMap.put(gameModel.getRobot(), robotCell);
+        for (Robot robot : gameModel.getRobots()) {
+            robotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingNorth));
+            robotsToCellsHashMap.put(robot, robotCell);
+        }
     }
 
     public void renderRobots() {
         clearRobotsFromMap();
         for (Robot robot : gameModel.getRobots()) {
-            // get the cell for that robot or use the default robot texture to create a new cell
-            TiledMapTileLayer.Cell cell = robotsToCellsHashMap.getOrDefault(robot, new TiledMapTileLayer.Cell().
-                    setTile(new StaticTiledMapTile(robotFacingUp)));
+            TiledMapTileLayer.Cell cell = robotsToCellsHashMap.get(robot);
             rotateCellToMatchRobot(robot, cell);
             gameModel.getTiledMapHandler().getRobotLayer().setCell(robot.getX(), robot.getY(), cell);
         }
@@ -60,17 +60,21 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private void rotateCellToMatchRobot(Robot robot, TiledMapTileLayer.Cell cell) {
         // assuming the texture in the cell is facing north when rotation is 0
         Direction direction = robot.getDirection();
-        new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
-        if (direction == Direction.NORTH) {
-            cell.setRotation(0);
-        } else if (direction == Direction.WEST) {
-            cell.setRotation(1);
-        } else if (direction == Direction.SOUTH) {
-            cell.setRotation(2);
-        } else if (direction == Direction.EAST) {
-            cell.setRotation(3);
-        } else {
-            throw new IllegalArgumentException("Unexpected fifth direction");
+        switch (direction) {
+            case NORTH:
+                cell.setRotation(0);
+                break;
+            case WEST:
+                cell.setRotation(1);
+                break;
+            case SOUTH:
+                cell.setRotation(2);
+                break;
+            case EAST:
+                cell.setRotation(3);
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected fifth direction");
         }
     }
 

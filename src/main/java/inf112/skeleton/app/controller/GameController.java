@@ -46,13 +46,13 @@ public class GameController extends InputAdapter {
     private void handleTestingInput(int keycode) {
         switch (keycode) {
             case Input.Keys.LEFT:
-                gameModel.getRobot().execute(new RotateLeftCard());
+                gameModel.getRobots().get(0).execute(new RotateLeftCard());
                 break;
             case Input.Keys.UP:
-                gameModel.getRobot().execute(new MoveForwardCard());
+                gameModel.getRobots().get(0).execute(new MoveForwardCard());
                 break;
             case Input.Keys.RIGHT:
-                gameModel.getRobot().execute(new RotateRightCard());
+                gameModel.getRobots().get(0).execute(new RotateRightCard());
                 break;
             default:
         }
