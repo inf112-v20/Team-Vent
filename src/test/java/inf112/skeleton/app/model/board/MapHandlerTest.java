@@ -37,10 +37,4 @@ public class MapHandlerTest {
     public void getMapTest() {
         assertNotNull(mapHandler.getMap());
     }
-
-    @Test
-    public void setTileOfTypeTest() {
-        mapHandler.setTile(0, 0, "hole");
-        assertEquals("hole", mapHandler.getTileLayer().getCell(0, 0).getTile().getProperties().get("type"));
-    }
 }
