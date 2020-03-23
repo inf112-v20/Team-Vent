@@ -1,5 +1,6 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -23,7 +24,7 @@ public class GameModel {
 
     private ArrayList<Deque<StateInfo>> cardSteps = new ArrayList<>();
     private ArrayList<Deque<StateInfo>> tileSteps = new ArrayList<>();
-
+    private ArrayList<Deque<StateInfo>> laserSteps = new ArrayList<>();
 
 
     public GameModel(String map_filename) {
@@ -35,6 +36,7 @@ public class GameModel {
         for (int i = 0; i < 5; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
+            laserSteps.add(new LinkedList<>());
         }
         tiledMapHandler = new MapHandler(map_filename);
     }
@@ -59,6 +61,9 @@ public class GameModel {
             state = updateLastState(state, cardSteps.get(i));
             doTiles(i, state);
             state = updateLastState(state, tileSteps.get(i));
+            System.out.println("test do laser i phase "+ i + state);
+            state = updateLastState(state, laserSteps.get(i));
+            doLaser(i, state);
         }
 
         int delay = 0;
@@ -144,6 +149,23 @@ public class GameModel {
     private StateInfo updateLastState (StateInfo state, Deque<StateInfo> states) {
         if (states.peekLast() != null) {return states.peekLast();}
         return state;
+    }
+    //Lage getLaser som finner hvor alle laserene er så if robotInPath ta damage istedenfor, phase
+    private void doLaser (int phaseNumber, StateInfo state) {
+        StateInfo copy = state.copy();
+
+            while (!tiledMapHandler.wallInPath(copy.location.forward()) &&
+                    !tiledMapHandler.outOfBounds(copy.location.forward())) {
+
+                copy.location = copy.location.forward();
+                if (tiledMapHandler.robotInPath(copy.location, robots)) {
+                    System.out.println("you get shot by a laser take 1dmg");
+                    state.updateDamage(1);
+                    break;
+                }
+
+
+            }
     }
 
     public boolean inTestMode() {

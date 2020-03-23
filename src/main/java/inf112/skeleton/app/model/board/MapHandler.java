@@ -9,7 +9,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Constants;
+import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.tiles.TileType;
+
+import java.util.LinkedList;
 
 public class MapHandler {
     private final TiledMap tiledMap;
@@ -128,6 +131,19 @@ public class MapHandler {
         Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
+    public boolean robotInPath(Location location,LinkedList<Robot> robots) {
+        Location nextLocation = location.copy();
+
+        boolean robotBlockingCurrentPath = false;
+        for (int i =0; i < robots.size(); i++) {
+           nextLocation = nextLocation.forward();
+            if (robots.get(i).getLocation().equals(nextLocation)){
+                robotBlockingCurrentPath = true;
+            }
+        }
+            return robotBlockingCurrentPath;
+        }
+
 
     /**
      * @return a list of all objects in all map layers on the board
@@ -144,8 +160,17 @@ public class MapHandler {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER);
     }
 
+
+
     public TiledMapTileLayer getWallLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
+    }
+    public boolean outOfBounds(Location loc){
+        if (loc.getPosition().getX() > getWidth() || loc.getPosition().getY() > getHeight()){
+            return true;
+        } else{
+            return false;
+        }
     }
 
     //public TiledMapTileLayer getLaserLayer() {
