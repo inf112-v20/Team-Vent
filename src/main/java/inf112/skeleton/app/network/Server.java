@@ -80,7 +80,7 @@ public class Server implements Runnable {
                 }
                 System.out.println("Got " + command + " command from " + clientAddress);
                 System.out.println("Response: " + response);
-                outputStream.writeBytes(response + "\n\r");
+                outputStream.writeBytes(response + "\r");
                 outputStream.flush();
             } catch (IOException e){
                 if (e instanceof SocketException){

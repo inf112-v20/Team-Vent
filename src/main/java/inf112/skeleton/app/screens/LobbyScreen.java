@@ -19,6 +19,7 @@ public class LobbyScreen extends ScreenAdapter {
     private Boolean isHost;
     private String hostAddress;
     private GameClient gameClient;
+    private List playerList;
 
     public LobbyScreen(Boolean isHost, String hostAddress) {
         this.isHost = isHost;
@@ -32,7 +33,7 @@ public class LobbyScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage);
 
         // Player in lobby list
-        List playerList = new List<String>(skin);
+        playerList = new List<String>(skin);
         playerList.setItems(new String[]{" ", " ", " ", " ", " ", " ", " ", " "});
 
         // Refresh button
@@ -50,7 +51,7 @@ public class LobbyScreen extends ScreenAdapter {
             }
         });
         table.setFillParent(true);
-        table.setDebug(true);
+        table.setDebug(false);
 
         table.add(playerList);
         table.row().pad(150);
@@ -67,6 +68,9 @@ public class LobbyScreen extends ScreenAdapter {
             gameHostThread.start();
         }
         gameClient = new GameClient(hostAddress);
+
+        String[] players = gameClient.getPlayersInLobby();
+        playerList.setItems(players);
     }
 
     @Override
@@ -87,7 +91,7 @@ public class LobbyScreen extends ScreenAdapter {
         new LwjglApplication(new Game() {
             @Override
             public void create() {
-                this.setScreen(new LobbyScreen(false, "10.111.27.1"));
+                this.setScreen(new LobbyScreen(false, "127.0.0.1"));
             }
         }, cfg);
 
