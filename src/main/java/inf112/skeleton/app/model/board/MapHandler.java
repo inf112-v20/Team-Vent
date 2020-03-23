@@ -44,7 +44,9 @@ public class MapHandler {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 tileLayer.setCell(i, j, new TiledMapTileLayer.Cell());
-                setTile(i, j, "");
+                TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
+                tile.getProperties().put("type", "base_tile");
+                getTileLayer().getCell(i, j).setTile(tile);
             }
         }
         // create the object layer
@@ -125,12 +127,6 @@ public class MapHandler {
 
         Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
-    }
-
-    public void setTile(int x, int y, String type) {
-        TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
-        tile.getProperties().put("type", type);
-        getTileLayer().getCell(x, y).setTile(tile);
     }
 
     /**
