@@ -1,16 +1,23 @@
 package inf112.skeleton.app.model;
 
-import inf112.skeleton.app.model.cards.IProgramCard;
-import inf112.skeleton.app.model.cards.MoveForwardCard;
-import inf112.skeleton.app.model.cards.RotateLeftCard;
-import inf112.skeleton.app.model.cards.RotateRightCard;
 
-import java.util.Arrays;
+import inf112.skeleton.app.model.cards.*;
+
+import java.util.*;
 
 public class Player {
 
     private final IProgramCard[] cardHand = new IProgramCard[9];
     private final IProgramCard[] programmingSlots = new IProgramCard[5];
+    private final HashMap<Integer, IProgramCard> cardH = new HashMap<Integer, IProgramCard>();
+    private int playerLife;
+    private int playerHP;
+
+    public Player() {
+        this.playerLife = 3;
+        this.playerHP = 9;
+    }
+
     // Boolean finishedPlacingCards = false;
 
     public void placeCardFromHandToSlot(int handSlot) {
@@ -56,16 +63,34 @@ public class Player {
 
     //Methods below are for testing purposes atm, should be removed/moved to other classes later.
 
+    //Cards are stored in a hashmap, where key is the priority which is distinct and random
     public void generateCardHand() {
-        for (int i = 0; i < 9; i++) {
-            if (i < 3) {
-                cardHand[i] = new MoveForwardCard();
-            } else if (i < 6) {
-                cardHand[i] = new RotateLeftCard();
-            } else {
-                cardHand[i] = new RotateRightCard();
+
+       ArrayList<Integer> numb = new ArrayList<Integer>();
+       for (int i =0; i < 80; i++){
+           numb.add(i);
+       }
+        Collections.shuffle(numb);
+        for (int i =0; i <80; i++){
+            if (i <= 25) {
+                cardH.put(numb.get(i), new MoveForwardCard());
+            }
+
+            if (i > 25 && i <= 45){
+                cardH.put(numb.get(i), new MoveBackwardCard());
+            }
+            if(i > 45 && i <= 65){
+                cardH.put(numb.get(i), new RotateRightCard());
+            }
+            if (i >= 65){
+                cardH.put(numb.get(i), new RotateLeftCard());
             }
         }
+        for (int i=0;i<9;i++){
+            int k = (int) (Math.random() * 80 );
+            cardHand[i]=cardH.get(k);
+        }
+
     }
 
     public String handAsString() {
@@ -89,6 +114,7 @@ public class Player {
             TargetString.append("  ");
             if (cardArray[i] != null) {
                 TargetString.append(cardArray[i].toString());
+
             }
             TargetString.append("\n");
         }
@@ -102,4 +128,31 @@ public class Player {
         }
         return null;
     }
+
+    public int getPlayerLife() {
+        return playerLife;
+    }
+    public int getPlayerHP() {
+        return playerHP;
+    }
+    public void setPlayerLife(int playerLife) {
+        this.playerLife = playerLife;
+    }
+    public void setPlayerHP(int playerLife) {
+        this.playerHP = playerHP;
+    }
+
+    public String playerLifeAsString(int args) {
+        String p = "playerLife: " + Integer.toString(args) + "\n";
+        return p;
+    }
+
+    public String playerHPAsString(int args) {
+        String p = "playerHP: " + Integer.toString(args) + "\n";
+        return p;
+    }
+
+
+
+
 }

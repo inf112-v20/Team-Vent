@@ -4,14 +4,17 @@ import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.cards.IProgramCard;
 
+
 public class Robot {
     private final int MAX_DAMAGE = 1;
     private Location location;
     private int damage;
+    private boolean dead;
 
     public Robot(Location location) {
         this.location = location;
         this.damage = 0;
+        this.dead = false;
     }
 
     public Robot() {
@@ -40,6 +43,16 @@ public class Robot {
 
     public int getY() {
         return getLocation().getPosition().getY();
+    }
+
+    public void updateState (StateInfo state) {
+        location = state.location.copy();
+        damage = state.damage;
+        dead = state.dead;
+    }
+
+    public StateInfo getState() {
+        return  new StateInfo(this, location, damage, dead);
     }
 
     public void takeDamage() {
