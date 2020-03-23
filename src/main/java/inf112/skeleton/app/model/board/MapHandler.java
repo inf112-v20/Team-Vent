@@ -160,17 +160,14 @@ public class MapHandler {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER);
     }
 
-
-
     public TiledMapTileLayer getWallLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
     }
+
     public boolean outOfBounds(Location loc){
-        if (loc.getPosition().getX() > getWidth() || loc.getPosition().getY() > getHeight()){
-            return true;
-        } else{
-            return false;
-        }
+        return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
+                || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
+
     }
 
     //public TiledMapTileLayer getLaserLayer() {

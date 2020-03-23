@@ -60,9 +60,8 @@ public class GameModel {
             state = updateLastState(state, cardSteps.get(i));
             doTiles(i, state);
             state = updateLastState(state, tileSteps.get(i));
-            System.out.println("test do laser i phase "+ i + state);
-            state = updateLastState(state, laserSteps.get(i));
             doLaser(i, state);
+            state = updateLastState(state, laserSteps.get(i));
         }
 
         int delay = 0;
