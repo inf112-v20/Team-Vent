@@ -1,6 +1,5 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -104,7 +103,6 @@ public class GameModel {
                 break;
             case HOLE:
                 tileSteps.get(phaseNumber).add(initialState.updateLifeStates(true)); // the robot died, so it has no position
-                //return tileSteps; // end the phase early
                 break;
             default:
                 break;
@@ -121,29 +119,23 @@ public class GameModel {
     }
 
     public void scheduleDoCardTimed(int delay, int phase) {
-        if (cardSteps.get(phase).size() != 0) {
-            Timer.Task doCardTimed = new Timer.Task() {
-                @Override
-                public void run() {
-                    StateInfo stateInfo = cardSteps.get(phase).remove();
-                    stateInfo.robot.updateState(stateInfo);
-                }
-            };
-            Timer.instance().scheduleTask(doCardTimed, delay, 1, cardSteps.get(phase).size() - 1);
-        }
+        scheduleSteps(delay, phase, cardSteps);
     }
 
     public  void scheduleDoTilesTimed(int delay, int phase) {
-        if (tileSteps.get(phase).size() != 0) {
-            Timer.Task doTilesTimed = new Timer.Task() {
-                @Override
-                public void run() {
-                    StateInfo stateInfo = tileSteps.get(phase).remove();
-                    stateInfo.robot.updateState(stateInfo);
-                }
-            };
-            Timer.instance().scheduleTask(doTilesTimed, delay, 1, tileSteps.get(phase).size() - 1);
-        }
+        scheduleSteps(delay, phase, tileSteps);
+    }
+
+    public void scheduleSteps(int delay, int phase, ArrayList<Deque<StateInfo>> steps) {
+        if (steps.get(phase).isEmpty()) return;
+        Timer.Task task = new Timer.Task() {
+            @Override
+            public void run() {
+                StateInfo stateInfo = steps.get(phase).remove();
+                stateInfo.robot.updateState(stateInfo);
+            }
+        };
+        Timer.instance().scheduleTask(task, delay, 1, steps.get(phase).size() - 1);
     }
 
     private StateInfo updateLastState (StateInfo state, Deque<StateInfo> states) {
@@ -168,9 +160,6 @@ public class GameModel {
             }
     }
 
-    public boolean inTestMode() {
-        return true;
-    }
     public List<Robot> getRobots() {
         return robots;
     }
