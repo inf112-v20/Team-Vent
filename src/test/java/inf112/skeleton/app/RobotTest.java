@@ -45,7 +45,28 @@ public class RobotTest {
     }
 
     @Test
-    public void visitFlag() {
-        // todo
+    public void noFlagsInTheBeginning() {
+        assertEquals(0, robot.getNumberOfFlags());
+    }
+
+    @Test
+    public void visitingTheWrongFlagHasNoEffect() {
+        robot.visitFlag(robot.getNumberOfFlags() + 10, robot.getLocation().forward());
+        assertEquals(0, robot.getNumberOfFlags());
+    }
+
+    @Test
+    public void visitingTheRightFlagIncreasesNumberOfFlags() {
+        Location flagLocation = robot.getLocation().forward();
+        robot.visitFlag(robot.getNumberOfFlags() + 1, flagLocation);
+        assertEquals(1, robot.getNumberOfFlags());
+    }
+
+    @Test
+    public void rebootingResetsToLastFlag() {
+        Location flagLocation = robot.getLocation().forward();
+        robot.visitFlag(robot.getNumberOfFlags() + 1, flagLocation);
+        robot.reboot();
+        assertEquals(flagLocation, robot.getLocation());
     }
 }
