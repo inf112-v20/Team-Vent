@@ -2,7 +2,6 @@ package inf112.skeleton.app.model.board;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayers;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,6 +15,7 @@ import java.util.LinkedList;
 
 public class MapHandler {
     private final TiledMap tiledMap;
+    private int numberOfFlags;
 
     /**
      * Load a map from a file. This will only work while the application is running
@@ -24,6 +24,15 @@ public class MapHandler {
      */
     public MapHandler(String filename) {
         tiledMap = new TmxMapLoader().load(filename);
+
+        // count the flags
+        for (int i = 0; i < getFlagLayer().getWidth(); i++) {
+            for (int j = 0; j < getFlagLayer().getHeight(); j++) {
+                if (getFlagLayer().getCell(i, j) != null) {
+                    numberOfFlags += 1;
+                }
+            }
+        }
     }
 
     /**
@@ -144,14 +153,6 @@ public class MapHandler {
             return robotBlockingCurrentPath;
         }
 
-
-    /**
-     * @return a list of all objects in all map layers on the board
-     */
-    public MapObjects getRobotMapObjects() {
-        return getRobotLayer().getObjects();
-    }
-
     public TiledMapTileLayer getRobotLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.ROBOT_LAYER);
     }
@@ -164,17 +165,21 @@ public class MapHandler {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
     }
 
-    public boolean outOfBounds(Location loc){
+    public TiledMapTileLayer getFlagLayer() {
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.FLAG_LAYER);
+    }
+
+    public TiledMapTileLayer getLaserLayer() {
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.LASER_LAYER);
+    }
+
+    public boolean outOfBounds(Location loc) {
         return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
                 || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
 
     }
 
-    //public TiledMapTileLayer getLaserLayer() {
-    //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.LASER_LAYER_NAME);
-    //}
-
-    //public TiledMapTileLayer getFlagLayer() {
-    //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.FLAG_LAYER_NAME);
-    //}
+    public int getNumberOfFlags() {
+        return this.numberOfFlags;
+    }
 }

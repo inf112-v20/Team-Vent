@@ -6,23 +6,21 @@ import inf112.skeleton.app.model.cards.IProgramCard;
 
 
 public class Robot {
-    private final int MAX_DAMAGE = 1;
     private Location location;
     private int damage;
     private boolean dead;
+    private int flagsVisited = 0; // number of flags that have been visited
+    private Location lastSaved;  // the location the robot will return to if it dies
 
     public Robot(Location location) {
         this.location = location;
+        this.lastSaved = location;
         this.damage = 0;
         this.dead = false;
     }
 
     public Robot() {
         this(new Location());
-    }
-
-    public void execute(IProgramCard card) {
-        this.location = card.instruction(this.location);
     }
 
     public Location getLocation() {
@@ -45,36 +43,34 @@ public class Robot {
         return getLocation().getPosition().getY();
     }
 
-    public void updateState (StateInfo state) {
+    public void updateState(StateInfo state) {
         location = state.location.copy();
         damage = state.damage;
         dead = state.dead;
     }
 
     public StateInfo getState() {
-        return  new StateInfo(this, location, damage, dead);
+        return new StateInfo(this, location, damage, dead);
     }
 
-    public void takeDamage() {
-        damage = Math.min(damage + 1, MAX_DAMAGE);
+    public void moveToLastSavedLocation() {
+        this.location = this.lastSaved;
     }
 
-    public boolean alive() {
-        return damage < MAX_DAMAGE;
+    public Robot copy() {
+        return new Robot(this.location.copy());
     }
 
-    public String status() {
-        return String.format("DAMAGE: %d/%d", this.damage, this.MAX_DAMAGE);
+    public int getNumberOfFlags() {
+        return flagsVisited;
     }
 
-    public void die() {
-        this.damage = MAX_DAMAGE;
+    public void visitFlag(int flagNumber, Location location) {
+        if (flagNumber == flagsVisited + 1) { // if this flag is the next flag
+            this.lastSaved = location;
+            this.flagsVisited += 1;
+            System.out.println("Visited flag number " + flagsVisited);
+        }
     }
-
-    public void moveInDirection(Direction moveDirection) {
-        this.location = this.location.moveDirection(moveDirection);
-    }
-
-    public Robot copy() {return new Robot(this.location.copy());}
 }
 

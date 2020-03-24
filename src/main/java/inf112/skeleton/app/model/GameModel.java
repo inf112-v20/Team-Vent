@@ -1,5 +1,7 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -57,13 +59,14 @@ public class GameModel {
             state = updateLastState(state, tileSteps.get(i));
             doLaser(i, state);
             state = updateLastState(state, laserSteps.get(i));
+            doFlag(state);
         }
 
         int delay = 0;
         for (int i = 0; i < PHASES; i++) {
-            scheduleDoCardTimed(delay, i);
+            scheduleSteps(delay, i, cardSteps);
             delay += cardSteps.get(i).size();
-            scheduleDoTilesTimed(delay, i);
+            scheduleSteps(delay, i, tileSteps);
             delay += tileSteps.get(i).size();
         }
         player.generateCardHand();
@@ -103,21 +106,24 @@ public class GameModel {
         }
     }
 
-    private void doCard (int phaseNumber, StateInfo stateinfo) {
+    private void doCard(int phaseNumber, StateInfo stateinfo) {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-            if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateinfo.location))) {
-                Location loc = stateinfo.location.copy();
-                cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(loc)));
-            }
+        if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateinfo.location))) {
+            Location loc = stateinfo.location.copy();
+            cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(loc)));
+        }
     }
 
-    public void scheduleDoCardTimed(int delay, int phase) {
-        scheduleSteps(delay, phase, cardSteps);
-    }
-
-    public  void scheduleDoTilesTimed(int delay, int phase) {
-        scheduleSteps(delay, phase, tileSteps);
+    private void doFlag(StateInfo state) {
+        TiledMapTileLayer.Cell cell = getTiledMapHandler().getFlagLayer().getCell(state.location.getPosition().getX(),
+                state.location.getPosition().getY());
+        if (cell == null) return; // there is no flag here
+        int flagNumber = (int) cell.getTile().getProperties().get("number");
+        state.robot.visitFlag(flagNumber, state.location);
+        if (state.robot.getNumberOfFlags() == getTiledMapHandler().getNumberOfFlags()) {
+            Gdx.app.log(this.getClass().getName(), "TODO: IMPLEMENT WINNING");
+        }
     }
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<StateInfo>> steps) {
@@ -149,8 +155,6 @@ public class GameModel {
                     state.updateDamage(1);
                     break;
                 }
-
-
             }
     }
 
