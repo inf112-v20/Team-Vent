@@ -1,14 +1,14 @@
 package inf112.skeleton.app.model;
 
 public class GameState {
-    int size;
-    StateInfo[] stateInfos;
-    int added;
+    private int size;
+    public StateInfo[] stateInfos;
+    private int added;
 
     public GameState (int size) {
         this.size = size;
         stateInfos = new StateInfo[size];
-        int added = 0;
+        added = 0;
     }
 
     public void add (StateInfo stateInfo) {
@@ -31,6 +31,7 @@ public class GameState {
     }
 
     //For when more than one thing happens in a single step, you can edit the state instead of updating.
+    //For example when one robot pushes another robot, or if we decide to display conveyors at the same time for all robots
     public void editState(StateInfo stateInfo) {
         for (int i = 0; i < size; i++) {
             if (stateInfos[i].robot.equals(stateInfo.robot)) {

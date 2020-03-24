@@ -1,6 +1,5 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -99,12 +98,12 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(newState);
 
                 loc = newState.getState(robotState.robot).location;
-                robotState = newState.getState(robotState.robot);
+                StateInfo newRobotState = newState.getState(robotState.robot);
 
                 TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.equals(nextTileType)) {
-                    newState = newState.updateState(robotState.updateLocation(loc.moveDirection(nextTileDirection)));
+                    newState = newState.updateState(newRobotState.updateLocation(loc.moveDirection(nextTileDirection)));
                     tileSteps.get(phaseNumber).add(newState);
                 }
                 break;
