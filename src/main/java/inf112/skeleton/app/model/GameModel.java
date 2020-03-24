@@ -135,7 +135,7 @@ public class GameModel {
                 stateInfo.robot.updateState(stateInfo);
             }
         };
-        Timer.instance().scheduleTask(task, delay, 1, steps.get(phase).size() - 1);
+        Timer.instance().scheduleTask(task, delay, 0, steps.get(phase).size() - 1);
     }
 
     private StateInfo updateLastState (StateInfo state, Deque<StateInfo> states) {
