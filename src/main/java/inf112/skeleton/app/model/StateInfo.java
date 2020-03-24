@@ -26,4 +26,6 @@ public class StateInfo {
         return new StateInfo(robot, location.copy(), damage, dead);
     }
 
+    public StateInfo copy() {return new StateInfo(robot, location, damage, dead)};
+
 }
