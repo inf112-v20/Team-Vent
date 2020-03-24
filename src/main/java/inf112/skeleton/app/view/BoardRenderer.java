@@ -43,6 +43,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     public void renderRobots() {
         clearRobotsFromMap();
         for (Robot robot : gameModel.getRobots()) {
+            if (!robot.alive()) continue;
             TiledMapTileLayer.Cell cell = robotsToCellsHashMap.get(robot);
             rotateCellToMatchRobot(robot, cell);
             gameModel.getTiledMapHandler().getRobotLayer().setCell(robot.getX(), robot.getY(), cell);

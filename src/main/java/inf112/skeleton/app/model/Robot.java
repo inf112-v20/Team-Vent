@@ -2,14 +2,13 @@ package inf112.skeleton.app.model;
 
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
-import inf112.skeleton.app.model.cards.IProgramCard;
 
 
 public class Robot {
     private Location location;
     private int damage;
     private boolean dead;
-    private int flagsVisited = 0; // number of flags that have been visited
+    private int capturedFlags = 0; // number of flags that have been visited
     private Location lastSaved;  // the location the robot will return to if it dies
 
     public Robot(Location location) {
@@ -53,24 +52,33 @@ public class Robot {
         return new StateInfo(this, location, damage, dead);
     }
 
-    public void moveToLastSavedLocation() {
-        this.location = this.lastSaved;
-    }
-
     public Robot copy() {
         return new Robot(this.location.copy());
     }
 
     public int getNumberOfFlags() {
-        return flagsVisited;
+        return capturedFlags;
     }
 
     public void visitFlag(int flagNumber, Location location) {
-        if (flagNumber == flagsVisited + 1) { // if this flag is the next flag
+        if (flagNumber == capturedFlags + 1) { // if this flag is the next flag
             this.lastSaved = location;
-            this.flagsVisited += 1;
-            System.out.println("Visited flag number " + flagsVisited);
+            this.capturedFlags += 1;
+            System.out.println("Visited flag number " + capturedFlags);
         }
+    }
+
+    /**
+     * Come alive if dead and move to the most recently captured flag, or to the starting position if there are no
+     * captured flags
+     */
+    public void reboot() {
+        this.dead = false;
+        this.location = this.lastSaved;
+    }
+
+    public boolean alive() {
+        return !dead;
     }
 }
 

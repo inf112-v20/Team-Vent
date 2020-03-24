@@ -24,7 +24,7 @@ public class StateInfo {
         return new StateInfo(robot, location.copy(), dmg, dead);
     }
 
-    public StateInfo updateLifeStates(boolean dead) {
+    public StateInfo updateDead(boolean dead) {
         return new StateInfo(robot, location.copy(), damage, dead);
     }
 

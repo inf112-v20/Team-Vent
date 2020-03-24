@@ -50,7 +50,7 @@ public class GameModel {
     }
 
     public void endTurn() {
-        StateInfo state = getRobots().get(0).getState(); // fixme: change to support multi-player
+        StateInfo state = getRobots().get(0).getState();
 
         for (int i = 0; i < PHASES; i++) {
             doCard(i, state);
@@ -70,6 +70,11 @@ public class GameModel {
             delay += tileSteps.get(i).size();
         }
         player.generateCardHand();
+
+        // come alive at the end of the round (temporary)
+        if (!state.robot.alive()) {
+            state.robot.reboot();
+        }
     }
 
     private void doTiles(int phaseNumber, StateInfo initialState) {
@@ -100,7 +105,7 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(initialState.updateLocation(turnLeft));
                 break;
             case HOLE:
-                tileSteps.get(phaseNumber).add(initialState.updateLifeStates(true)); // the robot died, so it has no position
+                tileSteps.get(phaseNumber).add(initialState.updateDead(true));
                 break;
             default:
                 break;
@@ -108,7 +113,10 @@ public class GameModel {
     }
 
     private void doCard(int phaseNumber, StateInfo stateInfo) {
-        if (stateInfo.dead) return;
+        if (stateInfo.dead) {
+            getPlayer().clearProgrammingSlots();
+            return;
+        }
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
         if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateInfo.location))) {
