@@ -5,6 +5,7 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.IProgramCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
@@ -27,7 +28,10 @@ public class GameModel {
 
     public GameModel(String map_filename) {
         robots = new LinkedList<>();
-        robots.add(new Robot());
+        robots.add(new Robot(new Location(new RVector2(15, 5), Direction.WEST)));
+        robots.add(new Robot(new Location(new RVector2(15, 6), Direction.WEST)));
+        robots.add(new Robot(new Location(new RVector2(14, 3), Direction.WEST)));
+        robots.add(new Robot(new Location(new RVector2(14, 8), Direction.WEST)));
         player = new Player();
         player.generateCardHand();
         for (int i = 0; i < 5; i++) {
