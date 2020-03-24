@@ -73,6 +73,7 @@ public class GameModel {
     }
 
     private void doTiles(int phaseNumber, StateInfo initialState) {
+        if (initialState.dead) return;
         Location loc = initialState.location.copy();
         // Calculate next steps based on current position
         TileType currentTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
@@ -106,16 +107,18 @@ public class GameModel {
         }
     }
 
-    private void doCard(int phaseNumber, StateInfo stateinfo) {
+    private void doCard(int phaseNumber, StateInfo stateInfo) {
+        if (stateInfo.dead) return;
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-        if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateinfo.location))) {
-            Location loc = stateinfo.location.copy();
-            cardSteps.get(phaseNumber).add(stateinfo.updateLocation(card.instruction(loc)));
+        if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(stateInfo.location))) {
+            Location loc = stateInfo.location.copy();
+            cardSteps.get(phaseNumber).add(stateInfo.updateLocation(card.instruction(loc)));
         }
     }
 
     private void doFlag(StateInfo state) {
+        if (state.dead) return;
         TiledMapTileLayer.Cell cell = getTiledMapHandler().getFlagLayer().getCell(state.location.getPosition().getX(),
                 state.location.getPosition().getY());
         if (cell == null) return; // there is no flag here
