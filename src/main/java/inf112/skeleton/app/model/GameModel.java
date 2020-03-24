@@ -146,6 +146,8 @@ public class GameModel {
         }
     }
 
+
+
     private StateInfo updateLastState (StateInfo state, Deque<StateInfo> states) {
         if (states.peekLast() != null) {return states.peekLast();}
         return state;
