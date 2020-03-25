@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.3.2" name="Tileset 100x100" tilewidth="100" tileheight="100" tilecount="136" columns="8">
+<tileset version="1.2" tiledversion="1.3.3" name="Tileset 100x100" tilewidth="100" tileheight="100" tilecount="136" columns="8">
  <image source="Tiles_100x100.png" width="800" height="1700"/>
  <tile id="0">
   <properties>
@@ -328,6 +328,7 @@
  <tile id="54">
   <properties>
    <property name="direction" type="int" value="0"/>
+   <property name="number" type="int" value="1"/>
    <property name="type" value="flag"/>
   </properties>
  </tile>
@@ -376,6 +377,7 @@
  <tile id="62">
   <properties>
    <property name="direction" type="int" value="0"/>
+   <property name="number" type="int" value="2"/>
    <property name="type" value="flag"/>
   </properties>
  </tile>
@@ -424,6 +426,7 @@
  <tile id="70">
   <properties>
    <property name="direction" type="int" value="0"/>
+   <property name="number" type="int" value="3"/>
    <property name="type" value="flag"/>
   </properties>
  </tile>
@@ -472,6 +475,7 @@
  <tile id="78">
   <properties>
    <property name="direction" type="int" value="0"/>
+   <property name="number" type="int" value="4"/>
    <property name="type" value="flag"/>
   </properties>
  </tile>

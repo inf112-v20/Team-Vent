@@ -1,5 +1,7 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -17,6 +19,7 @@ import java.util.List;
 
 public class GameModel {
 
+    private final int PHASES = 5;
     private LinkedList<Robot> robots;
     private MapHandler tiledMapHandler;
     private Player player;
@@ -34,16 +37,12 @@ public class GameModel {
         robots.add(new Robot(new Location(new RVector2(14, 8), Direction.WEST)));
         player = new Player();
         player.generateCardHand();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < PHASES; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
             laserSteps.add(new LinkedList<>());
         }
         tiledMapHandler = new MapHandler(map_filename);
-    }
-
-    public Robot getRobot(int index) {
-        return robots.get(index);
     }
 
     public MapHandler getTiledMapHandler() {
@@ -59,7 +58,7 @@ public class GameModel {
 
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < PHASES; i++) {
 
             for (Robot robot : robots) {
                 doCard(i, gameState, gameState.getState(robot));
@@ -73,17 +72,27 @@ public class GameModel {
                 doLaser(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, laserSteps.get(i));
             }
+            for (Robot robot : robots) {
+                doFlag(gameState.getState(robot));
+            }
         }
 
         int delay = 0;
-        for (int i = 0; i < 5; i++) {
-            scheduleDoCardTimed(delay, i);
+        for (int i = 0; i < PHASES; i++) {
+            scheduleSteps(delay, i, cardSteps);
             delay += cardSteps.get(i).size();
-            scheduleDoTilesTimed(delay, i);
+            scheduleSteps(delay, i, tileSteps);
             delay += tileSteps.get(i).size();
             laserSteps.get(i).clear();
         }
         player.generateCardHand();
+
+        // come alive at the end of the round (temporary)
+        for (Robot robot : robots) {
+            if (!gameState.getState(robot).robot.alive()) {
+                gameState.getState(robot).robot.reboot();
+            }
+        }
     }
 
     private void doTiles(int phaseNumber, GameState initialState, StateInfo robotState) {
@@ -122,9 +131,8 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             case HOLE:
-                newState = initialState.updateState(robotState.updateLifeStates(true));
-                tileSteps.get(phaseNumber).add(newState); // the robot died, so it has no position
-                //return tileSteps; // end the phase early
+                newState = initialState.updateState(robotState.updateDead(true));
+                tileSteps.get(phaseNumber).add(newState);
                 break;
             default:
                 break;
@@ -141,36 +149,31 @@ public class GameModel {
             }
     }
 
-    public void scheduleDoCardTimed(int delay, int phase) {
-        if (cardSteps.get(phase).size() != 0) {
-            Timer.Task doCardTimed = new Timer.Task() {
-                @Override
-                public void run() {
-                    GameState gameState = cardSteps.get(phase).remove();
-                    for (StateInfo stateInfo : gameState.stateInfos) {
-                        stateInfo.robot.updateState(stateInfo);
-                    }
-                }
-            };
-            Timer.instance().scheduleTask(doCardTimed, delay, 1, cardSteps.get(phase).size() - 1);
+    private void doFlag(StateInfo state) {
+        if (state.dead) return;
+        TiledMapTileLayer.Cell cell = getTiledMapHandler().getFlagLayer().getCell(state.location.getPosition().getX(),
+                state.location.getPosition().getY());
+        if (cell == null) return; // there is no flag here
+        int flagNumber = (int) cell.getTile().getProperties().get("number");
+        state.robot.visitFlag(flagNumber, state.location);
+        if (state.robot.getNumberOfFlags() == getTiledMapHandler().getNumberOfFlags()) {
+            Gdx.app.log(this.getClass().getName(), "TODO: IMPLEMENT WINNING");
         }
     }
 
-    public  void scheduleDoTilesTimed(int delay, int phase) {
-        if (tileSteps.get(phase).size() != 0) {
-            Timer.Task doTilesTimed = new Timer.Task() {
-                @Override
-                public void run() {
-                    GameState gameState = tileSteps.get(phase).remove();
-                    for (StateInfo stateInfo : gameState.stateInfos)
+    public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
+        if (steps.get(phase).isEmpty()) return;
+        Timer.Task task = new Timer.Task() {
+            @Override
+            public void run() {
+                GameState gameState = steps.get(phase).remove();
+                for (StateInfo stateInfo : gameState.stateInfos) {
                     stateInfo.robot.updateState(stateInfo);
                 }
-            };
-            Timer.instance().scheduleTask(doTilesTimed, delay, 1, tileSteps.get(phase).size() - 1);
-        }
+            }
+        };
+        Timer.instance().scheduleTask(task, delay, 1, steps.get(phase).size() - 1);
     }
-
-
 
     private GameState updateLastState (GameState state, Deque<GameState> states) {
         if (states.peekLast() != null) {return states.peekLast();}
@@ -189,15 +192,7 @@ public class GameModel {
                     laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
                     break;
                 }
-
-
             }
-    }
-
-
-
-    public boolean inTestMode() {
-        return true;
     }
 
     public GameState getInitialGameState() {

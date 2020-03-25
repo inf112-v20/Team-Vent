@@ -5,9 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
-import inf112.skeleton.app.model.cards.MoveForwardCard;
-import inf112.skeleton.app.model.cards.RotateLeftCard;
-import inf112.skeleton.app.model.cards.RotateRightCard;
+import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.screens.GameOverScreen;
 import inf112.skeleton.app.screens.GameScreen;
 
@@ -44,15 +42,16 @@ public class GameController extends InputAdapter {
      * Place the robot anywhere with the arrow keys. The rules of the game do not apply.
      */
     private void handleTestingInput(int keycode) {
+        Robot robot = gameModel.getRobots().get(0);
         switch (keycode) {
             case Input.Keys.LEFT:
-                gameModel.getRobot(0).execute(new RotateLeftCard());
+                robot.setLocation(robot.getLocation().rotateLeft());
                 break;
             case Input.Keys.UP:
-                gameModel.getRobot(0).execute(new MoveForwardCard());
+                robot.setLocation(robot.getLocation().forward());
                 break;
             case Input.Keys.RIGHT:
-                gameModel.getRobot(0).execute(new RotateRightCard());
+                robot.setLocation(robot.getLocation().rotateRight());
                 break;
             default:
         }

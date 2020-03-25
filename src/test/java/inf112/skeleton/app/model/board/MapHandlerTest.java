@@ -22,8 +22,6 @@ public class MapHandlerTest {
                 assertNotNull(mapHandler.getTileLayer().getCell(i, j).getTile());
             }
         }
-        // There are no objects in the robot layer
-        assertEquals(0, mapHandler.getRobotMapObjects().getCount());
     }
 
     @Test
