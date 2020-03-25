@@ -86,13 +86,6 @@ public class GameModel {
             laserSteps.get(i).clear();
         }
         player.generateCardHand();
-
-        // come alive at the end of the round (temporary)
-        for (Robot robot : robots) {
-            if (!gameState.getState(robot).robot.alive()) {
-                gameState.getState(robot).robot.reboot();
-            }
-        }
     }
 
     private void doTiles(int phaseNumber, GameState initialState, StateInfo robotState) {
