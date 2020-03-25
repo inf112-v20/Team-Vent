@@ -42,7 +42,7 @@ public class GameClient {
         sendAndReceiveMessage("STOP_H");
     }
 
-    private String sendAndReceiveMessage(String message){
+    public String sendAndReceiveMessage(String message){
         output.println(message);
         String response;
         try{
