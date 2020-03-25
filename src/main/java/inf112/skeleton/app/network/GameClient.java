@@ -32,6 +32,10 @@ public class GameClient {
         return reponse;
     }
 
+    public void setGameStatus(String status) {
+        sendAndReceiveMessage(String.format("SET_S-%s", status));
+    }
+
     public void closeConnection(){
         String response = sendAndReceiveMessage("STOP_C");
     }

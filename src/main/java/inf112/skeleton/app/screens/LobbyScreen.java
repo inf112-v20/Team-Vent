@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
+import inf112.skeleton.app.controller.GameController;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.network.GameHost;
 
@@ -37,6 +38,20 @@ public class LobbyScreen extends ScreenAdapter {
         playerList = new List<String>(skin);
         playerList.setItems(new String[]{" ", " ", " ", " ", " ", " ", " ", " "});
 
+        // Start game button
+        Button startGameButton = new TextButton("Start Game", skin);
+        startGameButton.addListener(new InputListener(){
+            @Override
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button){
+                setGameStart();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                return true;
+            }
+        });
+
         // Leave lobby button
         Button backButton = new TextButton("Leave lobby", skin);
         backButton.addListener(new InputListener(){
@@ -55,6 +70,10 @@ public class LobbyScreen extends ScreenAdapter {
         table.setDebug(false);
         table.add(playerList);
         table.row();
+        if(isHost){
+            table.add(startGameButton);
+            table.row();
+        }
         table.add(backButton);
         stage.addActor(table);
     }
@@ -69,7 +88,18 @@ public class LobbyScreen extends ScreenAdapter {
             case "LOBBY WAITING":
                 updatePlayerList();
                 break;
+            case "START":
+                startGame();
         }
+    }
+
+    private void startGame(){
+        Timer.instance().clear();
+        new GameController(game, "map-1.tmx", gameClient); //TODO: Add map selector in lobby
+    }
+
+    private void setGameStart(){
+        gameClient.setGameStatus("START");
     }
 
     private void updatePlayerList(){
@@ -99,6 +129,7 @@ public class LobbyScreen extends ScreenAdapter {
         }
         gameClient = new GameClient(hostAddress);
 
+        // Acts on changes in the game state of the game host every 200 ms
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {

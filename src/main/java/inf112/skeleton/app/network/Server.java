@@ -41,6 +41,11 @@ public class Server implements Runnable {
         return gameHost.getGameStatus();
     }
 
+    private String SET_S(String gameStatus) {
+        gameHost.setGameStatus(gameStatus);
+        return "";
+    }
+
      public void closeConnection(){
         gameHost.connectionList[index] = "";
         connectedSocket.dispose();
@@ -81,6 +86,9 @@ public class Server implements Runnable {
                     case "GET_S":
                         response = GET_S();
                         break;
+                    case "SET_S":
+                        response = SET_S(commands[1]);
+                        break;
                     case "STOP_C":
                         response = "CLOSING CONNECTION";
                         closeConnection();
@@ -89,7 +97,6 @@ public class Server implements Runnable {
                         response = "STOPPING HOST";
                         stopHost();
                         break;
-
                     default:
                         response = "ERR-Invalid command";
                         break;
@@ -106,4 +113,5 @@ public class Server implements Runnable {
             }
         }
     }
+
 }
