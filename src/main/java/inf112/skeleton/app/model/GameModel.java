@@ -161,19 +161,19 @@ public class GameModel {
         }
     }
 
-    public void scheduleSteps(int delay, int phase, ArrayList<Deque<StateInfo>> steps) {
+    public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         if (steps.get(phase).isEmpty()) return;
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
-                StateInfo stateInfo = steps.get(phase).remove();
-                stateInfo.robot.updateState(stateInfo);
+                GameState gameState = steps.get(phase).remove();
+                for (StateInfo stateInfo : gameState.stateInfos) {
+                    stateInfo.robot.updateState(stateInfo);
+                }
             }
         };
-        Timer.instance().scheduleTask(task, delay, 0, steps.get(phase).size() - 1);
+        Timer.instance().scheduleTask(task, delay, 1, steps.get(phase).size() - 1);
     }
-
-
 
     private GameState updateLastState (GameState state, Deque<GameState> states) {
         if (states.peekLast() != null) {return states.peekLast();}
