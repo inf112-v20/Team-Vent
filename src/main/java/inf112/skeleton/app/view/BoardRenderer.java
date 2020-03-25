@@ -30,12 +30,13 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         renderRobots();
     }
 
+    //TODO update for several robots instead of static 0
     private void loadTextures() {
         robotFacingUp = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
         TiledMapTileLayer.Cell robotCell = new TiledMapTileLayer.Cell().setTile(new StaticTiledMapTile(robotFacingUp));
         robotsToCellsHashMap = new IdentityHashMap<>();
         // associate robots with cells for the robot layer of the map
-        robotsToCellsHashMap.put(gameModel.getRobot(), robotCell);
+        robotsToCellsHashMap.put(gameModel.getRobot(0), robotCell);
     }
 
     public void renderRobots() {
