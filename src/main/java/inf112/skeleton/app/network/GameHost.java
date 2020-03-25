@@ -18,6 +18,7 @@ public class GameHost {
     private final ServerSocket serverSocket;
     private Boolean running = true;
     private Server[] servers;
+    private String GameStatus;
     public String[] connectionList;
 
     public GameHost(String hostName) {
@@ -29,6 +30,7 @@ public class GameHost {
         serverSocket = Gdx.net.newServerSocket(Net.Protocol.TCP, hostName, port, serverHints);
         connectionList = new String[8];
         servers = new Server[8];
+        GameStatus = "LOBBY WAITING";
         Arrays.fill(connectionList, "");
         while(running){
             // Waits until a new connection is established
@@ -61,6 +63,11 @@ public class GameHost {
         }
         System.out.println("Shutting down GameHost Server");
     }
+
+    public String getGameStatus() {
+        return GameStatus;
+    }
+
     public void stop(){
         for(Server s : servers){
             if(s != null){

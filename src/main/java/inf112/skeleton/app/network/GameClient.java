@@ -27,6 +27,11 @@ public class GameClient {
         return response.split("-");
     }
 
+    public String getGameStatus() {
+        String reponse = sendAndReceiveMessage("GET_S");
+        return reponse;
+    }
+
     public void closeConnection(){
         String response = sendAndReceiveMessage("STOP_C");
     }
@@ -41,6 +46,8 @@ public class GameClient {
         String response;
         try{
             response = input.readLine();
+        } catch (java.net.SocketException e){
+            response = "CLOSE";
         } catch (IOException e) {
             response = "";
             e.printStackTrace();

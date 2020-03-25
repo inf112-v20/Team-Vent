@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.network.GameClient;
@@ -18,10 +19,12 @@ public class LobbyScreen extends ScreenAdapter {
     private String hostAddress;
     private GameClient gameClient;
     private List playerList;
+    private RoboRallyGame game;
 
     public LobbyScreen(RoboRallyGame game, Boolean isHost, String hostAddress) {
         this.isHost = isHost;
         this.hostAddress = hostAddress;
+        this.game = game;
 
         Skin skin = new Skin(Gdx.files.internal("skin/shade/skin/uiskin.json"));
         stage = new Stage();
@@ -34,33 +37,12 @@ public class LobbyScreen extends ScreenAdapter {
         playerList = new List<String>(skin);
         playerList.setItems(new String[]{" ", " ", " ", " ", " ", " ", " ", " "});
 
-        // Refresh button
-        Button refreshButton = new TextButton("Refresh", skin);
-        refreshButton.addListener(new InputListener(){
-            @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button){
-                String[] players = gameClient.getPlayersInLobby();
-                playerList.setItems(players);
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                return true;
-            }
-        });
-
         // Leave lobby button
         Button backButton = new TextButton("Leave lobby", skin);
         backButton.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button){
-                if(isHost){
-                    gameClient.stopHost();
-                } else {
-                    gameClient.closeConnection();
-                }
-                gameClient = null;
-                game.setScreen(new MenuScreen(game));
+                backToMenu();
             }
 
             @Override
@@ -73,10 +55,37 @@ public class LobbyScreen extends ScreenAdapter {
         table.setDebug(false);
         table.add(playerList);
         table.row();
-        table.add(refreshButton);
-        table.row();
         table.add(backButton);
         stage.addActor(table);
+    }
+
+    private void actOnGameStatus(){
+        String status = gameClient.getGameStatus();
+
+        switch (status){
+            case "CLOSE":
+                backToMenu();
+                break;
+            case "LOBBY WAITING":
+                updatePlayerList();
+                break;
+        }
+    }
+
+    private void updatePlayerList(){
+        String[] players = gameClient.getPlayersInLobby();
+        playerList.setItems(players);
+    }
+
+    private void backToMenu(){
+        Timer.instance().clear();
+        if(isHost){
+            gameClient.stopHost();
+        } else {
+            gameClient.closeConnection();
+        }
+        gameClient = null;
+        game.setScreen(new MenuScreen(game));
     }
 
     @Override
@@ -90,8 +99,12 @@ public class LobbyScreen extends ScreenAdapter {
         }
         gameClient = new GameClient(hostAddress);
 
-        String[] players = gameClient.getPlayersInLobby();
-        playerList.setItems(players);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                actOnGameStatus();
+            }
+        }, 0, 0.2f);
     }
 
     @Override

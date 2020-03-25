@@ -37,6 +37,10 @@ public class Server implements Runnable {
         return response.toString();
     }
 
+    private String GET_S(){
+        return gameHost.getGameStatus();
+    }
+
      public void closeConnection(){
         gameHost.connectionList[index] = "";
         System.out.println("Closed connection with: " + clientAddress);
@@ -75,6 +79,9 @@ public class Server implements Runnable {
                     case "REF_P":
                         response = REF_P();
                         break;
+                    case "GET_S":
+                        response = GET_S();
+                        break;
                     case "STOP_C":
                         response = "STOP_C";
                         closeConnection();
@@ -83,6 +90,7 @@ public class Server implements Runnable {
                         response = "STOP_H";
                         stopHost();
                         break;
+
                     default:
                         response = "ERR-Invalid command";
                         break;
