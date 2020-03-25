@@ -12,10 +12,13 @@ import inf112.skeleton.app.model.GameState;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class MapHandler {
     private final TiledMap tiledMap;
     private int numberOfFlags;
+    private List<Location> lasers;
 
     /**
      * Load a map from a file. This will only work while the application is running
@@ -24,15 +27,22 @@ public class MapHandler {
      */
     public MapHandler(String filename) {
         tiledMap = new TmxMapLoader().load(filename);
-
+        lasers = new LinkedList<>();
         // count the flags
         for (int i = 0; i < getFlagLayer().getWidth(); i++) {
             for (int j = 0; j < getFlagLayer().getHeight(); j++) {
                 if (getFlagLayer().getCell(i, j) != null) {
                     numberOfFlags += 1;
                 }
+                TiledMapTileLayer.Cell wallCell = getWallLayer().getCell(i, j);
+                if (wallCell != null && TileType.hasLaser(wallCell)) {
+                    // the direction of the laser is the opposite of the direction of the wall
+                    Direction laserDirection = Objects.requireNonNull(TileType.getDirection(wallCell)).left().left();
+                    lasers.add(new Location(new RVector2(i, j), laserDirection));
+                }
             }
         }
+        System.out.println("LASERS: " + getLasersLocations().toString()); // fixme
     }
 
     /**
@@ -169,10 +179,6 @@ public class MapHandler {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.FLAG_LAYER);
     }
 
-    public TiledMapTileLayer getLaserLayer() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.LASER_LAYER);
-    }
-
     public boolean outOfBounds(Location loc) {
         return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
                 || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
@@ -181,5 +187,9 @@ public class MapHandler {
 
     public int getNumberOfFlags() {
         return this.numberOfFlags;
+    }
+
+    public List<Location> getLasersLocations() {
+        return lasers;
     }
 }

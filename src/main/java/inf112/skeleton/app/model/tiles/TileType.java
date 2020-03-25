@@ -46,6 +46,14 @@ public enum TileType {
         }
     }
 
+    public static boolean hasLaser(TiledMapTileLayer.Cell wallCell) {
+        try {
+            return (boolean) wallCell.getTile().getProperties().get("has_laser");
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+
     public String toString() {
         return this.name().toLowerCase();
     }
