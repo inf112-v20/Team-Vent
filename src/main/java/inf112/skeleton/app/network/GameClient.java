@@ -8,14 +8,12 @@ import com.badlogic.gdx.net.SocketHints;
 import java.io.*;
 
 public class GameClient {
-    private String hostName;
-    private int port = 10243;
     private BufferedReader input;
     private PrintWriter output;
 
     public GameClient(String hostName) {
-        this.hostName = hostName;
         SocketHints socketHints = new SocketHints();
+        int port = 10243;
         Socket clientSocket = Gdx.net.newClientSocket(Net.Protocol.TCP, hostName, port, socketHints);
 
         output = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -37,14 +35,14 @@ public class GameClient {
     }
 
     public void closeConnection(){
-        String response = sendAndReceiveMessage("STOP_C");
+        sendAndReceiveMessage("STOP_C");
     }
 
     public void stopHost(){
-        String response = sendAndReceiveMessage("STOP_H");
+        sendAndReceiveMessage("STOP_H");
     }
 
-    String sendAndReceiveMessage(String message){
+    private String sendAndReceiveMessage(String message){
         output.println(message);
         String response;
         try{

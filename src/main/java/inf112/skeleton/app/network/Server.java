@@ -9,14 +9,13 @@ public class Server implements Runnable {
     private Socket connectedSocket;
     private GameHost gameHost;
     private int index;
-    private String clientAddress;
     private boolean connected = true;
 
     public Server(GameHost gameHost, Socket connectedSocket, int index) {
         this.connectedSocket = connectedSocket;
         this.gameHost = gameHost;
         this.index = index;
-        clientAddress = connectedSocket.getRemoteAddress();
+        String clientAddress = connectedSocket.getRemoteAddress();
         gameHost.connectionList[index] = clientAddress;
     }
 
@@ -24,11 +23,11 @@ public class Server implements Runnable {
         return message.split("-");
     }
 
-    private String PING(){
+    private String ping(){
         return "PONG";
     }
 
-    private String REF_P(){
+    private String getConnectedPlayers(){
         StringBuilder response = new StringBuilder();
         for(String connection : gameHost.connectionList){
             response.append(connection);
@@ -37,11 +36,11 @@ public class Server implements Runnable {
         return response.toString();
     }
 
-    private String GET_S(){
+    private String getGameStatus(){
         return gameHost.getGameStatus();
     }
 
-    private String SET_S(String gameStatus) {
+    private String setGameStatus(String gameStatus) {
         gameHost.setGameStatus(gameStatus);
         return "";
     }
@@ -72,7 +71,7 @@ public class Server implements Runnable {
                 String response;
                 switch (command){
                     case "PING":
-                        response = PING();
+                        response = ping();
                         break;
                     case "SET_H":
                         response = ""; //TODO
@@ -81,13 +80,13 @@ public class Server implements Runnable {
                         response = ""; //TODO
                         break;
                     case "REF_P":
-                        response = REF_P();
+                        response = getConnectedPlayers();
                         break;
                     case "GET_S":
-                        response = GET_S();
+                        response = getGameStatus();
                         break;
                     case "SET_S":
-                        response = SET_S(commands[1]);
+                        response = setGameStatus(commands[1]);
                         break;
                     case "STOP_C":
                         response = "CLOSING CONNECTION";
@@ -103,15 +102,12 @@ public class Server implements Runnable {
                 }
                 outputStream.writeBytes(response + "\r");
                 outputStream.flush();
+            } catch (SocketException e){
+                closeConnection();
             } catch (IOException e){
-                if (e instanceof SocketException){
-                    closeConnection();
-                } else {
-                    e.printStackTrace();
-                    return;
-                }
+                e.printStackTrace();
+                return;
             }
         }
     }
-
 }

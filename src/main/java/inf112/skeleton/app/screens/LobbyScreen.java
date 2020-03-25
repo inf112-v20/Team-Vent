@@ -90,6 +90,9 @@ public class LobbyScreen extends ScreenAdapter {
                 break;
             case "START":
                 startGame();
+                break;
+            default:
+
         }
     }
 

@@ -9,7 +9,7 @@ public class ManualServerTest implements ApplicationListener {
     @Override
     public void create() {
         Thread gameHostThread = new Thread(() -> {
-            GameHost gameHost = new GameHost("127.0.0.1");
+             new GameHost("127.0.0.1");
         });
         gameHostThread.start();
     }

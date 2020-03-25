@@ -5,16 +5,10 @@ import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
-import com.badlogic.gdx.net.SocketHints;
-import org.lwjgl.Sys;
 
 import java.util.Arrays;
 
 public class GameHost {
-    private String hostName;
-    private int port = 10243;
-    private SocketHints socketHints;
-    private ServerSocketHints serverHints;
     private final ServerSocket serverSocket;
     private Boolean running = true;
     private Server[] servers;
@@ -22,11 +16,10 @@ public class GameHost {
     public String[] connectionList;
 
     public GameHost(String hostName) {
-        this.hostName = hostName;
-        SocketHints socketHints = new SocketHints();
         ServerSocketHints serverHints = new ServerSocketHints();
         // Accepting connections never time out. TODO: Probably a good idea to find another solution
         serverHints.acceptTimeout = 0;
+        int port = 10243;
         serverSocket = Gdx.net.newServerSocket(Net.Protocol.TCP, hostName, port, serverHints);
         connectionList = new String[8];
         servers = new Server[8];
