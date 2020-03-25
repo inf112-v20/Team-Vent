@@ -8,7 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Constants;
-import inf112.skeleton.app.model.Robot;
+import inf112.skeleton.app.model.GameState;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.LinkedList;
@@ -140,13 +140,13 @@ public class MapHandler {
         Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
-    public boolean robotInPath(Location location,LinkedList<Robot> robots) {
+    public boolean robotInPath(Location location, GameState state) {
         Location nextLocation = location.copy();
 
         boolean robotBlockingCurrentPath = false;
-        for (int i =0; i < robots.size(); i++) {
-           nextLocation = nextLocation.forward();
-            if (robots.get(i).getLocation().equals(nextLocation)){
+        for (int i = 0; i < state.stateInfos.length; i++) {
+           Location robotLoc = state.stateInfos[i].location;
+            if (robotLoc.getPosition().equals(nextLocation.getPosition())){
                 robotBlockingCurrentPath = true;
             }
         }

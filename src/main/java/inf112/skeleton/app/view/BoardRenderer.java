@@ -29,6 +29,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         renderRobots();
     }
 
+    //TODO update for several robots instead of static 0
     private void loadTextures() {
         TextureRegion robotFacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
         TiledMapTileLayer.Cell robotCell;
@@ -61,21 +62,16 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private void rotateCellToMatchRobot(Robot robot, TiledMapTileLayer.Cell cell) {
         // assuming the texture in the cell is facing north when rotation is 0
         Direction direction = robot.getDirection();
-        switch (direction) {
-            case NORTH:
-                cell.setRotation(0);
-                break;
-            case WEST:
-                cell.setRotation(1);
-                break;
-            case SOUTH:
-                cell.setRotation(2);
-                break;
-            case EAST:
-                cell.setRotation(3);
-                break;
-            default:
-                throw new IllegalArgumentException("Unexpected fifth direction");
+        if (direction == Direction.NORTH) {
+            cell.setRotation(0);
+        } else if (direction == Direction.WEST) {
+            cell.setRotation(1);
+        } else if (direction == Direction.SOUTH) {
+            cell.setRotation(2);
+        } else if (direction == Direction.EAST) {
+            cell.setRotation(3);
+        } else {
+            throw new IllegalArgumentException("Unexpected fifth direction");
         }
     }
 
