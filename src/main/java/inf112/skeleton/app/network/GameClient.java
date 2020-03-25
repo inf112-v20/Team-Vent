@@ -27,6 +27,14 @@ public class GameClient {
         return response.split("-");
     }
 
+    public void closeConnection(){
+        String response = sendAndReceiveMessage("STOP_C");
+    }
+
+    public void stopHost(){
+        String response = sendAndReceiveMessage("STOP_H");
+    }
+
     String sendAndReceiveMessage(String message){
         System.out.println(message);
         output.println(message);

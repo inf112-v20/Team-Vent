@@ -151,8 +151,4 @@ public class Player {
         String p = "playerHP: " + Integer.toString(args) + "\n";
         return p;
     }
-
-
-
-
 }

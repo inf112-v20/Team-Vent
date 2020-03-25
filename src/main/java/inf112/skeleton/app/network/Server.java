@@ -37,12 +37,17 @@ public class Server implements Runnable {
         return response.toString();
     }
 
-    private void closeConnection(){
+     public void closeConnection(){
         gameHost.connectionList[index] = "";
         System.out.println("Closed connection with: " + clientAddress);
         connectedSocket.dispose();
         Thread.currentThread().interrupt();
         connected = false;
+    }
+
+    private void stopHost(){
+        gameHost.stop();
+        closeConnection();
     }
 
     @Override
@@ -70,9 +75,13 @@ public class Server implements Runnable {
                     case "REF_P":
                         response = REF_P();
                         break;
-                    case "STOP":
-                        response = "STOP";
+                    case "STOP_C":
+                        response = "STOP_C";
                         closeConnection();
+                        break;
+                    case "STOP_H":
+                        response = "STOP_H";
+                        stopHost();
                         break;
                     default:
                         response = "ERR-Invalid command";

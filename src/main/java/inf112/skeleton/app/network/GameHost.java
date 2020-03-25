@@ -6,6 +6,7 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import org.lwjgl.Sys;
 
 import java.util.Arrays;
 
@@ -15,6 +16,8 @@ public class GameHost {
     private SocketHints socketHints;
     private ServerSocketHints serverHints;
     private final ServerSocket serverSocket;
+    private Boolean running = true;
+    private Server[] servers;
     public String[] connectionList;
 
     public GameHost(String hostName) {
@@ -25,18 +28,29 @@ public class GameHost {
         serverHints.acceptTimeout = 0;
         serverSocket = Gdx.net.newServerSocket(Net.Protocol.TCP, hostName, port, serverHints);
         connectionList = new String[8];
+        servers = new Server[8];
         Arrays.fill(connectionList, "");
-        while(true){
+        while(running){
             // Waits until a new connection is established
             Socket connectedSocket;
-            synchronized (serverSocket){
-                connectedSocket = serverSocket.accept(null);
+            synchronized (serverSocket) {
+                try {
+                    connectedSocket = serverSocket.accept(null);
+                    System.out.print("Connection established: ");
+                    System.out.println(connectedSocket.getRemoteAddress());
+                } catch (com.badlogic.gdx.utils.GdxRuntimeException e) {
+                    // For catching "Error accepting socket" exception when stopping the Game Host Server
+                    running = false;
+                    break;
+                }
             }
-            System.out.print("Connection established: ");
-            System.out.println(connectedSocket.getRemoteAddress());
+
             for(int i = 0; i < 8; i++){
                 if(connectionList[i].equals("")){
-                    Thread thread = new Thread(new Server(this, connectedSocket, i));
+                    Server server = new Server(this, connectedSocket, i);
+                    Thread thread = new Thread(server);
+                    servers[i] = server;
+                    thread.setName(String.format("Server %d", i));
                     thread.start();
                     break;
                 } else if (i == 7){
@@ -45,5 +59,15 @@ public class GameHost {
                 }
             }
         }
+        System.out.println("Shutting down GameHost Server");
+    }
+    public void stop(){
+        for(Server s : servers){
+            if(s != null){
+                s.closeConnection();
+            }
+        }
+        serverSocket.dispose();
+        running = false;
     }
 }

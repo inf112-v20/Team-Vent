@@ -1,16 +1,14 @@
 package inf112.skeleton.app.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.network.GameHost;
 
@@ -21,7 +19,7 @@ public class LobbyScreen extends ScreenAdapter {
     private GameClient gameClient;
     private List playerList;
 
-    public LobbyScreen(Boolean isHost, String hostAddress) {
+    public LobbyScreen(RoboRallyGame game, Boolean isHost, String hostAddress) {
         this.isHost = isHost;
         this.hostAddress = hostAddress;
 
@@ -50,21 +48,44 @@ public class LobbyScreen extends ScreenAdapter {
                 return true;
             }
         });
+
+        // Leave lobby button
+        Button backButton = new TextButton("Leave lobby", skin);
+        backButton.addListener(new InputListener(){
+            @Override
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button){
+                if(isHost){
+                    gameClient.stopHost();
+                } else {
+                    gameClient.closeConnection();
+                }
+                gameClient = null;
+                game.setScreen(new MenuScreen(game));
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                return true;
+            }
+        });
+
         table.setFillParent(true);
         table.setDebug(false);
-
         table.add(playerList);
-        table.row().pad(150);
+        table.row();
         table.add(refreshButton);
+        table.row();
+        table.add(backButton);
         stage.addActor(table);
-
     }
+
     @Override
     public void show(){
         if(isHost){
             Thread gameHostThread = new Thread(() -> {
                 GameHost gameHost = new GameHost(hostAddress);
             });
+            gameHostThread.setName("'Game Host Server");
             gameHostThread.start();
         }
         gameClient = new GameClient(hostAddress);
@@ -79,21 +100,5 @@ public class LobbyScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
-
-    }
-
-    public static void main(String[] args){
-        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        cfg.title = "RoboRally";
-        cfg.width = 600;
-        cfg.height = 600;
-        cfg.resizable = false;
-        new LwjglApplication(new Game() {
-            @Override
-            public void create() {
-                this.setScreen(new LobbyScreen(false, "127.0.0.1"));
-            }
-        }, cfg);
-
     }
 }

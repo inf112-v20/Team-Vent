@@ -67,7 +67,7 @@ public class MenuScreen extends ScreenAdapter {
         multiplayerPlayButton.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button){
-                game.setScreen(new LobbyScreen(hostCheckBox.isChecked(), ipTextField.getText()));
+                game.setScreen(new LobbyScreen(game, hostCheckBox.isChecked(), ipTextField.getText()));
             }
 
             @Override
