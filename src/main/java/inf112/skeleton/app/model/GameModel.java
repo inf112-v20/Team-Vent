@@ -55,7 +55,7 @@ public class GameModel {
     }
 
     public void endTurn() {
-        GameState gameState = getGameState();
+        GameState gameState = getInitialGameState();
 
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
@@ -70,7 +70,6 @@ public class GameModel {
                 gameState = updateLastState(gameState, tileSteps.get(i));
             }
             for (Robot robot : robots) {
-                System.out.println("test do laser i phase " + i + gameState);
                 doLaser(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, laserSteps.get(i));
             }
@@ -82,6 +81,7 @@ public class GameModel {
             delay += cardSteps.get(i).size();
             scheduleDoTilesTimed(delay, i);
             delay += tileSteps.get(i).size();
+            laserSteps.get(i).clear();
         }
         player.generateCardHand();
     }
@@ -178,14 +178,14 @@ public class GameModel {
     }
     //Lage getLaser som finner hvor alle laserene er så if robotInPath ta damage istedenfor, phase
     private void doLaser (int phaseNumber, GameState state, StateInfo robotState) {
-        StateInfo copy = robotState.copy();
+        Location copy = robotState.location.copy();
 
-            while (!tiledMapHandler.wallInPath(copy.location.forward()) &&
-                    !tiledMapHandler.outOfBounds(copy.location.forward())) {
+            while (!tiledMapHandler.wallInPath(copy.forward()) &&
+                    !tiledMapHandler.outOfBounds(copy.forward())) {
 
-                copy.location = copy.location.forward();
-                if (tiledMapHandler.robotInPath(copy.location, robots)) {
-                    System.out.println("you get shot by a laser take 1dmg");
+                copy = copy.forward();
+                if (tiledMapHandler.robotInPath(copy, state)) {
+                    System.out.println("Someone got shot by a laser take 1dmg");
                     laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
                     break;
                 }
@@ -200,7 +200,7 @@ public class GameModel {
         return true;
     }
 
-    public GameState getGameState() {
+    public GameState getInitialGameState() {
         GameState state = new GameState(robots.size());
         for (Robot robot : robots) {
             state.add(robot.getState());
