@@ -41,7 +41,6 @@ public class GameClient {
     }
 
     String sendAndReceiveMessage(String message){
-        System.out.println(message);
         output.println(message);
         String response;
         try{

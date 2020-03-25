@@ -43,7 +43,6 @@ public class Server implements Runnable {
 
      public void closeConnection(){
         gameHost.connectionList[index] = "";
-        System.out.println("Closed connection with: " + clientAddress);
         connectedSocket.dispose();
         Thread.currentThread().interrupt();
         connected = false;
@@ -83,11 +82,11 @@ public class Server implements Runnable {
                         response = GET_S();
                         break;
                     case "STOP_C":
-                        response = "STOP_C";
+                        response = "CLOSING CONNECTION";
                         closeConnection();
                         break;
                     case "STOP_H":
-                        response = "STOP_H";
+                        response = "STOPPING HOST";
                         stopHost();
                         break;
 
@@ -95,8 +94,6 @@ public class Server implements Runnable {
                         response = "ERR-Invalid command";
                         break;
                 }
-                System.out.println("Got " + command + " command from " + clientAddress);
-                System.out.println("Response: " + response);
                 outputStream.writeBytes(response + "\r");
                 outputStream.flush();
             } catch (IOException e){
