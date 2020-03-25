@@ -220,12 +220,14 @@
  <tile id="36">
   <properties>
    <property name="direction" type="int" value="2"/>
+   <property name="has_laser" type="bool" value="true"/>
    <property name="type" value="wall"/>
   </properties>
  </tile>
  <tile id="37">
   <properties>
    <property name="direction" type="int" value="3"/>
+   <property name="has_laser" type="bool" value="true"/>
    <property name="type" value="wall"/>
   </properties>
  </tile>
@@ -268,12 +270,14 @@
  <tile id="44">
   <properties>
    <property name="direction" type="int" value="0"/>
+   <property name="has_laser" type="bool" value="true"/>
    <property name="type" value="wall"/>
   </properties>
  </tile>
  <tile id="45">
   <properties>
    <property name="direction" type="int" value="1"/>
+   <property name="has_laser" type="bool" value="true"/>
    <property name="type" value="wall"/>
   </properties>
  </tile>
