@@ -2,17 +2,23 @@ package inf112.skeleton.app.model.board;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayers;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Constants;
+import inf112.skeleton.app.model.GameState;
 import inf112.skeleton.app.model.tiles.TileType;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class MapHandler {
     private final TiledMap tiledMap;
+    private int numberOfFlags;
+    private List<Location> lasers;
 
     /**
      * Load a map from a file. This will only work while the application is running
@@ -21,6 +27,22 @@ public class MapHandler {
      */
     public MapHandler(String filename) {
         tiledMap = new TmxMapLoader().load(filename);
+        lasers = new LinkedList<>();
+        // count the flags
+        for (int i = 0; i < getFlagLayer().getWidth(); i++) {
+            for (int j = 0; j < getFlagLayer().getHeight(); j++) {
+                if (getFlagLayer().getCell(i, j) != null) {
+                    numberOfFlags += 1;
+                }
+                TiledMapTileLayer.Cell wallCell = getWallLayer().getCell(i, j);
+                if (wallCell != null && TileType.hasLaser(wallCell)) {
+                    // the direction of the laser is the opposite of the direction of the wall
+                    Direction laserDirection = Objects.requireNonNull(TileType.getDirection(wallCell)).left().left();
+                    lasers.add(new Location(new RVector2(i, j), laserDirection));
+                }
+            }
+        }
+        System.out.println("LASERS: " + getLasersLocations().toString()); // fixme
     }
 
     /**
@@ -44,7 +66,9 @@ public class MapHandler {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 tileLayer.setCell(i, j, new TiledMapTileLayer.Cell());
-                setTile(i, j, "");
+                TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
+                tile.getProperties().put("type", "base_tile");
+                getTileLayer().getCell(i, j).setTile(tile);
             }
         }
         // create the object layer
@@ -126,19 +150,18 @@ public class MapHandler {
         Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
+    public boolean robotInPath(Location location, GameState state) {
+        Location nextLocation = location.copy();
 
-    public void setTile(int x, int y, String type) {
-        TiledMapTile tile = new StaticTiledMapTile(new TextureRegion());
-        tile.getProperties().put("type", type);
-        getTileLayer().getCell(x, y).setTile(tile);
-    }
-
-    /**
-     * @return a list of all objects in all map layers on the board
-     */
-    public MapObjects getRobotMapObjects() {
-        return getRobotLayer().getObjects();
-    }
+        boolean robotBlockingCurrentPath = false;
+        for (int i = 0; i < state.stateInfos.length; i++) {
+           Location robotLoc = state.stateInfos[i].location;
+            if (robotLoc.getPosition().equals(nextLocation.getPosition())){
+                robotBlockingCurrentPath = true;
+            }
+        }
+            return robotBlockingCurrentPath;
+        }
 
     public TiledMapTileLayer getRobotLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.ROBOT_LAYER);
@@ -152,11 +175,21 @@ public class MapHandler {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.WALL_LAYER);
     }
 
-    //public TiledMapTileLayer getLaserLayer() {
-    //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.LASER_LAYER_NAME);
-    //}
+    public TiledMapTileLayer getFlagLayer() {
+        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.FLAG_LAYER);
+    }
 
-    //public TiledMapTileLayer getFlagLayer() {
-    //    return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.FLAG_LAYER_NAME);
-    //}
+    public boolean outOfBounds(Location loc) {
+        return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
+                || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
+
+    }
+
+    public int getNumberOfFlags() {
+        return this.numberOfFlags;
+    }
+
+    public List<Location> getLasersLocations() {
+        return lasers;
+    }
 }

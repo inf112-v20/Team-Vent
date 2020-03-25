@@ -22,19 +22,6 @@ public class RobotTest {
     }
 
     @Test
-    public void execute() {
-        assertEquals(originalLocation, robot.getLocation());
-        robot.execute(new RotateLeftCard());
-        assertNotEquals(originalLocation, robot.getLocation());
-        robot.execute(new RotateLeftCard());
-        assertNotEquals(originalLocation, robot.getLocation());
-        robot.execute(new RotateLeftCard());
-        assertNotEquals(originalLocation, robot.getLocation());
-        robot.execute(new RotateLeftCard());
-        assertEquals(originalLocation, robot.getLocation());
-    }
-
-    @Test
     public void robotsHaveDifferentIdentities() {
         assertNotEquals(new Robot(), new Robot());
     }
@@ -55,5 +42,31 @@ public class RobotTest {
     public void setLocation() {
         robot.setLocation(originalLocation.forward());
         assertEquals(originalLocation.forward(), robot.getLocation());
+    }
+
+    @Test
+    public void noFlagsInTheBeginning() {
+        assertEquals(0, robot.getNumberOfFlags());
+    }
+
+    @Test
+    public void visitingTheWrongFlagHasNoEffect() {
+        robot.visitFlag(robot.getNumberOfFlags() + 10, robot.getLocation().forward());
+        assertEquals(0, robot.getNumberOfFlags());
+    }
+
+    @Test
+    public void visitingTheRightFlagIncreasesNumberOfFlags() {
+        Location flagLocation = robot.getLocation().forward();
+        robot.visitFlag(robot.getNumberOfFlags() + 1, flagLocation);
+        assertEquals(1, robot.getNumberOfFlags());
+    }
+
+    @Test
+    public void rebootingResetsToLastFlag() {
+        Location flagLocation = robot.getLocation().forward();
+        robot.visitFlag(robot.getNumberOfFlags() + 1, flagLocation);
+        robot.reboot();
+        assertEquals(flagLocation, robot.getLocation());
     }
 }
