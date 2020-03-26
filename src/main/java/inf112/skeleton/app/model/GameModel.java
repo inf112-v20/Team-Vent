@@ -9,6 +9,7 @@ import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.IProgramCard;
+import inf112.skeleton.app.model.cards.MoveBackwardCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
 
@@ -135,11 +136,28 @@ public class GameModel {
     private void doCard (int phaseNumber, GameState initialState, StateInfo robotState) {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-            if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(robotState.location))) {
+            if (cardCanBePlayed(card, robotState.location, robotState)){
                 Location loc = robotState.location.copy();
                 GameState newState = initialState.updateState(robotState.updateLocation(card.instruction(loc)));
                 cardSteps.get(phaseNumber).add(newState);
             }
+
+    }
+    private boolean cardCanBePlayed(IProgramCard card, Location loc, StateInfo robotState){
+        Location cop = loc.copy();
+
+        boolean canBePlayed =true;
+        if (card == null){
+            canBePlayed = false;
+        }
+        else if ((card instanceof MoveForwardCard &&  tiledMapHandler.wallInPath(cop))){
+            canBePlayed =false;
+        }
+        else if ((card instanceof MoveBackwardCard &&
+                        tiledMapHandler.wallInPath(robotState.location.rotateLeft().rotateLeft()))) {
+            canBePlayed = false;
+        }
+        return canBePlayed;
     }
 
     private void doFlag(StateInfo state) {
