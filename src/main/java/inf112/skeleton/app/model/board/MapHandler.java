@@ -42,7 +42,7 @@ public class MapHandler {
                 }
             }
         }
-        System.out.println("LASERS: " + getLasersLocations().toString()); // fixme
+
     }
 
     /**

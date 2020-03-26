@@ -172,18 +172,43 @@ public class GameModel {
         if (states.peekLast() != null) {return states.peekLast();}
         return state;
     }
-    //Lage getLaser som finner hvor alle laserene er så if robotInPath ta damage istedenfor, phase
+
     private void doLaser (int phaseNumber, GameState state, StateInfo robotState) {
         Location copy = robotState.location.copy();
+        tiledMapHandler.getLasersLocations();
+        Location wallLaserCopy;
 
-            while (!tiledMapHandler.wallInPath(copy.forward()) &&
-                    !tiledMapHandler.outOfBounds(copy.forward())) {
 
+                //Wall Laser check
+                for (int i=0; i < tiledMapHandler.getLasersLocations().size(); i++ ) {
+                    wallLaserCopy = tiledMapHandler.getLasersLocations().get(i);
+                    while (!tiledMapHandler.wallInPath(wallLaserCopy) &&
+                            !tiledMapHandler.outOfBounds(wallLaserCopy)) {
+
+                        if (tiledMapHandler.robotInPath(wallLaserCopy, state)){
+                            System.out.println("Someone got shot by a wall-laser take 1dmg");
+                            player.setPlayerHP(-1);
+                            laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
+                            break;
+                        }
+                        else if (tiledMapHandler.robotInPath(wallLaserCopy.forward(), state)){
+                            System.out.println("Someone got shot by a wall-laser take 1dmg");
+                            player.setPlayerHP(-1);
+                            laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
+
+                            break;
+                        }
+                        wallLaserCopy = wallLaserCopy.forward();
+                    }
+                }
+                //Robot laser check
+        while (!tiledMapHandler.wallInPath(copy.forward()) && !tiledMapHandler.outOfBounds(copy.forward())) {
                 copy = copy.forward();
                 if (tiledMapHandler.robotInPath(copy, state)) {
-                    System.out.println("Someone got shot by a laser take 1dmg");
+                    System.out.println("Someone got shot by a robot-laser take 1dmg");
+                    player.setPlayerHP(-1);
                     laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
-                    break;
+                break;
                 }
             }
     }
