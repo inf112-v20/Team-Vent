@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
+import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.screens.GameOverScreen;
 import inf112.skeleton.app.screens.GameScreen;
 
@@ -16,6 +17,15 @@ public class GameController extends InputAdapter {
     private String map_filename;
 
     public GameController(RoboRallyGame game, String map_filename) {
+        this.map_filename = map_filename;
+        this.gameModel = new GameModel(map_filename);
+        this.game = game;
+        game.setScreen(new GameScreen(gameModel));
+        Gdx.input.setInputProcessor(this);
+    }
+
+    //TODO: Make use of the gameClient class to implement multiplayer
+    public GameController(RoboRallyGame game, String map_filename, GameClient gameClient) {
         this.map_filename = map_filename;
         this.gameModel = new GameModel(map_filename);
         this.game = game;

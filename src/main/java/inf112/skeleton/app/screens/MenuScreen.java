@@ -42,15 +42,32 @@ public class MenuScreen extends ScreenAdapter {
         mapSelectorBox.setItems(mapSelectorOptions);
 
 
+        // Host checkbox
+        CheckBox hostCheckBox = new CheckBox("Host", skin);
+
+        // Ip text field
+        TextField ipTextField = new TextField("127.0.0.1", skin);
+
         // Play button
         Button playButton = new TextButton("Play", skin);
         playButton.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button){
-                String selectedResolution = (String) resolutionBox.getSelected();
-                String resolutions[] = selectedResolution.split("x");
-                //Gdx.graphics.setWindowedMode(Integer.parseInt(resolutions[0]), Integer.parseInt(resolutions[1]));
                 new GameController(game, (String) mapSelectorBox.getSelected());
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                return true;
+            }
+        });
+
+        // Play multiplayer button
+        Button multiplayerPlayButton = new TextButton("Multiplayer", skin);
+        multiplayerPlayButton.addListener(new InputListener(){
+            @Override
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button){
+                game.setScreen(new LobbyScreen(game, hostCheckBox.isChecked(), ipTextField.getText()));
             }
 
             @Override
@@ -77,6 +94,11 @@ public class MenuScreen extends ScreenAdapter {
         table.add(logo).top().colspan(2).padBottom(100).padTop(50);
         table.row().padBottom(25);
         table.add(playButton).prefHeight(50).prefWidth(200).colspan(2);
+        table.row().padBottom(25);
+        table.add(multiplayerPlayButton).prefHeight(50).prefWidth(200).colspan(2);
+        table.row().padBottom(25);
+        table.add(ipTextField).colspan(2);
+        table.add(hostCheckBox);
         table.row().padBottom(25);
         table.add(mapSelectorLabel).right();
         table.add(mapSelectorBox).left();
