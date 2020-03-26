@@ -9,6 +9,7 @@ import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.IProgramCard;
+import inf112.skeleton.app.model.cards.MoveBackwardCard;
 import inf112.skeleton.app.model.cards.MoveForwardCard;
 import inf112.skeleton.app.model.tiles.TileType;
 
@@ -61,6 +62,7 @@ public class GameModel {
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
         for (int i = 0; i < PHASES; i++) {
+
             for (Robot robot : robots) {
                 doCard(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, cardSteps.get(i));
@@ -138,11 +140,27 @@ public class GameModel {
     private void doCard(int phaseNumber, GameState initialState, RobotState robotState) {
         IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-        if ((card != null) && !(card instanceof MoveForwardCard && tiledMapHandler.wallInPath(robotState.getLocation()))) {
-            Location loc = robotState.getLocation();
+        if (cardCanBePlayed(card, robotState.getLocation(), robotState)) {
+            Location loc = robotState.getLocation().copy();
             GameState newState = initialState.updateState(robotState.updateLocation(card.instruction(loc)));
             cardSteps.get(phaseNumber).add(newState);
         }
+
+    }
+
+    private boolean cardCanBePlayed(IProgramCard card, Location loc, RobotState robotState) {
+        Location cop = loc.copy();
+
+        boolean canBePlayed = true;
+        if (card == null) {
+            canBePlayed = false;
+        } else if ((card instanceof MoveForwardCard && tiledMapHandler.wallInPath(cop))) {
+            canBePlayed = false;
+        } else if ((card instanceof MoveBackwardCard &&
+                tiledMapHandler.wallInPath(robotState.getLocation().rotateLeft().rotateLeft()))) {
+            canBePlayed = false;
+        }
+        return canBePlayed;
     }
 
     private void doFlag(int phaseNumber, GameState initialState, RobotState robotState) {
@@ -178,20 +196,43 @@ public class GameModel {
         return state;
     }
 
-    //Lage getLaser som finner hvor alle laserene er så if robotInPath ta damage istedenfor, phase
     private void doLaser(int phaseNumber, GameState state, RobotState robotState) {
-        Location copy = robotState.getLocation();
+        Location copy = robotState.getLocation().copy();
+        tiledMapHandler.getLasersLocations();
+        Location wallLaserCopy;
 
-        while (!tiledMapHandler.wallInPath(copy.forward()) &&
-                !tiledMapHandler.outOfBounds(copy.forward())) {
 
+        //Wall Laser check
+        for (int i = 0; i < tiledMapHandler.getLasersLocations().size(); i++) {
+            wallLaserCopy = tiledMapHandler.getLasersLocations().get(i);
+            while (!tiledMapHandler.wallInPath(wallLaserCopy) &&
+                    !tiledMapHandler.outOfBounds(wallLaserCopy)) {
+
+                if (tiledMapHandler.robotInPath(wallLaserCopy, state)) {
+                    System.out.println("Someone got shot by a wall-laser take 1dmg");
+                    player.setPlayerHP(-1);
+                    laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
+                    break;
+                } else if (tiledMapHandler.robotInPath(wallLaserCopy.forward(), state)) {
+                    System.out.println("Someone got shot by a wall-laser take 1dmg");
+                    player.setPlayerHP(-1);
+                    laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
+
+                    break;
+                }
+                wallLaserCopy = wallLaserCopy.forward();
+            }
+        }
+        //Robot laser check
+        while (!tiledMapHandler.wallInPath(copy.forward()) && !tiledMapHandler.outOfBounds(copy.forward())) {
             copy = copy.forward();
             if (tiledMapHandler.robotInPath(copy, state)) {
-                log(String.format("%s got shot by a laser take 1dmg", robotState.getRobot().toString()));
+                log("Someone got shot by a robot-laser take 1dmg");
+                player.setPlayerHP(-1);
                 laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
                 break;
             }
-            }
+        }
     }
 
     public GameState getInitialGameState() {
