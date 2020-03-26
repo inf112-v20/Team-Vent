@@ -5,17 +5,14 @@ import inf112.skeleton.app.model.board.Location;
 
 
 public class Robot {
-    private Location location;
-    private int damage;
-    private boolean dead;
-    private int capturedFlags = 0; // number of flags that have been visited
-    private Location lastSaved;  // the location the robot will return to if it dies
+    private RobotState state;
 
     public Robot(Location location) {
-        this.location = location;
-        this.lastSaved = location;
-        this.damage = 0;
-        this.dead = false;
+        this.state = new RobotState(this, location, 0, false, 0, location);
+    }
+
+    public Robot(RobotState state) {
+        this.state = state;
     }
 
     public Robot() {
@@ -23,11 +20,7 @@ public class Robot {
     }
 
     public Location getLocation() {
-        return this.location.copy();
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
+        return this.state.getLocation();
     }
 
     public Direction getDirection() {
@@ -42,43 +35,24 @@ public class Robot {
         return getLocation().getPosition().getY();
     }
 
-    public void updateState(StateInfo state) {
-        location = state.location.copy();
-        damage = state.damage;
-        dead = state.dead;
+    public void updateState(RobotState state) {
+        this.state = state;
     }
 
-    public StateInfo getState() {
-        return new StateInfo(this, location, damage, dead);
+    public RobotState getState() {
+        return state.copy();
     }
 
     public Robot copy() {
-        return new Robot(this.location.copy());
+        return new Robot(getLocation().copy());
     }
 
-    public int getNumberOfFlags() {
-        return capturedFlags;
-    }
-
-    public void visitFlag(int flagNumber, Location location) {
-        if (flagNumber == capturedFlags + 1) { // if this flag is the next flag
-            this.lastSaved = location;
-            this.capturedFlags += 1;
-            System.out.println("Visited flag number " + capturedFlags);
-        }
-    }
-
-    /**
-     * Come alive if dead and move to the most recently captured flag, or to the starting position if there are no
-     * captured flags
-     */
-    public void reboot() {
-        this.dead = false;
-        this.location = this.lastSaved;
+    public int getCapturedFlags() {
+        return state.getCapturedFlags();
     }
 
     public boolean alive() {
-        return !dead;
+        return !state.getDead();
     }
 }
 
