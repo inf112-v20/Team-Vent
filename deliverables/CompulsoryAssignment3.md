@@ -56,7 +56,7 @@ Agenda:
 
 Meeting Notes:
 
-We will use discord for voice chat, codeshare for sharing our code, awwapp for a whiteboard, and slack for chat log with links and other useful things. Talked even more about the our user stories. (This was the day everyone had to leave campus)
+We will use discord for voice chat, codeshare for sharing our code, awwapp for a whiteboard, and slack for chat log with links and other useful things. Talked even more about the user stories. (This was the day everyone had to leave campus)
 
 Attendance: Everyone except Caroline
 
@@ -79,7 +79,7 @@ We looked at the feedback, and asked Eric some questions about it. Everyone also
 
 Attendance: Everyone
 
-** Meeting 23.04.2020
+### Meeting 23.04.2020
 
 Agenda:
 
@@ -164,7 +164,7 @@ Our communication has also changed over the past weeks. This has also had an imp
 
 **MVP requirements:**
 
-The list above shows which requirements we consider as MVP requirements. Before every iteration we decide which requirements we will focus on and hopefully manage to fulfill. Last iteration one of the requirements we chose to focus on was “Play a round”. In this iteration we realized that part of playing a round is capturing flags. We did not implement this in the last iteration, but managed to do this in this iteration. The other requirements focused on in this iteration is: The robot can take damage, play local network multiplayer and implement lasers. We choose these requirements as MVP because these requirements are an important part of creating a functional RoboRally. 
+The list above shows which requirements we consider as MVP. Before every iteration we decide which requirements we will focus on and hopefully manage to fulfill. Last iteration one of the requirements we chose to focus on was “Play a round”. In this iteration we realized that part of playing a round is capturing flags. We did not implement this in the last iteration, but managed to do this in this iteration. The other requirements focused on in this iteration is: The robot can take damage, play local network multiplayer and implement lasers. We choose these requirements as MVP because these requirements are an important part of creating a functional RoboRally. 
 
 **User stories:**
 
@@ -198,3 +198,47 @@ The list above shows which requirements we consider as MVP requirements. Before 
 - Trying to join a game with an ip that is not hosting causes an exception
 - Joining a full lobby causes the application to freeze until a slot is open or an exception is thrown
 - Joining a game in progress sends the player to the lobby instead
+- When the robot gets shot by a wall laser it gets triggered more times than supposed to
+
+## Code
+
+**How to run the program**
+
+The program is built using Maven. To run the game, run `Launcher.java` (main) in the master branch. 
+
+**How to play**
+
+- When the Menu Screen comes up you have some options:
+
+**Quick Play:** (This was our first functionality; we are now working to realize the multiplayer) 
+
+Press Play and start the game without multiplayer.
+
+-	Program the robot by choosing cards to the right using the keyboard numbers 1-9 (The cards appears in the number slots)
+
+-	To generate a new hand press <kbd>G</kbd>
+
+-	To start a round press <kbd>E</kbd>
+
+-	You can also move around with <kbd>&#8593;</kbd> and use <kbd>&#8592;</kbd> or <kbd>&#8594;</kbd> to rotate the robot
+
+-	The players life and HP are currently shown up in the upper left corner of the sidebar 
+
+-	Some tiles to notice when programming the robot:
+    - **Normal conveyer belt:** move 1 space in the directon of the arrow 
+    - **Express conveyer belt:** move 2 spaces in the direction of the arrrow
+    - **Gears:** rotate 90° in the direction of the arrows 
+  
+**Multiplayer:** (Playing multiplayer as of now is not completely implemented, but it is possible to set up a game using the lobby system)
+
+-  Decide on a host
+
+-  The host needs check the host checkbox and type in their IPv4 Adress in the textbox and press the "Multiplayer" button
+
+-  The other players can then join the lobby by typing in the host's IPv4 Adress and pressing the "Multiplayer" button
+
+-  When all the players are in the lobby, the host can press the "Start Game" button
+
+-  The game itself does not currently support mutiplayer so this only starts a single player game for every player in the lobby
+
+(For testing purposes, 127.0.0.1 can be used to test the mutiplayer by running the program in parallel with one host and up to 7 other players)
