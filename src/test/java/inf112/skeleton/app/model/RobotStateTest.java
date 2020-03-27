@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class RobotStateTest {
-    RobotState state;
+    private RobotState state;
 
     @Before
     public void beforeEach() {
