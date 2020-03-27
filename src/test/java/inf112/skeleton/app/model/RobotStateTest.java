@@ -32,7 +32,7 @@ public class RobotStateTest {
     public void rebootingResetsToLastFlag() {
         Location flagLocation = state.getLocation().forward();
         state.visitFlag(state.getCapturedFlags() + 1, flagLocation);
-        state.reboot();
-        assertEquals(flagLocation, state.getLocation());
+        RobotState newState = state.reboot();
+        assertEquals(flagLocation, newState.getLocation());
     }
 }
