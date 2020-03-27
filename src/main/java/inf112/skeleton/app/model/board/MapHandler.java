@@ -42,7 +42,6 @@ public class MapHandler {
                 }
             }
         }
-
     }
 
     /**
@@ -154,14 +153,14 @@ public class MapHandler {
         Location nextLocation = location.copy();
 
         boolean robotBlockingCurrentPath = false;
-        for (int i = 0; i < state.stateInfos.length; i++) {
-           Location robotLoc = state.stateInfos[i].location;
-            if (robotLoc.getPosition().equals(nextLocation.getPosition())){
+        for (int i = 0; i < state.robotStates.length; i++) {
+            Location robotLoc = state.robotStates[i].getLocation();
+            if (robotLoc.getPosition().equals(nextLocation.getPosition())) {
                 robotBlockingCurrentPath = true;
             }
         }
-            return robotBlockingCurrentPath;
-        }
+        return robotBlockingCurrentPath;
+    }
 
     public TiledMapTileLayer getRobotLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.ROBOT_LAYER);

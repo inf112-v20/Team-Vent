@@ -2,29 +2,28 @@ package inf112.skeleton.app.model;
 
 public class GameState {
     private int size;
-    public StateInfo[] stateInfos;
+    public RobotState[] robotStates;
     private int added;
 
-    public GameState (int size) {
+    public GameState(int size) {
         this.size = size;
-        stateInfos = new StateInfo[size];
+        robotStates = new RobotState[size];
         added = 0;
     }
 
-    public void add (StateInfo stateInfo) {
-        stateInfos[added] = stateInfo.copy();
+    public void add(RobotState robotState) {
+        robotStates[added] = robotState.copy();
         added++;
     }
 
     //you return a new gameState when a step happens (atleast one thing happens)
-    public GameState updateState(StateInfo stateInfo) {
+    public GameState updateState(RobotState robotState) {
         GameState newState = new GameState(size);
         for (int i = 0; i < size; i++) {
-            if (stateInfos[i].robot.equals(stateInfo.robot)) {
-                newState.add(stateInfo);
-            }
-            else {
-                newState.add(stateInfos[i]);
+            if (robotStates[i].getRobot().equals(robotState.getRobot())) {
+                newState.add(robotState);
+            } else {
+                newState.add(robotStates[i]);
             }
         }
         return newState;
@@ -32,19 +31,19 @@ public class GameState {
 
     //For when more than one thing happens in a single step, you can edit the state instead of updating.
     //For example when one robot pushes another robot, or if we decide to display conveyors at the same time for all robots
-    public void editState(StateInfo stateInfo) {
+    public void editState(RobotState robotState) {
         for (int i = 0; i < size; i++) {
-            if (stateInfos[i].robot.equals(stateInfo.robot)) {
-                stateInfos[i] = stateInfo;
+            if (robotStates[i].getRobot().equals(robotState.getRobot())) {
+                robotStates[i] = robotState;
             }
         }
     }
 
     //TODO make hashmap in GameState so for loop is not required
-    public StateInfo getState (Robot robot) {
+    public RobotState getState(Robot robot) {
         for (int i = 0; i < size; i++) {
-            if (stateInfos[i].robot.equals(robot)) {
-                return stateInfos[i];
+            if (robotStates[i].getRobot().equals(robot)) {
+                return robotStates[i];
             }
         }
         return null;

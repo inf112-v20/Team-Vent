@@ -4,7 +4,6 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.RVector2;
-import inf112.skeleton.app.model.cards.RotateLeftCard;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,35 +37,9 @@ public class RobotTest {
         assertEquals(originalLocation.getPosition().getY(), robot.getY());
     }
 
-    @Test
-    public void setLocation() {
-        robot.setLocation(originalLocation.forward());
-        assertEquals(originalLocation.forward(), robot.getLocation());
-    }
 
     @Test
     public void noFlagsInTheBeginning() {
-        assertEquals(0, robot.getNumberOfFlags());
-    }
-
-    @Test
-    public void visitingTheWrongFlagHasNoEffect() {
-        robot.visitFlag(robot.getNumberOfFlags() + 10, robot.getLocation().forward());
-        assertEquals(0, robot.getNumberOfFlags());
-    }
-
-    @Test
-    public void visitingTheRightFlagIncreasesNumberOfFlags() {
-        Location flagLocation = robot.getLocation().forward();
-        robot.visitFlag(robot.getNumberOfFlags() + 1, flagLocation);
-        assertEquals(1, robot.getNumberOfFlags());
-    }
-
-    @Test
-    public void rebootingResetsToLastFlag() {
-        Location flagLocation = robot.getLocation().forward();
-        robot.visitFlag(robot.getNumberOfFlags() + 1, flagLocation);
-        robot.reboot();
-        assertEquals(flagLocation, robot.getLocation());
+        assertEquals(0, robot.getState().getCapturedFlags());
     }
 }

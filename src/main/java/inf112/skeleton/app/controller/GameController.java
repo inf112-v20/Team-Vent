@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputAdapter;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
+import inf112.skeleton.app.model.RobotState;
+import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.screens.GameOverScreen;
 import inf112.skeleton.app.screens.GameScreen;
@@ -53,15 +55,17 @@ public class GameController extends InputAdapter {
      */
     private void handleTestingInput(int keycode) {
         Robot robot = gameModel.getRobots().get(0);
+        RobotState newState = robot.getState().copy();
+        Location current = newState.getLocation();
         switch (keycode) {
             case Input.Keys.LEFT:
-                robot.setLocation(robot.getLocation().rotateLeft());
+                robot.updateState(robot.getState().updateLocation(current.rotateLeft()));
                 break;
             case Input.Keys.UP:
-                robot.setLocation(robot.getLocation().forward());
+                robot.updateState(robot.getState().updateLocation(current.forward()));
                 break;
             case Input.Keys.RIGHT:
-                robot.setLocation(robot.getLocation().rotateRight());
+                robot.updateState(robot.getState().updateLocation(current.rotateRight()));
                 break;
             default:
         }
