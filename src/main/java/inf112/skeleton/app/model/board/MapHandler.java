@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.GameState;
+import inf112.skeleton.app.model.Robot;
+import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.LinkedList;
@@ -149,17 +151,26 @@ public class MapHandler {
         Direction nextLocationWallDirection = getDirection(nextLocation.getPosition(), Constants.WALL_LAYER);
         return nextLocationWallDirection == nextLocation.getDirection().left().left();
     }
-    public boolean robotInPath(Location location, GameState state) {
-        Location nextLocation = location.copy();
 
-        boolean robotBlockingCurrentPath = false;
-        for (int i = 0; i < state.robotStates.length; i++) {
-            Location robotLoc = state.robotStates[i].getLocation();
-            if (robotLoc.getPosition().equals(nextLocation.getPosition())) {
-                robotBlockingCurrentPath = true;
+    /**
+     * Return the first robot in the line of vision from a location, if there is one. Walls block the line of vision
+     *
+     * @param location the point of view
+     * @param state    the game state
+     * @return a robot that is in the line of vision or null
+     */
+    public Robot robotInLineOfVision(Location location, GameState state) {
+        while (!(wallInPath(location) || outOfBounds(location.forward()))) {
+            // if one of the robots is on the next tile then return it
+            for (int i = 0; i < state.robotStates.length; i++) {
+                RobotState robotState = state.robotStates[i];
+                if (robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
+                    return robotState.getRobot();
+                }
             }
+            location = location.forward();
         }
-        return robotBlockingCurrentPath;
+        return null;
     }
 
     public TiledMapTileLayer getRobotLayer() {
@@ -182,10 +193,6 @@ public class MapHandler {
         return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
                 || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
 
-    }
-
-    public int getNumberOfFlags() {
-        return this.numberOfFlags;
     }
 
     public List<Location> getLasersLocations() {
