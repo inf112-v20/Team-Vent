@@ -27,7 +27,7 @@ public class RobotState {
 
     public RobotState updateDamage(int damage) {
         RobotState other = this.copy();
-        other.damage = damage;
+        other.damage = other.damage + damage;
         return other;
     }
 

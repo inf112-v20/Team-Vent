@@ -21,8 +21,8 @@ public class GameScreen extends ScreenAdapter {
 
     public GameScreen(GameModel gameModel) {
         this.gameModel = gameModel;
-        int tilesWide = gameModel.getTiledMapHandler().getWidth();
-        int tilesHigh = gameModel.getTiledMapHandler().getHeight();
+        int tilesWide = gameModel.getMapHandler().getWidth();
+        int tilesHigh = gameModel.getMapHandler().getHeight();
         OrthographicCamera camera = new OrthographicCamera();
         camera.setToOrtho(false, tilesWide + tilesWide / 3f, tilesHigh);
         camera.update();

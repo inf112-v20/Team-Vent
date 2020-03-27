@@ -16,7 +16,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private IdentityHashMap<Robot, TiledMapTileLayer.Cell> robotsToCellsHashMap;
 
     public BoardRenderer(GameModel gameModel) {
-        super(gameModel.getTiledMapHandler().getMap(), 1 / gameModel.getTiledMapHandler().getTileLayer().
+        super(gameModel.getMapHandler().getMap(), 1 / gameModel.getMapHandler().getTileLayer().
                 getTileWidth());
         this.gameModel = gameModel;
         loadTextures();
@@ -47,14 +47,14 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
             if (!robot.alive()) continue;
             TiledMapTileLayer.Cell cell = robotsToCellsHashMap.get(robot);
             rotateCellToMatchRobot(robot, cell);
-            gameModel.getTiledMapHandler().getRobotLayer().setCell(robot.getX(), robot.getY(), cell);
+            gameModel.getMapHandler().getRobotLayer().setCell(robot.getX(), robot.getY(), cell);
         }
     }
 
     private void clearRobotsFromMap() {
-        for (int i = 0; i < gameModel.getTiledMapHandler().getWidth(); i++) {
-            for (int j = 0; j < gameModel.getTiledMapHandler().getWidth(); j++) {
-                gameModel.getTiledMapHandler().getRobotLayer().setCell(i, j, null);
+        for (int i = 0; i < gameModel.getMapHandler().getWidth(); i++) {
+            for (int j = 0; j < gameModel.getMapHandler().getWidth(); j++) {
+                gameModel.getMapHandler().getRobotLayer().setCell(i, j, null);
             }
         }
     }

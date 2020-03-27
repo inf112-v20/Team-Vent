@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GameModel {
 
-    private static final boolean ENABLE_LOGGING = false;
+    private static final boolean ENABLE_LOGGING = true;
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
     private final MapHandler tiledMapHandler;
@@ -48,7 +48,7 @@ public class GameModel {
         tiledMapHandler = new MapHandler(map_filename);
     }
 
-    public MapHandler getTiledMapHandler() {
+    public MapHandler getMapHandler() {
         return this.tiledMapHandler;
     }
 
@@ -72,13 +72,15 @@ public class GameModel {
                 gameState = updateLastState(gameState, tileSteps.get(i));
             }
             for (Robot robot : robots) {
-                doLaser(i, gameState, gameState.getState(robot));
+                doRobotLaser(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, laserSteps.get(i));
             }
             for (Robot robot : robots) {
                 doFlag(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, flagVisitSteps.get(i));
             }
+            doWallLasers(i, gameState);
+            gameState = updateLastState(gameState, laserSteps.get(i));
         }
 
         int delay = 0;
@@ -165,7 +167,7 @@ public class GameModel {
 
     private void doFlag(int phaseNumber, GameState initialState, RobotState robotState) {
         if (robotState.getDead()) return;
-        TiledMapTileLayer.Cell cell = getTiledMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
+        TiledMapTileLayer.Cell cell = getMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
                 robotState.getLocation().getPosition().getY());
         if (cell == null) return; // there is no flag here
         int flagNumber = (int) cell.getTile().getProperties().get("number");
@@ -196,41 +198,23 @@ public class GameModel {
         return state;
     }
 
-    private void doLaser(int phaseNumber, GameState state, RobotState robotState) {
-        Location copy = robotState.getLocation().copy();
-        tiledMapHandler.getLasersLocations();
-        Location wallLaserCopy;
-
-
-        //Wall Laser check
-        for (int i = 0; i < tiledMapHandler.getLasersLocations().size(); i++) {
-            wallLaserCopy = tiledMapHandler.getLasersLocations().get(i);
-            while (!tiledMapHandler.wallInPath(wallLaserCopy) &&
-                    !tiledMapHandler.outOfBounds(wallLaserCopy)) {
-
-                if (tiledMapHandler.robotInPath(wallLaserCopy, state)) {
-                    System.out.println("Someone got shot by a wall-laser take 1dmg");
-                    player.setPlayerHP(-1);
-                    laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
-                    break;
-                } else if (tiledMapHandler.robotInPath(wallLaserCopy.forward(), state)) {
-                    System.out.println("Someone got shot by a wall-laser take 1dmg");
-                    player.setPlayerHP(-1);
-                    laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
-
-                    break;
-                }
-                wallLaserCopy = wallLaserCopy.forward();
-            }
+    private void doRobotLaser(int phaseNumber, GameState gameState, RobotState robotState) {
+        if (robotState.getDead()) return;
+        Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
+        if (toShoot != null) {
+            log(robotState.getRobot().toString() + " fired at " + toShoot.toString());
+            RobotState shotState = gameState.getState(toShoot).updateDamage(-1);
+            laserSteps.get(phaseNumber).add(gameState.updateState(shotState));
         }
-        //Robot laser check
-        while (!tiledMapHandler.wallInPath(copy.forward()) && !tiledMapHandler.outOfBounds(copy.forward())) {
-            copy = copy.forward();
-            if (tiledMapHandler.robotInPath(copy, state)) {
-                log("Someone got shot by a robot-laser take 1dmg");
-                player.setPlayerHP(-1);
-                laserSteps.get(phaseNumber).add(state.updateState(robotState.updateDamage(1)));
-                break;
+    }
+
+    private void doWallLasers(int phaseNumber, GameState gameState) {
+        for (Location laserLocation : getMapHandler().getLasersLocations()) {
+            Robot toShoot = getMapHandler().robotInLineOfVision(laserLocation, gameState);
+            if (toShoot != null) {
+                log(toShoot.toString() + " was shot by the wall laser at " + laserLocation.getPosition().toString());
+                RobotState shotRobotState = gameState.getState(toShoot).updateDamage(-1);
+                laserSteps.get(phaseNumber).add(gameState.updateState(shotRobotState));
             }
         }
     }
