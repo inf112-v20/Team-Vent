@@ -96,5 +96,5 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="9" name="Robot"/>
+ <objectgroup id="9" name="Robot" visible="0"/>
 </map>

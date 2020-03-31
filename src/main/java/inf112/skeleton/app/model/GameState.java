@@ -1,8 +1,8 @@
 package inf112.skeleton.app.model;
 
 public class GameState {
-    private int size;
     public RobotState[] robotStates;
+    private int size;
     private int added;
 
     public GameState(int size) {
@@ -48,5 +48,4 @@ public class GameState {
         }
         return null;
     }
-
 }

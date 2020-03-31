@@ -13,6 +13,7 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.tiles.TileType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class MapHandler {
     private final TiledMap tiledMap;
     private int numberOfFlags;
+    private List<Location> startLocations = new ArrayList<>(8);
     private List<Location> lasers;
 
     /**
@@ -31,17 +33,39 @@ public class MapHandler {
         tiledMap = new TmxMapLoader().load(filename);
         lasers = new LinkedList<>();
         // count the flags
-        for (int i = 0; i < getFlagLayer().getWidth(); i++) {
-            for (int j = 0; j < getFlagLayer().getHeight(); j++) {
+        for (int i = 0; i < getWidth(); i++) {
+            for (int j = 0; j < getHeight(); j++) {
+                // count the flags
                 if (getFlagLayer().getCell(i, j) != null) {
                     numberOfFlags += 1;
                 }
+                // locate the wall lasers
                 TiledMapTileLayer.Cell wallCell = getWallLayer().getCell(i, j);
                 if (wallCell != null && TileType.hasLaser(wallCell)) {
                     // the direction of the laser is the opposite of the direction of the wall
                     Direction laserDirection = Objects.requireNonNull(TileType.getDirection(wallCell)).left().left();
                     lasers.add(new Location(new RVector2(i, j), laserDirection));
                 }
+                // locate starting positions
+                Integer startNumber = (Integer) TileType.getProperty(getTileLayer().getCell(i, j), "start_number");
+                if (startNumber != null) {
+                    startLocations.add(new Location(new RVector2(i, j), Direction.EAST));
+                }
+            }
+            // Sort start locations by their number
+            startLocations.sort((o1, o2) -> {
+                int startNumberX = (Integer) TileType.getProperty(getTileLayer().getCell(o1.getPosition().getX(),
+                        o1.getPosition().getY()), "start_number");
+                int startNumberY = (Integer) TileType.getProperty(getTileLayer().getCell(o2.getPosition().getX(),
+                        o2.getPosition().getY()), "start_number");
+                return Integer.compare(startNumberX, startNumberY);
+            });
+        }
+
+        // Make sure robots face the center of the board
+        if (!startLocations.isEmpty() && startLocations.get(0) != null && startLocations.get(0).getPosition().getX() > getWidth() / 2) {
+            for (int i = 0; i < startLocations.size(); i++) {
+                startLocations.set(i, startLocations.get(i).halfTurn());
             }
         }
     }
@@ -197,5 +221,9 @@ public class MapHandler {
 
     public List<Location> getLasersLocations() {
         return lasers;
+    }
+
+    public List<Location> getStartLocations() {
+        return startLocations;
     }
 }
