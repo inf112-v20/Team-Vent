@@ -116,7 +116,7 @@ public class Player {
             TargetString.append("\n");
         }
     }
-
+    //Methods below might be useful, but as of 31.03 we use robotsHP instead, delete if not useful
     public int getPlayerLife() {
         return playerLife;
     }
