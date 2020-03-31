@@ -17,7 +17,7 @@ public class GameState {
     }
 
     //you return a new gameState when a step happens (atleast one thing happens)
-    public GameState updateState(RobotState robotState) {
+    public GameState update(RobotState robotState) {
         GameState newState = new GameState(size);
         for (int i = 0; i < size; i++) {
             if (robotStates[i].getRobot().equals(robotState.getRobot())) {
@@ -31,7 +31,7 @@ public class GameState {
 
     //For when more than one thing happens in a single step, you can edit the state instead of updating.
     //For example when one robot pushes another robot, or if we decide to display conveyors at the same time for all robots
-    public void editState(RobotState robotState) {
+    public void edit(RobotState robotState) {
         for (int i = 0; i < size; i++) {
             if (robotStates[i].getRobot().equals(robotState.getRobot())) {
                 robotStates[i] = robotState;

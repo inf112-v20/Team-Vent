@@ -7,17 +7,10 @@ import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
 import inf112.skeleton.app.model.board.RVector2;
-import inf112.skeleton.app.model.cards.IProgramCard;
-import inf112.skeleton.app.model.cards.MoveBackwardCard;
-import inf112.skeleton.app.model.cards.MoveForwardCard;
+import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class GameModel {
 
@@ -105,11 +98,11 @@ public class GameModel {
         Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
         switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
             case CONVEYOR_NORMAL:
-                newState = initialState.updateState(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
+                newState = initialState.update(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             case CONVEYOR_EXPRESS:
-                newState = initialState.updateState(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
+                newState = initialState.update(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
                 tileSteps.get(phaseNumber).add(newState);
 
                 loc = newState.getState(robotState.getRobot()).getLocation();
@@ -118,22 +111,22 @@ public class GameModel {
                 TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.equals(nextTileType)) {
-                    newState = newState.updateState(newRobotState.updateLocation(loc.moveDirection(nextTileDirection)));
+                    newState = newState.update(newRobotState.updateLocation(loc.moveDirection(nextTileDirection)));
                     tileSteps.get(phaseNumber).add(newState);
                 }
                 break;
             case GEAR_CLOCKWISE:
                 Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
-                newState = initialState.updateState(robotState.updateLocation(turnRight));
+                newState = initialState.update(robotState.updateLocation(turnRight));
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             case GEAR_COUNTERCLOCKWISE:
                 Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
-                newState = initialState.updateState(robotState.updateLocation(turnLeft));
+                newState = initialState.update(robotState.updateLocation(turnLeft));
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             case HOLE:
-                newState = initialState.updateState(robotState.updateDead(true));
+                newState = initialState.update(robotState.updateDead(true));
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             default:
@@ -142,29 +135,52 @@ public class GameModel {
     }
 
     private void doCard(int phaseNumber, GameState initialState, RobotState robotState) {
-        IProgramCard card = player.getCardInProgrammingSlot(phaseNumber);
+        Card card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
-        if (cardCanBePlayed(card, robotState.getLocation(), robotState)) {
-            Location loc = robotState.getLocation().copy();
-            GameState newState = initialState.updateState(robotState.updateLocation(card.instruction(loc)));
-            cardSteps.get(phaseNumber).add(newState);
+        if (card == null) return;
+        RobotState nextRobotState = robotState;
+        switch (card) {
+            case MOVE_THREE:
+                nextRobotState = movedOne(nextRobotState);
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
+                // no break
+            case MOVE__TWO:
+                nextRobotState = movedOne(nextRobotState);
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
+                // no break
+            case MOVE__ONE:
+                nextRobotState = movedOne(nextRobotState);
+                break;
+            case BACK_UP:
+                nextRobotState = backedUpOne(nextRobotState);
+                break;
+            case ROTATE_RIGHT:
+                nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().rotateRight());
+                break;
+            case ROTATE_LEFT:
+                nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().rotateLeft());
+                break;
+            case U_TURN:
+                nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().halfTurn());
+                break;
+            default:
+                break;
         }
-
+        cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
     }
 
-    private boolean cardCanBePlayed(IProgramCard card, Location loc, RobotState robotState) {
-        Location cop = loc.copy();
-
-        boolean canBePlayed = true;
-        if (card == null) {
-            canBePlayed = false;
-        } else if ((card instanceof MoveForwardCard && tiledMapHandler.wallInPath(cop))) {
-            canBePlayed = false;
-        } else if ((card instanceof MoveBackwardCard &&
-                tiledMapHandler.wallInPath(robotState.getLocation().rotateLeft().rotateLeft()))) {
-            canBePlayed = false;
+    private RobotState movedOne(RobotState robotState) {
+        if (!tiledMapHandler.wallInPath(robotState.getLocation())) {
+            robotState = robotState.updateLocation(robotState.getLocation().forward());
         }
-        return canBePlayed;
+        return robotState;
+    }
+
+    private RobotState backedUpOne(RobotState robotState) {
+        if (!tiledMapHandler.wallInPath(robotState.getLocation().halfTurn())) {
+            robotState = robotState.updateLocation(robotState.getLocation().backward());
+        }
+        return robotState;
     }
 
     private void doFlag(int phaseNumber, GameState initialState, RobotState robotState) {
@@ -175,7 +191,7 @@ public class GameModel {
         int flagNumber = (int) cell.getTile().getProperties().get("number");
         RobotState newRobotState = robotState.copy();
         newRobotState.visitFlag(flagNumber, robotState.getLocation());
-        GameState newState = initialState.updateState(newRobotState);
+        GameState newState = initialState.update(newRobotState);
         flagVisitSteps.get(phaseNumber).add(newState);
     }
 
@@ -211,7 +227,7 @@ public class GameModel {
         if (toShoot != null) {
             log(robotState.getRobot().toString() + " fired at " + toShoot.toString());
             RobotState shotState = gameState.getState(toShoot).updateDamage(-1);
-            laserSteps.get(phaseNumber).add(gameState.updateState(shotState));
+            laserSteps.get(phaseNumber).add(gameState.update(shotState));
         }
     }
 
@@ -221,7 +237,7 @@ public class GameModel {
             if (toShoot != null) {
                 log(toShoot.toString() + " was shot by the wall laser at " + laserLocation.getPosition().toString());
                 RobotState shotRobotState = gameState.getState(toShoot).updateDamage(-1);
-                laserSteps.get(phaseNumber).add(gameState.updateState(shotRobotState));
+                laserSteps.get(phaseNumber).add(gameState.update(shotRobotState));
             }
         }
     }

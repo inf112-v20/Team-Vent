@@ -1,15 +1,17 @@
 package inf112.skeleton.app.model;
 
 
-import inf112.skeleton.app.model.cards.*;
+import inf112.skeleton.app.model.cards.Card;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class Player {
 
-    private final IProgramCard[] cardHand = new IProgramCard[9];
-    private final IProgramCard[] programmingSlots = new IProgramCard[5];
-    private final HashMap<Integer, IProgramCard> cardH = new HashMap<Integer, IProgramCard>();
+    private final Card[] cardHand = new Card[9];
+    private final Card[] programmingSlots = new Card[5];
+    private final HashMap<Integer, Card> cardH = new HashMap<>();
     private int playerLife;
     private int playerHP;
 
@@ -28,7 +30,7 @@ public class Player {
         findOpenSlot(programmingSlot, programmingSlots, cardHand);
     }
 
-    private boolean findOpenSlot(int cardSlotInOriginArray, IProgramCard[] originArray, IProgramCard[] destinationArray) {
+    private boolean findOpenSlot(int cardSlotInOriginArray, Card[] originArray, Card[] destinationArray) {
         if (originArray[cardSlotInOriginArray] != null) {
             for (int i = 0; i < destinationArray.length; i++) {
                 if (destinationArray[i] == null) {
@@ -41,23 +43,19 @@ public class Player {
         return false;
     }
 
-    public void clearProgrammingSlots() {
-        Arrays.fill(programmingSlots, null);
-    }
-
-    public void setCardinProgrammingSlot(int programmingSlot, IProgramCard programCard) {
+    public void setCardinProgrammingSlot(int programmingSlot, Card programCard) {
         programmingSlots[programmingSlot] = programCard;
     }
 
-    public IProgramCard getCardInProgrammingSlot(int slot) {
+    public Card getCardInProgrammingSlot(int slot) {
         return programmingSlots[slot];
     }
 
-    public void setCardinHand(int handSlot, IProgramCard programCard) {
+    public void setCardinHand(int handSlot, Card programCard) {
         cardHand[handSlot] = programCard;
     }
 
-    public IProgramCard getCardinHand(int handSlot) {
+    public Card getCardinHand(int handSlot) {
         return cardHand[handSlot];
     }
 
@@ -65,32 +63,31 @@ public class Player {
 
     //Cards are stored in a hashmap, where key is the priority which is distinct and random
     public void generateCardHand() {
-
-       ArrayList<Integer> numb = new ArrayList<Integer>();
-       for (int i =0; i < 80; i++){
-           numb.add(i);
-       }
+        int LIMIT = 120;
+        ArrayList<Integer> numb = new ArrayList<>();
+        for (int i = 0; i < LIMIT; i++) {
+            numb.add(i);
+        }
         Collections.shuffle(numb);
-        for (int i =0; i <80; i++){
-            if (i <= 25) {
-                cardH.put(numb.get(i), new MoveForwardCard());
-            }
-
-            if (i > 25 && i <= 45){
-                cardH.put(numb.get(i), new MoveBackwardCard());
-            }
-            if(i > 45 && i <= 65){
-                cardH.put(numb.get(i), new RotateRightCard());
-            }
-            if (i >= 65){
-                cardH.put(numb.get(i), new RotateLeftCard());
+        for (int i = 0; i < LIMIT; i++) {
+            if (i < 20) {
+                cardH.put(numb.get(i), Card.MOVE__ONE);
+            } else if (i < 40) {
+                cardH.put(numb.get(i), Card.MOVE__TWO);
+            } else if (i < 60) {
+                cardH.put(numb.get(i), Card.MOVE_THREE);
+            } else if (i < 80) {
+                cardH.put(numb.get(i), Card.BACK_UP);
+            } else if (i < 100) {
+                cardH.put(numb.get(i), Card.ROTATE_LEFT);
+            } else {
+                cardH.put(numb.get(i), Card.ROTATE_RIGHT);
             }
         }
-        for (int i=0;i<9;i++){
-            int k = (int) (Math.random() * 80 );
-            cardHand[i]=cardH.get(k);
+        for (int i = 0; i < 9; i++) {
+            int k = (int) (Math.random() * LIMIT);
+            cardHand[i] = cardH.get(k);
         }
-
     }
 
     public String handAsString() {
@@ -108,7 +105,7 @@ public class Player {
         return programmingSlotsAsString.toString();
     }
 
-    private void cardArrayToString(StringBuilder TargetString, IProgramCard[] cardArray) {
+    private void cardArrayToString(StringBuilder TargetString, Card[] cardArray) {
         for (int i = 0; i < cardArray.length; i++) {
             TargetString.append(i + 1);
             TargetString.append("  ");
@@ -120,35 +117,29 @@ public class Player {
         }
     }
 
-    public IProgramCard playCardFromHand(int handSlot) {
-        if (cardHand[handSlot] != null) {
-            IProgramCard playCard = cardHand[handSlot];
-            cardHand[handSlot] = null;
-            return playCard;
-        }
-        return null;
-    }
-
     public int getPlayerLife() {
         return playerLife;
     }
+
     public int getPlayerHP() {
         return playerHP;
     }
+
     public void setPlayerLife(int playerLife) {
         this.playerLife = playerLife;
     }
+
     public void setPlayerHP(int playerLife) {
-        this.playerHP = playerHP;
+        this.playerHP = playerLife;
     }
 
-    public String playerLifeAsString(int args) {
-        String p = "playerLife: " + Integer.toString(args) + "\n";
+    public String playerLifeAsString(int lives) {
+        String p = "playerLife: " + lives + "\n";
         return p;
     }
 
     public String playerHPAsString(int args) {
-        String p = "playerHP: " + Integer.toString(args) + "\n";
+        String p = "playerHP: " + args + "\n";
         return p;
     }
 }
