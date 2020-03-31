@@ -138,32 +138,35 @@ public class GameModel {
         Card card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
         if (card == null) return;
+        RobotState nextRobotState = robotState;
         switch (card) {
             case MOVE_THREE:
-                robotState = movedOne(robotState);
-                cardSteps.get(phaseNumber).add(initialState.update(robotState));
-                // break intentionally left out
+                nextRobotState = movedOne(nextRobotState);
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
+                // no break
             case MOVE__TWO:
-                robotState = movedOne(robotState);
-                cardSteps.get(phaseNumber).add(initialState.update(robotState));
-                // break intentionally left out
+                nextRobotState = movedOne(nextRobotState);
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
+                // no break
             case MOVE__ONE:
-                robotState = movedOne(robotState);
+                nextRobotState = movedOne(nextRobotState);
                 break;
             case BACK_UP:
-                robotState = backedUpOne(robotState);
+                nextRobotState = backedUpOne(nextRobotState);
                 break;
             case ROTATE_RIGHT:
-                robotState = robotState.updateLocation(robotState.getLocation().rotateRight());
+                nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().rotateRight());
                 break;
             case ROTATE_LEFT:
-                robotState = robotState.updateLocation(robotState.getLocation().rotateLeft());
+                nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().rotateLeft());
                 break;
             case U_TURN:
-                robotState = robotState.updateLocation(robotState.getLocation().halfTurn());
+                nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().halfTurn());
+                break;
+            default:
                 break;
         }
-        cardSteps.get(phaseNumber).add(initialState.update(robotState));
+        cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
     }
 
     private RobotState movedOne(RobotState robotState) {
