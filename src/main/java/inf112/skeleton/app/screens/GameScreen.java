@@ -40,7 +40,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     @Override
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         this.width = width;
         this.height = height;
 

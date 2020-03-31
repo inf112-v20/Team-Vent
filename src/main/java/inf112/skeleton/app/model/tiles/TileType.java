@@ -22,6 +22,15 @@ public enum TileType {
         }
     }
 
+    public static Object getProperty(TiledMapTileLayer.Cell cell, String property) {
+        if (cell == null) return null;
+        try {
+            return cell.getTile().getProperties().get(property);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     public static String getType(TiledMapTileLayer.Cell cell) {
         try {
             return (String) cell.getTile().getProperties().get("type");

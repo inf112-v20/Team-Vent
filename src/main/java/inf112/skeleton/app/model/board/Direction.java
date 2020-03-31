@@ -14,7 +14,9 @@ public enum Direction {
             return UNIT_VECTOR_NORTH;
         }
 
-        public Direction opposite() { return SOUTH;}
+        public Direction opposite() {
+            return SOUTH;
+        }
 
     },
     SOUTH {
@@ -30,7 +32,9 @@ public enum Direction {
             return UNIT_VECTOR_SOUTH;
         }
 
-        public Direction opposite() { return NORTH;}
+        public Direction opposite() {
+            return NORTH;
+        }
 
     },
     EAST {
@@ -46,7 +50,9 @@ public enum Direction {
             return UNIT_VECTOR_EAST;
         }
 
-        public Direction opposite() {return WEST;}
+        public Direction opposite() {
+            return WEST;
+        }
     },
     WEST {
         public Direction left() {
@@ -61,7 +67,9 @@ public enum Direction {
             return UNIT_VECTOR_WEST;
         }
 
-        public Direction opposite() { return EAST;}
+        public Direction opposite() {
+            return EAST;
+        }
     };
 
     final RVector2 UNIT_VECTOR_NORTH = new RVector2(0, 1);
@@ -83,6 +91,7 @@ public enum Direction {
 
     //gives the opposite direction of a direction
     public abstract Direction opposite();
+
     /**
      * @return a vector of magnitude 1 in the direction
      */

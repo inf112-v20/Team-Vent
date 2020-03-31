@@ -12,10 +12,16 @@ public class Player {
     private final Card[] cardHand = new Card[9];
     private final Card[] programmingSlots = new Card[5];
     private final HashMap<Integer, Card> cardH = new HashMap<>();
+    private final Robot robot;
     private int playerLife;
     private int playerHP;
 
     public Player() {
+        this(new Robot());
+    }
+
+    public Player(Robot robot) {
+        this.robot = robot;
         this.playerLife = 3;
         this.playerHP = 9;
     }
@@ -121,12 +127,12 @@ public class Player {
         return playerLife;
     }
 
-    public int getPlayerHP() {
-        return playerHP;
-    }
-
     public void setPlayerLife(int playerLife) {
         this.playerLife = playerLife;
+    }
+
+    public int getPlayerHP() {
+        return playerHP;
     }
 
     public void setPlayerHP(int playerLife) {
@@ -141,5 +147,9 @@ public class Player {
     public String playerHPAsString(int args) {
         String p = "playerHP: " + args + "\n";
         return p;
+    }
+
+    public Robot getRobot() {
+        return robot;
     }
 }

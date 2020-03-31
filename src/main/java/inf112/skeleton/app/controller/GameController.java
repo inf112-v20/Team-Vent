@@ -9,7 +9,6 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.network.GameClient;
-import inf112.skeleton.app.screens.GameOverScreen;
 import inf112.skeleton.app.screens.GameScreen;
 
 public class GameController extends InputAdapter {
@@ -20,7 +19,7 @@ public class GameController extends InputAdapter {
 
     public GameController(RoboRallyGame game, String map_filename) {
         this.map_filename = map_filename;
-        this.gameModel = new GameModel(map_filename);
+        this.gameModel = new GameModel(map_filename, 4);
         this.game = game;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
@@ -29,7 +28,7 @@ public class GameController extends InputAdapter {
     //TODO: Make use of the gameClient class to implement multiplayer
     public GameController(RoboRallyGame game, String map_filename, GameClient gameClient) {
         this.map_filename = map_filename;
-        this.gameModel = new GameModel(map_filename);
+        this.gameModel = new GameModel(map_filename, 1);
         this.game = game;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
@@ -73,11 +72,6 @@ public class GameController extends InputAdapter {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (game.getScreen() instanceof GameOverScreen && keycode == Input.Keys.SPACE) {
-            this.gameModel = new GameModel(map_filename);
-            game.setScreen(new GameScreen(this.gameModel));
-            return true;
-        }
         if (keycode == Input.Keys.SHIFT_LEFT) {
             shiftIsPressed = false;
         }

@@ -29,7 +29,7 @@ public class LobbyScreen extends ScreenAdapter {
 
         Skin skin = new Skin(Gdx.files.internal("skin/shade/skin/uiskin.json"));
         stage = new Stage();
-        Table table  = new Table();
+        Table table = new Table();
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -40,28 +40,28 @@ public class LobbyScreen extends ScreenAdapter {
 
         // Start game button
         Button startGameButton = new TextButton("Start Game", skin);
-        startGameButton.addListener(new InputListener(){
+        startGameButton.addListener(new InputListener() {
             @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button){
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 setGameStart();
             }
 
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
         });
 
         // Leave lobby button
         Button backButton = new TextButton("Leave lobby", skin);
-        backButton.addListener(new InputListener(){
+        backButton.addListener(new InputListener() {
             @Override
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button){
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 backToMenu();
             }
 
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
         });
@@ -70,7 +70,7 @@ public class LobbyScreen extends ScreenAdapter {
         table.setDebug(false);
         table.add(playerList);
         table.row();
-        if(isHost){
+        if (isHost) {
             table.add(startGameButton);
             table.row();
         }
@@ -78,10 +78,10 @@ public class LobbyScreen extends ScreenAdapter {
         stage.addActor(table);
     }
 
-    private void actOnGameStatus(){
+    private void actOnGameStatus() {
         String status = gameClient.getGameStatus();
 
-        switch (status){
+        switch (status) {
             case "CLOSE":
                 backToMenu();
                 break;
@@ -96,23 +96,23 @@ public class LobbyScreen extends ScreenAdapter {
         }
     }
 
-    private void startGame(){
+    private void startGame() {
         Timer.instance().clear();
         new GameController(game, "map-1.tmx", gameClient); //TODO: Add map selector in lobby
     }
 
-    private void setGameStart(){
+    private void setGameStart() {
         gameClient.setGameStatus("START");
     }
 
-    private void updatePlayerList(){
+    private void updatePlayerList() {
         String[] players = gameClient.getPlayersInLobby();
         playerList.setItems(players);
     }
 
-    private void backToMenu(){
+    private void backToMenu() {
         Timer.instance().clear();
-        if(isHost){
+        if (isHost) {
             gameClient.stopHost();
         } else {
             gameClient.closeConnection();
@@ -122,8 +122,8 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
     @Override
-    public void show(){
-        if(isHost){
+    public void show() {
+        if (isHost) {
             Thread gameHostThread = new Thread(() -> {
                 GameHost gameHost = new GameHost(hostAddress);
             });
@@ -142,7 +142,7 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
     @Override
-    public void render(float delta){
+    public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();

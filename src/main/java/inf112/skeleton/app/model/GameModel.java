@@ -6,7 +6,6 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
-import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
@@ -17,34 +16,42 @@ public class GameModel {
     private static final boolean ENABLE_LOGGING = true;
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
-    private final MapHandler tiledMapHandler;
+    private final MapHandler mapHandler;
     private final Player player;
-
     private final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> flagVisitSteps = new ArrayList<>();
     Timer timer = new Timer(true);
+    private List<Player> players;
 
-    public GameModel(String map_filename) {
+    public GameModel(String map_filename, int numberOfPlayers) {
+        mapHandler = new MapHandler(map_filename);
+        if (mapHandler.getStartLocations().size() < numberOfPlayers) {
+            throw new IllegalStateException(String.format("There are not enough starting locations for %d players", numberOfPlayers));
+        }
+        // initialize players and robots
+        players = new LinkedList<>();
         robots = new LinkedList<>();
-        robots.add(new Robot(new Location(new RVector2(15, 5), Direction.WEST)));
-        robots.add(new Robot(new Location(new RVector2(15, 6), Direction.WEST)));
-        robots.add(new Robot(new Location(new RVector2(14, 3), Direction.WEST)));
-        robots.add(new Robot(new Location(new RVector2(14, 8), Direction.WEST)));
-        player = new Player();
-        player.generateCardHand();
+        for (int i = 0; i < numberOfPlayers; i++) {
+            Player p = new Player(new Robot(mapHandler.getStartLocations().get(i)));
+            p.generateCardHand();
+            players.add(p);
+            robots.add(p.getRobot());
+        }
+        // initialize phase lists
         for (int i = 0; i < PHASES; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
             laserSteps.add(new LinkedList<>());
             flagVisitSteps.add(new LinkedList<>());
         }
-        tiledMapHandler = new MapHandler(map_filename);
+        // legacy code
+        player = players.get(0);
     }
 
     public MapHandler getMapHandler() {
-        return this.tiledMapHandler;
+        return this.mapHandler;
     }
 
     public Player getPlayer() {
@@ -94,8 +101,8 @@ public class GameModel {
         Location loc = robotState.getLocation();
         // Calculate next steps based on current position
         GameState newState;
-        TileType currentTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
-        Direction currentTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
+        TileType currentTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+        Direction currentTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
         switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
             case CONVEYOR_NORMAL:
                 newState = initialState.update(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
@@ -108,8 +115,8 @@ public class GameModel {
                 loc = newState.getState(robotState.getRobot()).getLocation();
                 RobotState newRobotState = newState.getState(robotState.getRobot());
 
-                TileType nextTileType = tiledMapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
-                Direction nextTileDirection = tiledMapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
+                TileType nextTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+                Direction nextTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.equals(nextTileType)) {
                     newState = newState.update(newRobotState.updateLocation(loc.moveDirection(nextTileDirection)));
                     tileSteps.get(phaseNumber).add(newState);
@@ -170,14 +177,14 @@ public class GameModel {
     }
 
     private RobotState movedOne(RobotState robotState) {
-        if (!tiledMapHandler.wallInPath(robotState.getLocation())) {
+        if (!mapHandler.wallInPath(robotState.getLocation())) {
             robotState = robotState.updateLocation(robotState.getLocation().forward());
         }
         return robotState;
     }
 
     private RobotState backedUpOne(RobotState robotState) {
-        if (!tiledMapHandler.wallInPath(robotState.getLocation().halfTurn())) {
+        if (!mapHandler.wallInPath(robotState.getLocation().halfTurn())) {
             robotState = robotState.updateLocation(robotState.getLocation().backward());
         }
         return robotState;
