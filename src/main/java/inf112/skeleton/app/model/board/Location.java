@@ -38,6 +38,10 @@ public class Location {
         return new Location(position, this.direction.right());
     }
 
+    public Location halfTurn() {
+        return new Location(position, this.direction.left().left());
+    }
+
     public Location copy() {
         return new Location(this.position.cpy(), this.direction);
     }
