@@ -8,42 +8,40 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.view.BoardRenderer;
 
 public class GameScreen extends ScreenAdapter {
-    private final BoardRenderer boardRenderer;
     private final GameModel gameModel;
     private SpriteBatch batch;
     private BitmapFont font;
-    private int width;
-    private int height;
+    private OrthogonalTiledMapRenderer renderer;
+    private int bottomTableHeight;
+    private OrthographicCamera camera;
+
 
     public GameScreen(GameModel gameModel) {
         this.gameModel = gameModel;
-        int tilesWide = gameModel.getMapHandler().getWidth();
-        int tilesHigh = gameModel.getMapHandler().getHeight();
-        OrthographicCamera camera = new OrthographicCamera();
-        camera.setToOrtho(false, tilesWide, tilesHigh);
-        camera.update();
-        boardRenderer = new BoardRenderer(gameModel);
-        boardRenderer.setView(camera);
         loadFont();
+        // Note: the height of the bottom table is static and determines the size of the map
+        this.bottomTableHeight = Gdx.graphics.getWidth() / 8;
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, ((float) Gdx.graphics.getWidth() / (Gdx.graphics.getHeight() -
+                bottomTableHeight)) * 10, 10);
+        camera.update();
+        renderer = new BoardRenderer(gameModel);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        boardRenderer.render();
+        renderer.setView(camera);
+        renderer.render();
+        Gdx.gl.glViewport(0, bottomTableHeight, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - bottomTableHeight);
+        camera.update();
         renderFont();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        this.width = width;
-        this.height = height;
-
     }
 
     private void loadFont() {
@@ -55,8 +53,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void renderFont() {
+        float width = Gdx.graphics.getWidth();
+        float height = Gdx.graphics.getHeight();
         batch.begin();
-
         font.draw(batch,gameModel.getRobots().get(0).robotHPAsString(
                 gameModel.getRobots().get(0).getRobotHP()), width * 0.753f, height * 0.98f);
         font.draw(batch, gameModel.getRobots().get(0).robotLifeAsString(
