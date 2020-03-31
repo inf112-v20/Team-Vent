@@ -2,7 +2,6 @@ package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.utils.Timer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameModel {
 
@@ -30,6 +31,7 @@ public class GameModel {
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> flagVisitSteps = new ArrayList<>();
+    Timer timer = new Timer(true);
 
     public GameModel(String map_filename) {
         robots = new LinkedList<>();
@@ -179,7 +181,13 @@ public class GameModel {
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         if (steps.get(phase).isEmpty()) return;
-        Timer.Task task = new Timer.Task() {
+        for (int i = 0; i < steps.get(phase).size(); i++) {
+            timer.schedule(doStep(phase, steps), delay * 1000 + 1000 * i);
+        }
+    }
+
+    public TimerTask doStep(int phase, ArrayList<Deque<GameState>> steps) {
+        return new TimerTask() {
             @Override
             public void run() {
                 GameState gameState = steps.get(phase).remove();
@@ -188,7 +196,6 @@ public class GameModel {
                 }
             }
         };
-        Timer.instance().scheduleTask(task, delay, 1, steps.get(phase).size() - 1);
     }
 
     private GameState updateLastState(GameState state, Deque<GameState> states) {
