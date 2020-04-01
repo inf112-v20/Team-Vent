@@ -1,11 +1,11 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
@@ -23,7 +23,7 @@ public class GameModel {
     private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> wallLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> flagVisitSteps = new ArrayList<>();
-    Timer timer = new Timer(true);
+    private final Timer timer = new Timer(true);
     private List<Player> players;
 
     public GameModel(String map_filename, int numberOfPlayers) {
@@ -70,18 +70,18 @@ public class GameModel {
             for (Robot robot : robots) {
                 doCard(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, cardSteps.get(i));
+                doAfterMove(gameState, cardSteps.get(i));
+                gameState = updateLastState(gameState, cardSteps.get(i));
             }
             for (Robot robot : robots) {
                 doTiles(i, gameState, gameState.getState(robot));
+                gameState = updateLastState(gameState, tileSteps.get(i));
+                doAfterMove(gameState, tileSteps.get(i));
                 gameState = updateLastState(gameState, tileSteps.get(i));
             }
             for (Robot robot : robots) {
                 doRobotLaser(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, robotLaserSteps.get(i));
-            }
-            for (Robot robot : robots) {
-                doFlag(i, gameState, gameState.getState(robot));
-                gameState = updateLastState(gameState, flagVisitSteps.get(i));
             }
             doWallLasers(i, gameState);
             gameState = updateLastState(gameState, wallLaserSteps.get(i));
@@ -142,7 +142,7 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             default:
-                break;
+                return;
         }
     }
 
@@ -195,16 +195,25 @@ public class GameModel {
         return robotState;
     }
 
-    private void doFlag(int phaseNumber, GameState initialState, RobotState robotState) {
-        if (robotState.getDead()) return;
-        TiledMapTileLayer.Cell cell = getMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
-                robotState.getLocation().getPosition().getY());
-        if (cell == null) return; // there is no flag here
-        int flagNumber = (int) cell.getTile().getProperties().get("number");
-        RobotState newRobotState = robotState.copy();
-        newRobotState.visitFlag(flagNumber, robotState.getLocation());
-        GameState newState = initialState.update(newRobotState);
-        flagVisitSteps.get(phaseNumber).add(newState);
+    /**
+     * Check if any of the robots are outside the board, or if they can visit a flag. If so, add an extra step to the
+     * current sequence. The current sequence of steps could be cardSteps.get(phaseNumber) for example
+     * <p>
+     * * @param sequence the step sequence in progress
+     */
+    private void doAfterMove(GameState gameState, Deque<GameState> sequence) {
+        for (RobotState robotState : gameState.getRobotStates()) {
+            RVector2 nextFlag = mapHandler.getFlagPosition(robotState.getCapturedFlags() + 1);
+            if (nextFlag == null) {
+                // todo: implement winning
+            } else if (robotState.getLocation().getPosition().equals(nextFlag)) {
+                sequence.add(gameState.update(robotState.visitFlag()));
+                log(String.format("%s visited flag number %d!", robotState.getRobot(), robotState.getCapturedFlags() + 1));
+            } else if (mapHandler.outOfBounds(robotState.getLocation())) {
+                sequence.add(gameState.update(robotState.updateDead(true)));
+                log(robotState.getRobot() + " is outside the board");
+            }
+        }
     }
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {

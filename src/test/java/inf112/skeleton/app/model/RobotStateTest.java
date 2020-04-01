@@ -1,10 +1,10 @@
 package inf112.skeleton.app.model;
 
-import inf112.skeleton.app.model.board.Location;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class RobotStateTest {
     private RobotState state;
@@ -16,23 +16,16 @@ public class RobotStateTest {
     }
 
     @Test
-    public void visitingTheWrongFlagHasNoEffect() {
-        state.visitFlag(state.getCapturedFlags() + 10, state.getLocation().forward());
+    public void visitingAFlagIncreasesNumberOfFlags() {
         assertEquals(0, state.getCapturedFlags());
-    }
-
-    @Test
-    public void visitingTheRightFlagIncreasesNumberOfFlags() {
-        Location flagLocation = state.getLocation().forward();
-        state.visitFlag(state.getCapturedFlags() + 1, flagLocation);
+        state = state.visitFlag();
         assertEquals(1, state.getCapturedFlags());
     }
 
     @Test
     public void rebootingResetsToLastFlag() {
-        Location flagLocation = state.getLocation().forward();
-        state.visitFlag(state.getCapturedFlags() + 1, flagLocation);
-        RobotState newState = state.reboot();
-        assertEquals(flagLocation, newState.getLocation());
+        RobotState forwardState = state.updateLocation(state.getLocation().forward());
+        assertNotEquals(state.getLocation().getPosition(), forwardState.getLocation().getPosition());
+        assertEquals(state.getLocation().getPosition(), forwardState.reboot().getLocation().getPosition());
     }
 }

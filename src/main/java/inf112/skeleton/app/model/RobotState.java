@@ -79,16 +79,12 @@ public class RobotState {
 
     /**
      * Update the save location and increase the number of captured flags if this flag is the next one
-     *
-     * @param number   the flag number
-     * @param location the location of the flag
      */
-    public void visitFlag(int number, Location location) {
-        if (number == capturedFlags + 1) { // if this flag is the next flag
-            this.saveLocation = location;
-            this.capturedFlags += 1;
-            System.out.println("Visited flag number " + capturedFlags);
-        }
+    public RobotState visitFlag() {
+        RobotState other = this.copy();
+        other.saveLocation = location;
+        other.capturedFlags += 1;
+        return other;
     }
 
     /**

@@ -13,16 +13,16 @@ import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.tiles.TileType;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class MapHandler {
     private final TiledMap tiledMap;
-    private int numberOfFlags;
-    private List<Location> startLocations = new ArrayList<>(8);
-    private List<Location> lasers;
+    private final List<Location> startLocations = new LinkedList<>();
+    private final List<Location> lasers = new LinkedList<>();
+    private final HashMap<Integer, RVector2> flags = new HashMap<>();
 
     /**
      * Load a map from a file. This will only work while the application is running
@@ -31,15 +31,19 @@ public class MapHandler {
      */
     public MapHandler(String filename) {
         tiledMap = new TmxMapLoader().load(filename);
-        lasers = new LinkedList<>();
         // count the flags
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
-                // count the flags
+                // locate flags
                 if (getFlagLayer().getCell(i, j) != null) {
-                    numberOfFlags += 1;
+                    Integer flagNumber = (Integer) TileType.getProperty(getFlagLayer().getCell(i, j), "number");
+                    if (flagNumber == null) {
+                        throw new IllegalStateException(String.format("Invalid map: The flag at (%d, %d) does not have a number", i, j));
+                    } else {
+                        flags.put(flagNumber, new RVector2(i, j));
+                    }
                 }
-                // locate the wall lasers
+                // locate wall lasers
                 TiledMapTileLayer.Cell wallCell = getWallLayer().getCell(i, j);
                 if (wallCell != null && TileType.hasLaser(wallCell)) {
                     // the direction of the laser is the opposite of the direction of the wall
@@ -52,7 +56,7 @@ public class MapHandler {
                     startLocations.add(new Location(new RVector2(i, j), Direction.EAST));
                 }
             }
-            // Sort start locations by their number
+            // Sort starting positions by their number
             startLocations.sort((o1, o2) -> {
                 int startNumberX = (Integer) TileType.getProperty(getTileLayer().getCell(o1.getPosition().getX(),
                         o1.getPosition().getY()), "start_number");
@@ -62,7 +66,7 @@ public class MapHandler {
             });
         }
 
-        // Make sure robots face the center of the board
+        // Ensure that the starting locations face the center of the board
         if (!startLocations.isEmpty() && startLocations.get(0) != null && startLocations.get(0).getPosition().getX() > getWidth() / 2) {
             for (int i = 0; i < startLocations.size(); i++) {
                 startLocations.set(i, startLocations.get(i).halfTurn());
@@ -123,10 +127,6 @@ public class MapHandler {
         }
     }
 
-    public TiledMapTileLayer.Cell getTileCell(RVector2 vector, String layerName) {
-        return getTileCell(vector.getX(), vector.getY(), layerName);
-    }
-
     public Direction getDirection(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
         try {
@@ -143,14 +143,6 @@ public class MapHandler {
     public String getTileTypeString(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
         return TileType.getType(cell);
-    }
-
-    public String getTileTypeString(RVector2 vector, String layerName) {
-        return getTileTypeString((int) vector.getVector().x, (int) vector.getVector().y, layerName);
-    }
-
-    public TileType getTileType(int x, int y, String layerName) {
-        return TileType.asTileType(getTileTypeString(x, y, layerName));
     }
 
     public TileType getTileType(RVector2 vector, String layerName) {
@@ -214,8 +206,8 @@ public class MapHandler {
     }
 
     public boolean outOfBounds(Location loc) {
-        return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
-                || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
+        return (loc.getPosition().getX() >= getWidth() || loc.getPosition().getX() < 0
+                || loc.getPosition().getY() >= getHeight() || loc.getPosition().getY() < 0);
 
     }
 
@@ -225,5 +217,9 @@ public class MapHandler {
 
     public List<Location> getStartLocations() {
         return startLocations;
+    }
+
+    public RVector2 getFlagPosition(int number) {
+        return flags.get(number);
     }
 }
