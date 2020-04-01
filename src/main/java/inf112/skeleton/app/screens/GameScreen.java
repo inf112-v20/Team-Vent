@@ -16,9 +16,9 @@ public class GameScreen extends ScreenAdapter {
     private final GameModel gameModel;
     private SpriteBatch batch;
     private BitmapFont font;
-    private OrthogonalTiledMapRenderer renderer;
-    private int bottomTableHeight;
-    private OrthographicCamera camera;
+    private final OrthogonalTiledMapRenderer renderer;
+    private final int bottomTableHeight;
+    private final OrthographicCamera camera;
 
 
     public GameScreen(GameModel gameModel) {
