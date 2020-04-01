@@ -75,16 +75,11 @@ public class GameModel {
                 doTiles(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, tileSteps.get(i));
             }
-            for (Robot robot : robots) {
-                doRobotLaser(i, gameState, gameState.getState(robot));
-                gameState = updateLastState(gameState, robotLaserSteps.get(i));
-            }
-            for (Robot robot : robots) {
-                doFlag(i, gameState, gameState.getState(robot));
-                gameState = updateLastState(gameState, flagVisitSteps.get(i));
-            }
+            doRobotLasers(i, gameState);
+            gameState = updateLastState(gameState, robotLaserSteps.get(i));
             doWallLasers(i, gameState);
             gameState = updateLastState(gameState, wallLaserSteps.get(i));
+            doFlags(i, gameState);
         }
 
         int delay = 0;
@@ -94,11 +89,11 @@ public class GameModel {
             scheduleSteps(delay, i, tileSteps);
             delay += tileSteps.get(i).size();
             scheduleSteps(delay, i, robotLaserSteps);
-            // delay += robotLaserSteps.get(i).size(); todo: re-enable delay for lasers when there are visualizations
+            delay += robotLaserSteps.get(i).size();
             scheduleSteps(delay, i, wallLaserSteps);
-            // delay += robotLaserSteps.get(i).size();
-            scheduleSteps(delay, i, flagVisitSteps);
+            delay += wallLaserSteps.get(i).size();
         }
+        scheduleSteps(delay, PHASES - 1, flagVisitSteps); // do this once, at the end of the phases
         player.generateCardHand();
     }
 
@@ -195,22 +190,25 @@ public class GameModel {
         return robotState;
     }
 
-    private void doFlag(int phaseNumber, GameState initialState, RobotState robotState) {
-        if (robotState.getDead()) return;
-        TiledMapTileLayer.Cell cell = getMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
-                robotState.getLocation().getPosition().getY());
-        if (cell == null) return; // there is no flag here
-        int flagNumber = (int) cell.getTile().getProperties().get("number");
-        RobotState newRobotState = robotState.copy();
-        newRobotState.visitFlag(flagNumber, robotState.getLocation());
-        GameState newState = initialState.update(newRobotState);
-        flagVisitSteps.get(phaseNumber).add(newState);
+    private void doFlags(int phaseNumber, GameState gameState) {
+        GameState nextState = gameState;
+        for (RobotState robotState : gameState.getRobotStates()) {
+            if (robotState.getDead()) return;
+            TiledMapTileLayer.Cell cell = getMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
+                    robotState.getLocation().getPosition().getY());
+            if (cell == null) return; // there is no flag here
+            int flagNumber = (int) cell.getTile().getProperties().get("number");
+            RobotState nextRobotState = robotState.copy();
+            nextRobotState.visitFlag(flagNumber, robotState.getLocation());
+            nextState = gameState.update(nextRobotState);
+        }
+        flagVisitSteps.get(phaseNumber).add(nextState);
     }
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         if (steps.get(phase).isEmpty()) return;
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delay * 1000 + 1000 * i);
+            timer.schedule(doStep(phase, steps), delay * 200 + 200 * i);
         }
     }
 
@@ -222,6 +220,8 @@ public class GameModel {
                 for (RobotState robotState : gameState.robotStates) {
                     robotState.getRobot().updateState(robotState);
                 }
+                //System.out.println("at: " + gameState.robotStates[0].getLocation());
+                System.out.println(gameState);
             }
         };
     }
@@ -233,25 +233,30 @@ public class GameModel {
         return state;
     }
 
-    private void doRobotLaser(int phaseNumber, GameState gameState, RobotState robotState) {
-        if (robotState.getDead()) return;
-        Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
-        if (toShoot != null) {
-            log(robotState.getRobot().toString() + " fired at " + toShoot.toString());
-            RobotState shotState = gameState.getState(toShoot).updateDamage(-1);
-            robotLaserSteps.get(phaseNumber).add(gameState.update(shotState));
+    private void doRobotLasers(int phaseNumber, GameState gameState) {
+        GameState next = gameState.copy();
+        for (RobotState robotState : gameState.getRobotStates()) {
+            Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
+            if (toShoot != null) {
+                log(toShoot.toString() + " was shot by " + robotState.getRobot().toString());
+                RobotState shotRobotState = gameState.getState(toShoot).updateDamage(-1);
+                next = gameState.update(shotRobotState);
+            }
         }
+        robotLaserSteps.get(phaseNumber).add(next);
     }
 
     private void doWallLasers(int phaseNumber, GameState gameState) {
+        GameState next = gameState.copy();
         for (Location laserLocation : getMapHandler().getLasersLocations()) {
             Robot toShoot = getMapHandler().robotInLineOfVision(laserLocation, gameState);
             if (toShoot != null) {
                 log(toShoot.toString() + " was shot by the wall laser at " + laserLocation.getPosition().toString());
                 RobotState shotRobotState = gameState.getState(toShoot).updateDamage(-1);
-                wallLaserSteps.get(phaseNumber).add(gameState.update(shotRobotState));
+                next = gameState.update(shotRobotState);
             }
         }
+        wallLaserSteps.get(phaseNumber).add(next);
     }
 
     public GameState getInitialGameState() {
