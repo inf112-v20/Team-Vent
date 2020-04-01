@@ -48,8 +48,4 @@ public class GameState {
         }
         return null;
     }
-
-    public RobotState[] getRobotStates() {
-        return robotStates;
-    }
 }
