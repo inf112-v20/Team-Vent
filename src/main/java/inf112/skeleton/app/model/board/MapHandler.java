@@ -186,8 +186,7 @@ public class MapHandler {
     public Robot robotInLineOfVision(Location location, GameState state) {
         while (!(wallInPath(location) || outOfBounds(location.forward()))) {
             // if one of the robots is on the next tile then return it
-            for (int i = 0; i < state.robotStates.length; i++) {
-                RobotState robotState = state.robotStates[i];
+            for (RobotState robotState : state.getRobotStates()) {
                 if (!robotState.getDead() && robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
                     return robotState.getRobot();
                 }
