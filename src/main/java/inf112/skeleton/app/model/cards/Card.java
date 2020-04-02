@@ -1,8 +1,8 @@
 package inf112.skeleton.app.model.cards;
 
 public enum Card {
-    MOVE__ONE,
-    MOVE__TWO,
+    MOVE_ONE,
+    MOVE_TWO,
     MOVE_THREE,
     BACK_UP,
     ROTATE_RIGHT,

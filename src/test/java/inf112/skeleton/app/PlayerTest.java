@@ -13,7 +13,7 @@ public class PlayerTest {
 
     @Test
     public void placingACardFromHandSlot0ToProgrammingSlot0() {
-        testPlayer.setCardinHand(0, Card.MOVE__ONE);
+        testPlayer.setCardinHand(0, Card.MOVE_ONE);
         Card testCard = testPlayer.getCardinHand(0);
         testPlayer.placeCardFromHandToSlot(0);
 
@@ -24,7 +24,7 @@ public class PlayerTest {
 
     @Test
     public void placingACardFromProgrammingSlotToHandSlot() {
-        testPlayer.setCardinHand(0, Card.MOVE__ONE);
+        testPlayer.setCardinHand(0, Card.MOVE_ONE);
         Card testCard = testPlayer.getCardinHand(0);
         testPlayer.placeCardFromHandToSlot(0);
         testPlayer.undoProgrammingSlotPlacement(0);

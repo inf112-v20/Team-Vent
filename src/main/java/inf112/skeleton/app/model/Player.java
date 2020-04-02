@@ -77,9 +77,9 @@ public class Player {
         Collections.shuffle(numb);
         for (int i = 0; i < LIMIT; i++) {
             if (i < 20) {
-                cardH.put(numb.get(i), Card.MOVE__ONE);
+                cardH.put(numb.get(i), Card.MOVE_ONE);
             } else if (i < 40) {
-                cardH.put(numb.get(i), Card.MOVE__TWO);
+                cardH.put(numb.get(i), Card.MOVE_TWO);
             } else if (i < 60) {
                 cardH.put(numb.get(i), Card.MOVE_THREE);
             } else if (i < 80) {
