@@ -188,7 +188,7 @@ public class MapHandler {
             // if one of the robots is on the next tile then return it
             for (int i = 0; i < state.robotStates.length; i++) {
                 RobotState robotState = state.robotStates[i];
-                if (robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
+                if (!robotState.getDead() && robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
                     return robotState.getRobot();
                 }
             }
@@ -225,5 +225,11 @@ public class MapHandler {
 
     public List<Location> getStartLocations() {
         return startLocations;
+    }
+
+    public Integer getFlag(RVector2 position) {
+        return (Integer) TileType.getProperty(getFlagLayer().getCell(position.getX(),
+                position.getY()), "number");
+
     }
 }

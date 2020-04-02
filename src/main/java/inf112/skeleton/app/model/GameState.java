@@ -48,4 +48,14 @@ public class GameState {
         }
         return null;
     }
+
+    public GameState copy() {
+        GameState other = new GameState(this.size);
+        other.robotStates = this.robotStates.clone();
+        return other;
+    }
+
+    public RobotState[] getRobotStates() {
+        return robotStates.clone();
+    }
 }
