@@ -57,7 +57,7 @@ public class GameScreen extends ScreenAdapter {
         float height = Gdx.graphics.getHeight();
         batch.begin();
         font.draw(batch,gameModel.getRobots().get(0).robotHPAsString(
-                gameModel.getRobots().get(0).getRobotHP()), width * 0.753f, height * 0.98f);
+                gameModel.getRobots().get(0).getState().getHp()), width * 0.753f, height * 0.98f);
         font.draw(batch, gameModel.getRobots().get(0).robotLifeAsString(
                 gameModel.getRobots().get(0).getRobotLife()), width * 0.753f, height * 0.95f);
         font.draw(batch, gameModel.getPlayer().handAsString(), width * 0.8f, height * 0.9f);

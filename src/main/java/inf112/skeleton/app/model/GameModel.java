@@ -238,21 +238,14 @@ public class GameModel {
         };
     }
 
-    private GameState updateLastState(GameState state, Deque<GameState> states) {
-        if (states.peekLast() != null) {
-            return states.peekLast();
-        }
-        return state;
-    }
-
     private void doRobotLasers(int phaseNumber, GameState gameState) {
         GameState next = gameState.copy();
         for (RobotState robotState : gameState.getRobotStates()) {
             if (robotState.getDead()) continue;
             Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
             if (toShoot != null) {
-                log(toShoot.toString() + " was shot by " + robotState.getRobot().toString());
-                RobotState shotRobotState = gameState.getState(toShoot).updateDamage(-1);
+                log(toShoot.toString() + " was shot by " + robotState.getRobot().toString() + "  " + phaseNumber);
+                RobotState shotRobotState = gameState.getState(toShoot).updateHP(-1);
                 next = gameState.update(shotRobotState);
             }
         }
@@ -265,11 +258,18 @@ public class GameModel {
             Robot toShoot = getMapHandler().robotInLineOfVision(laserLocation, gameState);
             if (toShoot != null) {
                 log(toShoot.toString() + " was shot by the wall laser at " + laserLocation.getPosition().toString());
-                RobotState shotRobotState = gameState.getState(toShoot).updateDamage(-1);
+                RobotState shotRobotState = gameState.getState(toShoot).updateHP(-1);
                 next = gameState.update(shotRobotState);
             }
         }
         wallLaserSteps.get(phaseNumber).add(next);
+    }
+
+    private GameState updateLastState(GameState state, Deque<GameState> states) {
+        if (states.peekLast() != null) {
+            return states.peekLast();
+        }
+        return state;
     }
 
     public GameState getInitialGameState() {

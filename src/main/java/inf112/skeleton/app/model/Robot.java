@@ -6,12 +6,10 @@ import inf112.skeleton.app.model.board.Location;
 
 public class Robot {
     private RobotState state;
-    private int robotHP;
     private int robotLife;
     public Robot(Location location) {
-        this.state = new RobotState(this, location, 0, false,
+        this.state = new RobotState(this, location, 9, false,
                 0, location);
-        this.robotHP = 9;
         this.robotLife = 3;
     }
 
@@ -60,14 +58,8 @@ public class Robot {
         return !state.getDead();
     }
 
-    public void setRobotHP(int healthPoints) {
-        this.robotHP = healthPoints;
-    }
-    public int getRobotHP() { return robotHP;}
-
     public String robotHPAsString(int args) {
-        String p = "robot's HP: " + args + "\n";
-        return p;
+        return "robot's HP: " + args + "\n";
     }
     public void setRobotLife(int lifePoints) {
         this.robotLife = lifePoints;
@@ -75,7 +67,6 @@ public class Robot {
     public int getRobotLife(){return robotLife;}
 
     public String robotLifeAsString(int args) {
-        String l = "robot's life: " + args + "\n";
-        return l;
+        return "robot's life: " + args + "\n";
     }
 }
