@@ -226,4 +226,10 @@ public class MapHandler {
     public List<Location> getStartLocations() {
         return startLocations;
     }
+
+    public Integer getFlag(RVector2 position) {
+        return (Integer) TileType.getProperty(getFlagLayer().getCell(position.getX(),
+                position.getY()), "number");
+
+    }
 }

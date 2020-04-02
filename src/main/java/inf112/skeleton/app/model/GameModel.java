@@ -1,7 +1,6 @@
 package inf112.skeleton.app.model;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
@@ -192,11 +191,8 @@ public class GameModel {
         GameState nextState = gameState;
         for (RobotState robotState : gameState.getRobotStates()) {
             if (robotState.getDead()) continue;
-            TiledMapTileLayer.Cell cell = getMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
-                    robotState.getLocation().getPosition().getY());
-            if (cell == null) return nextState;
-            int flagNumber = (int) cell.getTile().getProperties().get("number");
-            if (flagNumber == robotState.getCapturedFlags() + 1) {
+            Integer flagNumber = mapHandler.getFlag(robotState.getLocation().getPosition());
+            if (flagNumber != null && flagNumber == robotState.getCapturedFlags() + 1) {
                 nextState = nextState.update(robotState.visitFlag());
                 log(String.format("%s visited flag number %d", robotState.getRobot().toString(), flagNumber));
             }
