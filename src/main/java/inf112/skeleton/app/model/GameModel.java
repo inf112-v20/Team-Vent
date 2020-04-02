@@ -21,6 +21,7 @@ public class GameModel {
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> wallLaserSteps = new ArrayList<>();
+    private final ArrayList<Deque<GameState>> flagSteps = new ArrayList<>();
     Timer timer = new Timer(true);
     private List<Player> players;
 
@@ -44,6 +45,7 @@ public class GameModel {
             tileSteps.add(new LinkedList<>());
             robotLaserSteps.add(new LinkedList<>());
             wallLaserSteps.add(new LinkedList<>());
+            flagSteps.add(new LinkedList<>());
         }
         // legacy code
         player = players.get(0);
@@ -64,20 +66,21 @@ public class GameModel {
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
         for (int i = 0; i < PHASES; i++) {
 
-            for (Robot robot : robots) {
+           for (Robot robot : robots) {
                 doCard(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, cardSteps.get(i));
-            }
+           }
             for (Robot robot : robots) {
                 doTiles(i, gameState, gameState.getState(robot));
-                gameState = updateLastState(gameState, tileSteps.get(i));
-            }
+               gameState = updateLastState(gameState, tileSteps.get(i));
+           }
             doRobotLasers(i, gameState);
             gameState = updateLastState(gameState, robotLaserSteps.get(i));
             doWallLasers(i, gameState);
             gameState = updateLastState(gameState, wallLaserSteps.get(i));
+            doFlags(i, gameState);
+            gameState = updateLastState(gameState, flagSteps.get(i));
         }
-        gameState = doFlags(gameState);
 
         int delay = 0;
         for (int i = 0; i < PHASES; i++) {
@@ -89,8 +92,10 @@ public class GameModel {
             delay += robotLaserSteps.get(i).size();
             scheduleSteps(delay, i, wallLaserSteps);
             delay += wallLaserSteps.get(i).size();
+            scheduleSteps(delay, i, flagSteps);
+            delay += flagSteps.get(i).size();
+
         }
-        scheduleStep(delay, PHASES, gameState); // after phases
         player.generateCardHand();
     }
 
@@ -102,12 +107,11 @@ public class GameModel {
         Direction currentTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
         switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
             case CONVEYOR_NORMAL:
-                newState = initialState.update(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
-                tileSteps.get(phaseNumber).add(newState);
+                doMovement(phaseNumber, initialState, robotState, tileSteps, currentTileDirection);
                 break;
             case CONVEYOR_EXPRESS:
+                doMovement(phaseNumber, initialState, robotState, tileSteps, currentTileDirection);
                 newState = initialState.update(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
-                tileSteps.get(phaseNumber).add(newState);
 
                 loc = newState.getState(robotState.getRobot()).getLocation();
                 RobotState newRobotState = newState.getState(robotState.getRobot());
@@ -115,8 +119,7 @@ public class GameModel {
                 TileType nextTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
                 Direction nextTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
                 if (currentTileType.equals(nextTileType)) {
-                    newState = newState.update(newRobotState.updateLocation(loc.moveDirection(nextTileDirection)));
-                    tileSteps.get(phaseNumber).add(newState);
+                    doMovement(phaseNumber, newState, newRobotState, tileSteps, nextTileDirection);
                 }
                 break;
             case GEAR_CLOCKWISE:
@@ -145,76 +148,94 @@ public class GameModel {
         RobotState nextRobotState = robotState;
         switch (card) {
             case MOVE_THREE:
-                nextRobotState = movedOne(nextRobotState);
-                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
+                doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
+                initialState = cardSteps.get(phaseNumber).getLast();
+                robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE__TWO:
-                nextRobotState = movedOne(nextRobotState);
-                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
+                doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
+                initialState = cardSteps.get(phaseNumber).getLast();
+                robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE__ONE:
-                nextRobotState = movedOne(nextRobotState);
+                doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
                 break;
             case BACK_UP:
-                nextRobotState = backedUpOne(nextRobotState);
+                doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection().opposite());
                 break;
             case ROTATE_RIGHT:
                 nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().rotateRight());
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
                 break;
             case ROTATE_LEFT:
                 nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().rotateLeft());
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
                 break;
             case U_TURN:
                 nextRobotState = nextRobotState.updateLocation(nextRobotState.getLocation().halfTurn());
+                cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
                 break;
             default:
                 break;
         }
-        cardSteps.get(phaseNumber).add(initialState.update(nextRobotState));
     }
 
-    private RobotState movedOne(RobotState robotState) {
-        if (!mapHandler.wallInPath(robotState.getLocation())) {
-            robotState = robotState.updateLocation(robotState.getLocation().forward());
+    private boolean doMove(GameState initialState, RobotState robotState, Direction dir) {
+
+        Location locWithDir = new Location(robotState.getLocation().getPosition().cpy(), dir);
+        if (mapHandler.wallInPath(locWithDir)) {return false;}
+
+        Location pointOfContention = robotState.getLocation().moveDirection(dir);
+
+        for (RobotState state : initialState.getRobotStates()) {
+            if (state.getLocation().getPosition().equals(pointOfContention.getPosition())) {
+                if (doMove(initialState, state, dir)) {
+                    initialState.edit(robotState.updateLocation(robotState.getLocation().moveDirection(dir)));
+                    return true;
+                }
+                return false;
+            }
         }
-        return robotState;
+        initialState.edit(robotState.updateLocation(robotState.getLocation().moveDirection(dir)));
+        return true;
     }
 
-    private RobotState backedUpOne(RobotState robotState) {
-        if (!mapHandler.wallInPath(robotState.getLocation().halfTurn())) {
-            robotState = robotState.updateLocation(robotState.getLocation().backward());
+    private void doMovement(int phaseNumber, GameState state, RobotState robotState, ArrayList<Deque<GameState>> xSteps, Direction dir) {
+        GameState initialState = state.copy();
+        if(doMove(initialState, robotState, dir)) {
+            xSteps.get(phaseNumber).add(initialState);
         }
-        return robotState;
+
     }
 
-    private GameState doFlags(GameState gameState) {
-        GameState nextState = gameState;
+    private void doFlags(int phase, GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
             if (robotState.getDead()) continue;
             Integer flagNumber = mapHandler.getFlag(robotState.getLocation().getPosition());
             if (flagNumber != null && flagNumber == robotState.getCapturedFlags() + 1) {
-                nextState = nextState.update(robotState.visitFlag());
+                flagSteps.get(phase).add(gameState.update(robotState.visitFlag()));
                 log(String.format("%s visited flag number %d", robotState.getRobot().toString(), flagNumber));
             }
         }
-        return nextState;
     }
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
+        if (steps.get(phase).isEmpty()) return;
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            scheduleStep(delay, phase, steps.get(phase).remove());
+            timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
         }
     }
 
-    public void scheduleStep(int delay, int phase, GameState gameState) {
-        timer.schedule(new TimerTask() {
+    public TimerTask doStep(int phase, ArrayList<Deque<GameState>> steps) {
+        return new TimerTask() {
             @Override
             public void run() {
-                for (RobotState robotState : gameState.getRobotStates()) {
-                    robotState.getRobot().updateState(robotState);
+                GameState gameState = steps.get(phase).remove();
+                for (RobotState stateInfo : gameState.getRobotStates()) {
+                    stateInfo.getRobot().updateState(stateInfo);
                 }
             }
-        }, delay * 200 + 200 * phase);
+        };
     }
 
     private GameState updateLastState(GameState state, Deque<GameState> states) {

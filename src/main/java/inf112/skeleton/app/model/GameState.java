@@ -1,12 +1,12 @@
 package inf112.skeleton.app.model;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 
 public class GameState {
-    private IdentityHashMap<Robot, RobotState> robotMap;
+    private HashMap<Robot, RobotState> robotMap;
 
     public GameState() {
-        robotMap = new IdentityHashMap<>();
+        robotMap = new HashMap<>();
     }
 
     public void add(RobotState robotState) {
@@ -19,13 +19,19 @@ public class GameState {
         return other;
     }
 
+    public void edit(RobotState robotState) {
+        robotMap.put(robotState.getRobot(), robotState);
+    }
+
     public RobotState getState(Robot robot) {
         return robotMap.get(robot).copy();
     }
 
     public GameState copy() {
         GameState other = new GameState();
-        other.robotMap = new IdentityHashMap<>(this.robotMap);
+        for (RobotState state : robotMap.values()) {
+            other.robotMap.put(state.getRobot(), state.copy());
+        }
         return other;
     }
 

@@ -30,11 +30,9 @@ public class RobotState {
         other.damage = other.damage + damage;
         int hpCopy = getRobot().getRobotHP();
         int dmgTaken = hpCopy + damage;
-        if (dmgTaken < 0 || dmgTaken == 0 || hpCopy < 1){
+        if (dmgTaken <= 0 || hpCopy < 1){
             getRobot().setRobotLife(getRobot().getRobotLife()-1);
             getRobot().setRobotHP(9);
-            dmgTaken=0;
-
         }
         else {
             getRobot().setRobotHP(dmgTaken);
