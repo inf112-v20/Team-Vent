@@ -38,6 +38,9 @@ public class HostController {
             case "PROGRAMMING":
                 endProgrammingPhase();
                 break;
+            case "START ROUND":
+                startProgrammingPhase();
+                break;
             default:
                 break;
         }

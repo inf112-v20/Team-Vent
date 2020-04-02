@@ -139,7 +139,7 @@ public class GameController extends InputAdapter {
     // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
         Card[][] playerSlots = gameClient.getPlayerCards();
-        for (int playerI = 0; playerI < numberOfPlayers; playerI++){
+        for (int playerI = 0; playerI < 1; playerI++){ // TEMPORARY: Only lets the host control the player
             for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++){
                 gameModel.getPlayer(playerI).setCardinProgrammingSlot(cardSlotI, playerSlots[playerI][cardSlotI]);
             }

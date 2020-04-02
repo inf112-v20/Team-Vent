@@ -50,7 +50,7 @@ public class GameModel {
             flagSteps.add(new LinkedList<>());
         }
         // legacy code
-        player = players.get(playerIndex);
+        player = players.get(0);
     }
 
     public MapHandler getMapHandler() {
