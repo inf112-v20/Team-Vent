@@ -17,6 +17,7 @@ public class GameModel {
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
     private final Player player;
+    private final int playerIndex;
     private final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
@@ -25,7 +26,8 @@ public class GameModel {
     Timer timer = new Timer(true);
     private List<Player> players;
 
-    public GameModel(String map_filename, int numberOfPlayers) {
+    public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
+        this.playerIndex = playerIndex;
         mapHandler = new MapHandler(map_filename);
         if (mapHandler.getStartLocations().size() < numberOfPlayers) {
             throw new IllegalStateException(String.format("There are not enough starting locations for %d players", numberOfPlayers));
@@ -48,14 +50,18 @@ public class GameModel {
             flagSteps.add(new LinkedList<>());
         }
         // legacy code
-        player = players.get(0);
+        player = players.get(playerIndex);
     }
 
     public MapHandler getMapHandler() {
         return this.mapHandler;
     }
 
-    public Player getPlayer() {
+    public Player getPlayer(int index){
+        return players.get(index);
+    }
+
+    public Player getPlayer(){
         return this.player;
     }
 
@@ -152,12 +158,12 @@ public class GameModel {
                 initialState = cardSteps.get(phaseNumber).getLast();
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
-            case MOVE__TWO:
+            case MOVE_TWO:
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
                 initialState = cardSteps.get(phaseNumber).getLast();
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
-            case MOVE__ONE:
+            case MOVE_ONE:
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
                 break;
             case BACK_UP:
