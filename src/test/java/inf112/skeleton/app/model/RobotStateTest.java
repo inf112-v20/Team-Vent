@@ -16,23 +16,25 @@ public class RobotStateTest {
     }
 
     @Test
-    public void visitingTheWrongFlagHasNoEffect() {
-        state.visitFlag(state.getCapturedFlags() + 10, state.getLocation().forward());
-        assertEquals(0, state.getCapturedFlags());
-    }
-
-    @Test
-    public void visitingTheRightFlagIncreasesNumberOfFlags() {
-        Location flagLocation = state.getLocation().forward();
-        state.visitFlag(state.getCapturedFlags() + 1, flagLocation);
+    public void visitingFlagIncreasesNumberOfCapturedFlags() {
+        state = state.visitFlag();
         assertEquals(1, state.getCapturedFlags());
     }
 
     @Test
-    public void rebootingResetsToLastFlag() {
+    public void visitingFlagUpdatesSaveLocation() {
+        RobotState moved = state.updateLocation(state.getLocation().forward());
+        moved = moved.visitFlag();
+        assertEquals(moved.getSaveLocation(), moved.getLocation());
+    }
+
+    @Test
+    public void rebootingResetsToLastSavedLocation() {
         Location flagLocation = state.getLocation().forward();
-        state.visitFlag(state.getCapturedFlags() + 1, flagLocation);
-        RobotState newState = state.reboot();
-        assertEquals(flagLocation, newState.getLocation());
+        Location otherLocation = state.getLocation().backward();
+        RobotState moved = state.updateLocation(flagLocation);
+        moved = moved.visitFlag();
+        moved = moved.updateLocation(otherLocation);
+        assertEquals(moved.getSaveLocation(), flagLocation);
     }
 }

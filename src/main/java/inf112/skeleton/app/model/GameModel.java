@@ -22,7 +22,6 @@ public class GameModel {
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> wallLaserSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> flagVisitSteps = new ArrayList<>();
     Timer timer = new Timer(true);
     private List<Player> players;
 
@@ -46,7 +45,6 @@ public class GameModel {
             tileSteps.add(new LinkedList<>());
             robotLaserSteps.add(new LinkedList<>());
             wallLaserSteps.add(new LinkedList<>());
-            flagVisitSteps.add(new LinkedList<>());
         }
         // legacy code
         player = players.get(0);
@@ -79,8 +77,8 @@ public class GameModel {
             gameState = updateLastState(gameState, robotLaserSteps.get(i));
             doWallLasers(i, gameState);
             gameState = updateLastState(gameState, wallLaserSteps.get(i));
-            doFlags(i, gameState);
         }
+        gameState = doFlags(gameState);
 
         int delay = 0;
         for (int i = 0; i < PHASES; i++) {
@@ -93,7 +91,7 @@ public class GameModel {
             scheduleSteps(delay, i, wallLaserSteps);
             delay += wallLaserSteps.get(i).size();
         }
-        scheduleSteps(delay, PHASES - 1, flagVisitSteps); // do this once, at the end of the phases
+        scheduleStep(delay, PHASES, gameState); // after phases
         player.generateCardHand();
     }
 
@@ -190,40 +188,37 @@ public class GameModel {
         return robotState;
     }
 
-    private void doFlags(int phaseNumber, GameState gameState) {
+    private GameState doFlags(GameState gameState) {
         GameState nextState = gameState;
         for (RobotState robotState : gameState.getRobotStates()) {
-            if (robotState.getDead()) return;
+            if (robotState.getDead()) continue;
             TiledMapTileLayer.Cell cell = getMapHandler().getFlagLayer().getCell(robotState.getLocation().getPosition().getX(),
                     robotState.getLocation().getPosition().getY());
-            if (cell == null) return; // there is no flag here
+            if (cell == null) return nextState;
             int flagNumber = (int) cell.getTile().getProperties().get("number");
-            RobotState nextRobotState = robotState.copy();
-            nextRobotState.visitFlag(flagNumber, robotState.getLocation());
-            nextState = gameState.update(nextRobotState);
+            if (flagNumber == robotState.getCapturedFlags() + 1) {
+                nextState = nextState.update(robotState.visitFlag());
+                log(String.format("%s visited flag number %d", robotState.getRobot().toString(), flagNumber));
+            }
         }
-        flagVisitSteps.get(phaseNumber).add(nextState);
+        return nextState;
     }
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
-        if (steps.get(phase).isEmpty()) return;
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delay * 200 + 200 * i);
+            scheduleStep(delay, phase, steps.get(phase).remove());
         }
     }
 
-    public TimerTask doStep(int phase, ArrayList<Deque<GameState>> steps) {
-        return new TimerTask() {
+    public void scheduleStep(int delay, int phase, GameState gameState) {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                GameState gameState = steps.get(phase).remove();
                 for (RobotState robotState : gameState.robotStates) {
                     robotState.getRobot().updateState(robotState);
                 }
-                //System.out.println("at: " + gameState.robotStates[0].getLocation());
-                System.out.println(gameState);
             }
-        };
+        }, delay * 200 + 200 * phase);
     }
 
     private GameState updateLastState(GameState state, Deque<GameState> states) {
@@ -236,6 +231,7 @@ public class GameModel {
     private void doRobotLasers(int phaseNumber, GameState gameState) {
         GameState next = gameState.copy();
         for (RobotState robotState : gameState.getRobotStates()) {
+            if (robotState.getDead()) continue;
             Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
             if (toShoot != null) {
                 log(toShoot.toString() + " was shot by " + robotState.getRobot().toString());
