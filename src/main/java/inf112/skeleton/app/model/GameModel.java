@@ -210,7 +210,7 @@ public class GameModel {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                for (RobotState robotState : gameState.robotStates) {
+                for (RobotState robotState : gameState.getRobotStates()) {
                     robotState.getRobot().updateState(robotState);
                 }
             }
@@ -252,7 +252,7 @@ public class GameModel {
     }
 
     public GameState getInitialGameState() {
-        GameState state = new GameState(robots.size());
+        GameState state = new GameState();
         for (Robot robot : robots) {
             state.add(robot.getState());
         }
