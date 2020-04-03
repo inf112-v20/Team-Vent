@@ -85,4 +85,10 @@ public class RobotState {
         other.location = this.saveLocation;
         return other;
     }
+
+    public RobotState updateSaveLocation() {
+        RobotState other = this.copy();
+        other.saveLocation = this.location;
+        return other;
+    }
 }

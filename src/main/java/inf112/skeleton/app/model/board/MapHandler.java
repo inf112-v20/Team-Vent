@@ -47,17 +47,16 @@ public class MapHandler {
                     lasers.add(new Location(new RVector2(i, j), laserDirection));
                 }
                 // locate starting positions
-                Integer startNumber = (Integer) TileType.getProperty(getTileLayer().getCell(i, j), "start_number");
-                if (startNumber != null) {
+                if (getTileType(i, j, Constants.TILE_LAYER) == TileType.START) {
                     startLocations.add(new Location(new RVector2(i, j), Direction.EAST));
                 }
             }
             // Sort start locations by their number
             startLocations.sort((o1, o2) -> {
                 int startNumberX = (Integer) TileType.getProperty(getTileLayer().getCell(o1.getPosition().getX(),
-                        o1.getPosition().getY()), "start_number");
+                        o1.getPosition().getY()), "number");
                 int startNumberY = (Integer) TileType.getProperty(getTileLayer().getCell(o2.getPosition().getX(),
-                        o2.getPosition().getY()), "start_number");
+                        o2.getPosition().getY()), "number");
                 return Integer.compare(startNumberX, startNumberY);
             });
         }
@@ -230,5 +229,10 @@ public class MapHandler {
         return (Integer) TileType.getProperty(getFlagLayer().getCell(position.getX(),
                 position.getY()), "number");
 
+    }
+
+    public boolean hasRepairSite(RVector2 position) {
+        TileType tileType = getTileType(position, Constants.TILE_LAYER);
+        return tileType == TileType.REPAIR_ONE || tileType == TileType.REPAIR_TWO;
     }
 }

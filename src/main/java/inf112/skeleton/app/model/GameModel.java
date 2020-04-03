@@ -12,7 +12,7 @@ import java.util.*;
 
 public class GameModel {
 
-    private static final boolean ENABLE_LOGGING = false;
+    private static final boolean ENABLE_LOGGING = true;
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
@@ -215,6 +215,9 @@ public class GameModel {
             if (flagNumber != null && flagNumber == robotState.getCapturedFlags() + 1) {
                 flagSteps.get(phase).add(gameState.update(robotState.visitFlag()));
                 log(String.format("%s visited flag number %d", robotState.getRobot().toString(), flagNumber));
+            } else if (mapHandler.hasRepairSite(robotState.getLocation().getPosition())) {
+                flagSteps.get(phase).add(gameState.update(robotState.updateSaveLocation()));
+                log(String.format("%s touched a repair site and updated its save location", robotState.getRobot().toString()));
             }
         }
     }
