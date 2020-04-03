@@ -84,17 +84,15 @@ public class GameModel {
 
         int delay = 0;
         for (int i = 0; i < PHASES; i++) {
-            scheduleSteps(delay, i, cardSteps);
+            scheduleSteps(delay, i, cardSteps, true);
             delay += cardSteps.get(i).size();
-            scheduleSteps(delay, i, tileSteps);
+            scheduleSteps(delay, i, tileSteps, true);
             delay += tileSteps.get(i).size();
-            scheduleSteps(delay, i, robotLaserSteps);
+            scheduleSteps(delay, i, robotLaserSteps, true);
             delay += robotLaserSteps.get(i).size();
-            scheduleSteps(delay, i, wallLaserSteps);
+            scheduleSteps(delay, i, wallLaserSteps, true);
             delay += wallLaserSteps.get(i).size();
-            scheduleSteps(delay, i, flagSteps);
-            delay += flagSteps.get(i).size();
-
+            scheduleSteps(delay, i, flagSteps, false);
         }
         player.generateCardHand();
     }
@@ -222,10 +220,9 @@ public class GameModel {
         }
     }
 
-    public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
-        if (steps.get(phase).isEmpty()) return;
+    public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps, boolean delayBetweenSteps) {
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
+            timer.schedule(doStep(phase, steps), delayBetweenSteps ? delay * 500 + 500 * i : delay * 500);
         }
     }
 
