@@ -40,7 +40,7 @@
  <tile id="6">
   <properties>
    <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
+   <property name="type" value="repair_two"/>
   </properties>
  </tile>
  <tile id="7">
@@ -88,7 +88,7 @@
  <tile id="14">
   <properties>
    <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
+   <property name="type" value="repair_one"/>
   </properties>
  </tile>
  <tile id="15">
@@ -718,205 +718,54 @@
   <properties>
    <property name="direction" type="int" value="0"/>
    <property name="type" value=""/>
-    < / properties >
-    < / tile >
-    < tile
-id = "119" >
-    < properties >
-    < property
-name = "type"
-value = "" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "120" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "1" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "121" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "2" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "122" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "3" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "123" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "4" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "124" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "type"
-value = "" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "125" >
-    < properties >
-   <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
   </properties>
  </tile>
- <tile id="126">
+ <tile id="120">
   <properties>
-   <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
-    < / properties >
-    < / tile >
-    < tile
-id = "127" >
-    < properties >
-    < property
-name = "type"
-value = "" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "128" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "5" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "129" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "6" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "130" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "7" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "131" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "start_number"
-type = "int"
-value = "8" / >
-    < property
-name = "type"
-value = "start_tile" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "132" >
-    < properties >
-    < property
-name = "direction"
-type = "int"
-value = "0" / >
-    < property
-name = "type"
-value = "" / >
-    < / properties >
-    < / tile >
-    < tile
-id = "133" >
-    < properties >
-   <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
+   <property name="number" type="int" value="1"/>
+   <property name="type" value="start"/>
   </properties>
  </tile>
- <tile id="134">
+ <tile id="121">
   <properties>
-   <property name="direction" type="int" value="0"/>
-   <property name="type" value=""/>
+   <property name="number" type="int" value="2"/>
+   <property name="type" value="start"/>
   </properties>
  </tile>
- <tile id="135">
+ <tile id="122">
   <properties>
-   <property name="type" value=""/>
+   <property name="number" type="int" value="3"/>
+   <property name="type" value="start"/>
+  </properties>
+ </tile>
+ <tile id="123">
+  <properties>
+   <property name="number" type="int" value="4"/>
+   <property name="type" value="start"/>
+  </properties>
+ </tile>
+ <tile id="128">
+  <properties>
+   <property name="number" type="int" value="5"/>
+   <property name="type" value="start"/>
+  </properties>
+ </tile>
+ <tile id="129">
+  <properties>
+   <property name="number" type="int" value="6"/>
+   <property name="type" value="start"/>
+  </properties>
+ </tile>
+ <tile id="130">
+  <properties>
+   <property name="number" type="int" value="7"/>
+   <property name="type" value="start"/>
+  </properties>
+ </tile>
+ <tile id="131">
+  <properties>
+   <property name="number" type="int" value="8"/>
+   <property name="type" value="start"/>
   </properties>
  </tile>
 </tileset>

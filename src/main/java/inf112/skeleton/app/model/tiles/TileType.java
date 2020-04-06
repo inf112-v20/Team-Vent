@@ -9,7 +9,10 @@ public enum TileType {
     CONVEYOR_NORMAL,
     CONVEYOR_EXPRESS,
     GEAR_CLOCKWISE,
-    GEAR_COUNTERCLOCKWISE;
+    GEAR_COUNTERCLOCKWISE,
+    REPAIR_ONE,
+    REPAIR_TWO,
+    START;
 
     public static TileType asTileType(String name) {
         try {

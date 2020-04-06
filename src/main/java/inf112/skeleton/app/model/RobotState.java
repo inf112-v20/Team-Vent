@@ -83,6 +83,13 @@ public class RobotState {
         RobotState other = this.copy();
         other.dead = false;
         other.location = this.saveLocation;
+        other.hp = Robot.getMaxHP();
+        return other;
+    }
+
+    public RobotState updateSaveLocation() {
+        RobotState other = this.copy();
+        other.saveLocation = this.location;
         return other;
     }
 }
