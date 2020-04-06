@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.view.BoardRenderer;
 
 public class GameScreen extends ScreenAdapter {
@@ -55,13 +56,36 @@ public class GameScreen extends ScreenAdapter {
     private void renderFont() {
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
+        float horizontalAlign = width * 0.72f;
+        float verticalPosition = height;
+        float lineHeight = width * 0.02f;
         batch.begin();
-        font.draw(batch,gameModel.getRobots().get(0).robotHPAsString(
-                gameModel.getRobots().get(0).getState().getHp()), width * 0.753f, height * 0.98f);
-        font.draw(batch, gameModel.getRobots().get(0).robotLifeAsString(
-                gameModel.getRobots().get(0).getRobotLife()), width * 0.753f, height * 0.95f);
-        font.draw(batch, gameModel.getPlayer().handAsString(), width * 0.8f, height * 0.9f);
-        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), width * 0.8f, height * 0.4f);
+        verticalPosition -= lineHeight;
+        // Draw the state of this player's robot
+        Robot mine = gameModel.getPlayer().getRobot();
+        font.draw(batch, formatRobotState(mine), horizontalAlign, verticalPosition);
+        // Draw other robots
+        for (Robot robot : gameModel.getRobots()) {
+            if (!robot.equals(mine)) {
+                verticalPosition -= lineHeight;
+                font.draw(batch, formatRobotState(robot), horizontalAlign, verticalPosition);
+            }
+        }
+
+        // Draw the hand, and programming slots
+        font.draw(batch, gameModel.getPlayer().handAsString(), horizontalAlign, height * 0.7f);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), horizontalAlign, height * 0.3f);
         batch.end();
+    }
+
+    private String formatRobotState(Robot robot) {
+        // note: because of a problem with the the font the string there is no way to align the strings perfectly
+        // added to project board
+        return String.format("%s: %-8s  %s: %d  %s: %d  %s:  %s%n",
+                "NAME", robot.toString(),
+                "HP", robot.getState().getHp(),
+                "LIVES", robot.getRobotLife(),
+                "FLAGS", String.format("%d / %d", robot.getState().getCapturedFlags(),
+                        gameModel.getMapHandler().getNumberOfFlags()));
     }
 }

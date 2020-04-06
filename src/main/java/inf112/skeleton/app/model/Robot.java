@@ -46,15 +46,7 @@ public class Robot {
         return !state.getDead();
     }
 
-    public String robotHPAsString(int args) {
-        return "robot's HP: " + args + "\n";
-    }
-
     public int getRobotLife(){return robotLife;}
-
-    public String robotLifeAsString(int args) {
-        return "robot's life: " + args + "\n";
-    }
 
     public static int getMaxHP() {
         return 9;

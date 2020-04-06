@@ -228,11 +228,14 @@ public class MapHandler {
     public Integer getFlag(RVector2 position) {
         return (Integer) TileType.getProperty(getFlagLayer().getCell(position.getX(),
                 position.getY()), "number");
-
     }
 
     public boolean hasRepairSite(RVector2 position) {
         TileType tileType = getTileType(position, Constants.TILE_LAYER);
         return tileType == TileType.REPAIR_ONE || tileType == TileType.REPAIR_TWO;
+    }
+
+    public int getNumberOfFlags() {
+        return numberOfFlags;
     }
 }
