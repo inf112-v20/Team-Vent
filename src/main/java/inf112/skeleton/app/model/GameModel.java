@@ -85,46 +85,46 @@ public class GameModel {
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
         }
-        // append end of turn effects
-        gameState = doRepairs(gameState);
-        endOfPhaseSteps.get(PHASES - 1).add(gameState);
-        gameState = doReboot(gameState);
-        endOfPhaseSteps.get(PHASES - 1).add(gameState);
+        // end of turn effects
+        doRepairs(gameState);
+        doReboot(gameState);
 
         int delay = 0;
         for (int i = 0; i < PHASES; i++) {
-            scheduleSteps(delay, i, cardSteps, true);
+            scheduleSteps(delay, i, cardSteps);
             delay += cardSteps.get(i).size();
-            scheduleSteps(delay, i, tileSteps, true);
+            scheduleSteps(delay, i, tileSteps);
             delay += tileSteps.get(i).size();
-            scheduleSteps(delay, i, robotLaserSteps, true);
+            scheduleSteps(delay, i, robotLaserSteps);
             delay += robotLaserSteps.get(i).size();
-            scheduleSteps(delay, i, wallLaserSteps, true);
+            scheduleSteps(delay, i, wallLaserSteps);
             delay += wallLaserSteps.get(i).size();
-            scheduleSteps(delay, i, endOfPhaseSteps, false);
+            scheduleSteps(delay, i, endOfPhaseSteps);
         }
         player.generateCardHand();
     }
 
-    public GameState doReboot(GameState gameState) {
-        GameState nextGameState = gameState.copy();
+    /**
+     * Edit a game state so that dead robots re-spawn at their last saved location
+     */
+    public void doReboot(GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
             if (robotState.getDead()) {
-                nextGameState = nextGameState.update(robotState.reboot());
+                gameState.edit(robotState.reboot());
             }
         }
-        return nextGameState;
     }
 
-    public GameState doRepairs(GameState gameState) {
-        GameState nextGameState = gameState.copy();
+    /**
+     * Edit a game state so that all robots that are standing on a repair tile gain one hp
+     */
+    public void doRepairs(GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
             if (mapHandler.hasRepairSite(robotState.getLocation().getPosition())) {
                 log(robotState.getRobot() + " will be repaired");
-                nextGameState = nextGameState.update(robotState.updateHP(1)); // increase hp by one
+                gameState.edit(robotState.updateHP(1)); // increase hp by one
             }
         }
-        return nextGameState;
     }
 
     private void doTiles(int phaseNumber, GameState initialState, RobotState robotState) {
@@ -250,9 +250,9 @@ public class GameModel {
         }
     }
 
-    public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps, boolean delayBetweenSteps) {
+    public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delayBetweenSteps ? delay * 500 + 500 * i : delay * 500);
+            timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
         }
     }
 
