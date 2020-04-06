@@ -187,7 +187,8 @@ public class MapHandler {
         while (!(wallInPath(location) || outOfBounds(location.forward()))) {
             // if one of the robots is on the next tile then return it
             for (RobotState robotState : state.getRobotStates()) {
-                if (!robotState.getDead() && robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
+                if (!robotState.getDead() && robotState.getLocation().getPosition().equals(location.forward().getPosition()) ||
+                        robotState.getLocation().getPosition().equals(location.getPosition())) {
                     return robotState.getRobot();
                 }
             }
