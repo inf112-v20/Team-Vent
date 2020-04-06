@@ -21,7 +21,7 @@ public class GameModel {
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> wallLaserSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> flagSteps = new ArrayList<>();
+    private final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
     Timer timer = new Timer(true);
     private List<Player> players;
 
@@ -45,7 +45,7 @@ public class GameModel {
             tileSteps.add(new LinkedList<>());
             robotLaserSteps.add(new LinkedList<>());
             wallLaserSteps.add(new LinkedList<>());
-            flagSteps.add(new LinkedList<>());
+            endOfPhaseSteps.add(new LinkedList<>());
         }
         // legacy code
         String[] names = {"Blue", "Yellow", "Red", "Green"};
@@ -76,15 +76,20 @@ public class GameModel {
            }
             for (Robot robot : robots) {
                 doTiles(i, gameState, gameState.getState(robot));
-               gameState = updateLastState(gameState, tileSteps.get(i));
-           }
+                gameState = updateLastState(gameState, tileSteps.get(i));
+            }
             doRobotLasers(i, gameState);
             gameState = updateLastState(gameState, robotLaserSteps.get(i));
             doWallLasers(i, gameState);
             gameState = updateLastState(gameState, wallLaserSteps.get(i));
             doFlags(i, gameState);
-            gameState = updateLastState(gameState, flagSteps.get(i));
+            gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
         }
+        // append end of turn effects
+        gameState = doRepairs(gameState);
+        endOfPhaseSteps.get(PHASES - 1).add(gameState);
+        gameState = doReboot(gameState);
+        endOfPhaseSteps.get(PHASES - 1).add(gameState);
 
         int delay = 0;
         for (int i = 0; i < PHASES; i++) {
@@ -96,9 +101,30 @@ public class GameModel {
             delay += robotLaserSteps.get(i).size();
             scheduleSteps(delay, i, wallLaserSteps, true);
             delay += wallLaserSteps.get(i).size();
-            scheduleSteps(delay, i, flagSteps, false);
+            scheduleSteps(delay, i, endOfPhaseSteps, false);
         }
         player.generateCardHand();
+    }
+
+    public GameState doReboot(GameState gameState) {
+        GameState nextGameState = gameState.copy();
+        for (RobotState robotState : gameState.getRobotStates()) {
+            if (robotState.getDead()) {
+                nextGameState = nextGameState.update(robotState.reboot());
+            }
+        }
+        return nextGameState;
+    }
+
+    public GameState doRepairs(GameState gameState) {
+        GameState nextGameState = gameState.copy();
+        for (RobotState robotState : gameState.getRobotStates()) {
+            if (mapHandler.hasRepairSite(robotState.getLocation().getPosition())) {
+                log(robotState.getRobot() + " will be repaired");
+                nextGameState = nextGameState.update(robotState.updateHP(1)); // increase hp by one
+            }
+        }
+        return nextGameState;
     }
 
     private void doTiles(int phaseNumber, GameState initialState, RobotState robotState) {
@@ -215,10 +241,10 @@ public class GameModel {
             if (robotState.getDead()) continue;
             Integer flagNumber = mapHandler.getFlag(robotState.getLocation().getPosition());
             if (flagNumber != null && flagNumber == robotState.getCapturedFlags() + 1) {
-                flagSteps.get(phase).add(gameState.update(robotState.visitFlag()));
+                endOfPhaseSteps.get(phase).add(gameState.update(robotState.visitFlag()));
                 log(String.format("%s will visit flag number %d", robotState.getRobot().toString(), flagNumber));
             } else if (mapHandler.hasRepairSite(robotState.getLocation().getPosition())) {
-                flagSteps.get(phase).add(gameState.update(robotState.updateSaveLocation()));
+                endOfPhaseSteps.get(phase).add(gameState.update(robotState.updateSaveLocation()));
                 log(String.format("%s will touch a repair site and update its save location", robotState.getRobot().toString()));
             }
         }
