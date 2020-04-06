@@ -5,22 +5,18 @@ import inf112.skeleton.app.model.board.Location;
 
 
 public class Robot {
+    private String name = "Anonymous";
     private RobotState state;
     private int robotLife;
     public Robot(Location location) {
-        this.state = new RobotState(this, location, 9, false,
+        this.state = new RobotState(this, location, getMaxHP(), false,
                 0, location);
         this.robotLife = 3;
-    }
-
-    public Robot(RobotState state) {
-        this.state = state;
     }
 
     public Robot() {
         this(new Location());
     }
-
 
     public Location getLocation() {
         return this.state.getLocation();
@@ -46,14 +42,6 @@ public class Robot {
         return state.copy();
     }
 
-    public Robot copy() {
-        return new Robot(getLocation().copy());
-    }
-
-    public int getCapturedFlags() {
-        return state.getCapturedFlags();
-    }
-
     public boolean alive() {
         return !state.getDead();
     }
@@ -61,12 +49,23 @@ public class Robot {
     public String robotHPAsString(int args) {
         return "robot's HP: " + args + "\n";
     }
-    public void setRobotLife(int lifePoints) {
-        this.robotLife = lifePoints;
-    }
+
     public int getRobotLife(){return robotLife;}
 
     public String robotLifeAsString(int args) {
         return "robot's life: " + args + "\n";
+    }
+
+    public static int getMaxHP() {
+        return 9;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

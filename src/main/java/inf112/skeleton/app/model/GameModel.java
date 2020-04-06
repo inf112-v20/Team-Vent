@@ -48,6 +48,10 @@ public class GameModel {
             flagSteps.add(new LinkedList<>());
         }
         // legacy code
+        String[] names = {"Blue", "Yellow", "Red", "Green"};
+        for (int i = 0; i < names.length && i < robots.size(); i++) {
+            robots.get(i).setName(names[i]);
+        }
         player = players.get(0);
     }
 
@@ -212,10 +216,10 @@ public class GameModel {
             Integer flagNumber = mapHandler.getFlag(robotState.getLocation().getPosition());
             if (flagNumber != null && flagNumber == robotState.getCapturedFlags() + 1) {
                 flagSteps.get(phase).add(gameState.update(robotState.visitFlag()));
-                log(String.format("%s visited flag number %d", robotState.getRobot().toString(), flagNumber));
+                log(String.format("%s will visit flag number %d", robotState.getRobot().toString(), flagNumber));
             } else if (mapHandler.hasRepairSite(robotState.getLocation().getPosition())) {
                 flagSteps.get(phase).add(gameState.update(robotState.updateSaveLocation()));
-                log(String.format("%s touched a repair site and updated its save location", robotState.getRobot().toString()));
+                log(String.format("%s will touch a repair site and update its save location", robotState.getRobot().toString()));
             }
         }
     }
@@ -244,7 +248,7 @@ public class GameModel {
             if (robotState.getDead()) continue;
             Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
             if (toShoot != null) {
-                log(toShoot.toString() + " was shot by " + robotState.getRobot().toString() + "  " + phaseNumber);
+                log(toShoot.toString() + " will be shot by " + robotState.getRobot().toString() + "  " + phaseNumber);
                 RobotState shotRobotState = gameState.getState(toShoot).updateHP(-1);
                 next = gameState.update(shotRobotState);
             }
@@ -257,7 +261,7 @@ public class GameModel {
         for (Location laserLocation : getMapHandler().getLasersLocations()) {
             Robot toShoot = getMapHandler().robotInLineOfVision(laserLocation, gameState);
             if (toShoot != null) {
-                log(toShoot.toString() + " was shot by the wall laser at " + laserLocation.getPosition().toString());
+                log(toShoot.toString() + " will be shot by the wall laser at " + laserLocation.getPosition().toString());
                 RobotState shotRobotState = gameState.getState(toShoot).updateHP(-1);
                 next = gameState.update(shotRobotState);
             }
