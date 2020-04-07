@@ -30,14 +30,14 @@ public class MenuScreen extends ScreenAdapter {
         // Resolution selector
         Label resolutionLabel = new Label("Resolution: ", skin);
         resolutionLabel.setFontScale(1.3f);
-        SelectBox resolutionBox = new SelectBox(skin);
+        SelectBox<String> resolutionBox = new SelectBox<>(skin);
         String[] resolutionOptions = {"1366x768"};
         resolutionBox.setItems(resolutionOptions);
 
         // Map selector
         Label mapSelectorLabel = new Label("Map: ", skin);
         mapSelectorLabel.setFontScale(1.3f);
-        SelectBox mapSelectorBox = new SelectBox(skin);
+        SelectBox<String> mapSelectorBox = new SelectBox<>(skin);
         String[] mapSelectorOptions = {"map-1.tmx", "demo.tmx"};
         mapSelectorBox.setItems(mapSelectorOptions);
 
@@ -53,7 +53,7 @@ public class MenuScreen extends ScreenAdapter {
         playButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                new GameController(game, (String) mapSelectorBox.getSelected());
+                new GameController(game, mapSelectorBox.getSelected());
             }
 
             @Override
