@@ -275,8 +275,7 @@ public class GameModel {
             Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
             if (toShoot != null) {
                 log(toShoot.toString() + " will be shot by " + robotState.getRobot().toString() + "  " + phaseNumber);
-                RobotState shotRobotState = gameState.getState(toShoot).updateHP(-1);
-                next = gameState.update(shotRobotState);
+                next.edit(gameState.getState(toShoot).updateHP(-1));
             }
         }
         robotLaserSteps.get(phaseNumber).add(next);
