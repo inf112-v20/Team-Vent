@@ -10,9 +10,12 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
+import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.RVector2;
 
 import java.util.IdentityHashMap;
+
+import static inf112.skeleton.app.model.GameState.LaserBeam;
 
 public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private final GameModel gameModel;
@@ -28,26 +31,30 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
                 getTileWidth());
         this.gameModel = gameModel;
         loadTextures();
-        // add layers to render for objects that move or change based on the game model
+        // create additional layers for objects that move or change based on the game model
         TiledMapTileLayer tileLayer = gameModel.getMapHandler().getTileLayer();
         this.robotLayer = new TiledMapTileLayer(tileLayer.getWidth(), tileLayer.getHeight(),
                 (int) tileLayer.getTileWidth(), (int) tileLayer.getTileHeight());
         robotLayer.setName(Constants.ROBOT_LAYER);
-        map.getLayers().add(robotLayer);
         this.laserLayer = new TiledMapTileLayer(tileLayer.getWidth(), tileLayer.getHeight(),
                 (int) tileLayer.getTileWidth(), (int) tileLayer.getTileHeight());
         laserLayer.setName(Constants.LASER_LAYER);
-        map.getLayers().add(laserLayer);
     }
 
     @Override
     public void render() {
-        super.render();
         clearObjectLayers();
-        renderRobots();
+        updateRobotLayer();
+        updateLaserBeamLayer();
+        super.render();  // render all static layers
+        this.beginRender();
+        this.renderMapLayer(laserLayer);
+        this.renderMapLayer(robotLayer);
+        // re-render wall layer so that wall layers are on top of beams
+        this.renderMapLayer(gameModel.getMapHandler().getWallLayer());
+        this.endRender();
     }
 
-    //TODO update for several robots instead of static 0
     private void loadTextures() {
         TextureRegion robotFacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech1A_north.png"));
         TextureRegion robot2FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech2.png"));
@@ -74,13 +81,36 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         }
     }
 
-    public void renderRobots() {
+    public void updateRobotLayer() {
         for (Robot robot : gameModel.getRobots()) {
             if (!robot.alive()) continue;
             Cell cell = robotsToCellsHashMap.get(robot);
             rotateCellToMatchRobot(robot, cell);
             robotLayer.setCell(robot.getX(), robot.getY(), cell);
         }
+    }
+
+    public void updateLaserBeamLayer() {
+        for (LaserBeam beam : gameModel.getLaserBeams()) {
+            Location next = beam.shooterIsRobot ? beam.origin.forward() : beam.origin;
+            while (!next.getPosition().equals(beam.target)) {
+                setLaserTile(next.getPosition(), beam.origin.getDirection() == Direction.WEST ||
+                        beam.origin.getDirection() == Direction.EAST);
+                next = next.forward();
+            }
+        }
+    }
+
+    public void setLaserTile(RVector2 position, boolean horizontal) {
+        Cell cell = laserLayer.getCell(position.getX(), position.getY());
+        if ((horizontal && cell == VERTICAL_LASER_TILE_CELL) || (!horizontal && cell == HORIZONTAL_LASER_TILE_CELL)) {
+            cell = CROSS_LASER_TILE_CELL;
+        } else if (horizontal) {
+            cell = HORIZONTAL_LASER_TILE_CELL;
+        } else {
+            cell = VERTICAL_LASER_TILE_CELL;
+        }
+        laserLayer.setCell(position.getX(), position.getY(), cell);
     }
 
     private void clearObjectLayers() {

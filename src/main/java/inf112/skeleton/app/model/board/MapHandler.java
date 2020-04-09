@@ -9,7 +9,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.GameState;
-import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.tiles.TileType;
 
@@ -182,12 +181,12 @@ public class MapHandler {
      * @param state    the game state
      * @return a robot that is in the line of vision or null
      */
-    public Robot robotInLineOfVision(Location location, GameState state) {
+    public RobotState robotInLineOfVision(Location location, GameState state) {
         while (!(wallInPath(location) || outOfBounds(location.forward()))) {
             // if one of the robots is on the next tile then return it
             for (RobotState robotState : state.getRobotStates()) {
                 if (!robotState.getDead() && robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
-                    return robotState.getRobot();
+                    return robotState;
                 }
             }
             location = location.forward();

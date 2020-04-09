@@ -9,6 +9,8 @@ import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class GameModel {
 
@@ -19,12 +21,12 @@ public class GameModel {
     private final Player player;
     private final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> wallLaserSteps = new ArrayList<>();
+    private final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
     public Timer timer = new Timer(true);
     public int delay;
     private List<Player> players;
+    private GameState currentGameState;
 
 
     public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
@@ -46,8 +48,7 @@ public class GameModel {
         for (int i = 0; i < PHASES; i++) {
             cardSteps.add(new LinkedList<>());
             tileSteps.add(new LinkedList<>());
-            robotLaserSteps.add(new LinkedList<>());
-            wallLaserSteps.add(new LinkedList<>());
+            laserSteps.add(new LinkedList<>());
             endOfPhaseSteps.add(new LinkedList<>());
         }
         // legacy code
@@ -56,6 +57,7 @@ public class GameModel {
             robots.get(i).setName(names[i]);
         }
         player = players.get(playerIndex);
+        this.currentGameState = getInitialGameState();
     }
 
     public MapHandler getMapHandler() {
@@ -78,17 +80,15 @@ public class GameModel {
         for (int i = 0; i < PHASES; i++) {
             for (Player player : players) {
                 Robot robot = player.getRobot();
-                 doCard(i, gameState, gameState.getState(robot), player);
-                 gameState = updateLastState(gameState, cardSteps.get(i));
+                doCard(i, gameState, gameState.getState(robot), player);
+                gameState = updateLastState(gameState, cardSteps.get(i));
             }
             for (Robot robot : robots) {
                 doTiles(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, tileSteps.get(i));
             }
-            doRobotLasers(i, gameState);
-            gameState = updateLastState(gameState, robotLaserSteps.get(i));
-            doWallLasers(i, gameState);
-            gameState = updateLastState(gameState, wallLaserSteps.get(i));
+            doLasers(i, gameState);
+            gameState = updateLastState(gameState, laserSteps.get(i));
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
         }
@@ -102,11 +102,31 @@ public class GameModel {
             delay += cardSteps.get(i).size();
             scheduleSteps(delay, i, tileSteps);
             delay += tileSteps.get(i).size();
-            scheduleSteps(delay, i, robotLaserSteps);
-            delay += robotLaserSteps.get(i).size();
-            scheduleSteps(delay, i, wallLaserSteps);
-            delay += wallLaserSteps.get(i).size();
+            scheduleSteps(delay, i, laserSteps);
+            delay += laserSteps.get(i).size();
             scheduleSteps(delay, i, endOfPhaseSteps);
+        }
+    }
+
+    private void doLasers(int phaseNumber, GameState initialState) {
+        GameState laserBeamState = initialState.copy();
+        List<Location> shootingLocations = initialState.getRobotStates().stream()
+                .filter(Predicate.not(RobotState::getDead))
+                .map(RobotState::getLocation).collect(Collectors.toCollection(LinkedList::new));
+        shootingLocations.addAll(mapHandler.getLasersLocations());
+        boolean shotsFired = false;
+        for (Location origin : shootingLocations) {
+            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState);
+            if (toShoot == null) continue;
+            shotsFired = true;
+            laserBeamState = laserBeamState.update(toShoot.updateHP(-1));
+            laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
+                    !mapHandler.getLasersLocations().contains(origin));
+            log(toShoot.getRobot().toString() + " will be shot");
+        }
+        if (shotsFired) {
+            laserSteps.get(phaseNumber).add(laserBeamState);
+            laserSteps.get(phaseNumber).add(laserBeamState.clearLaserBeams()); // state without lasers
         }
     }
 
@@ -270,34 +290,9 @@ public class GameModel {
                 for (RobotState stateInfo : gameState.getRobotStates()) {
                     stateInfo.getRobot().updateState(stateInfo);
                 }
+                currentGameState = gameState;
             }
         };
-    }
-
-    private void doRobotLasers(int phaseNumber, GameState gameState) {
-        GameState next = gameState.copy();
-        for (RobotState robotState : gameState.getRobotStates()) {
-            if (robotState.getDead()) continue;
-            Robot toShoot = getMapHandler().robotInLineOfVision(robotState.getLocation(), gameState);
-            if (toShoot != null) {
-                log(toShoot.toString() + " will be shot by " + robotState.getRobot().toString() + "  " + phaseNumber);
-                next.edit(gameState.getState(toShoot).updateHP(-1));
-            }
-        }
-        robotLaserSteps.get(phaseNumber).add(next);
-    }
-
-    private void doWallLasers(int phaseNumber, GameState gameState) {
-        GameState next = gameState.copy();
-        for (Location laserLocation : getMapHandler().getLasersLocations()) {
-            Robot toShoot = getMapHandler().robotInLineOfVision(laserLocation, gameState);
-            if (toShoot != null) {
-                log(toShoot.toString() + " will be shot by the wall laser at " + laserLocation.getPosition().toString());
-                RobotState shotRobotState = gameState.getState(toShoot).updateHP(-1);
-                next = gameState.update(shotRobotState);
-            }
-        }
-        wallLaserSteps.get(phaseNumber).add(next);
     }
 
     private GameState updateLastState(GameState state, Deque<GameState> states) {
@@ -325,8 +320,11 @@ public class GameModel {
         }
     }
 
-    public int getFinalPhaseSize(){
+    public int getFinalPhaseSize() {
         return endOfPhaseSteps.get(4).size();
     }
 
+    public Iterable<? extends GameState.LaserBeam> getLaserBeams() {
+        return currentGameState.getLaserBeams();
+    }
 }
