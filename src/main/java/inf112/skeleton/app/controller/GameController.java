@@ -22,9 +22,11 @@ public class GameController extends InputAdapter {
     private GameClient gameClient;
     private Boolean isHost;
     private HostController hostController;
+    private Boolean multiplayer;
     private String lastServerStatus = "START";
     private int numberOfPlayers;
     private int playerIndex;
+    private boolean roundInProgress = false;
     Timer timer = new Timer(true);
 
     /**
@@ -38,6 +40,7 @@ public class GameController extends InputAdapter {
         this.game = game;
         gameClient = null;
         isHost = false;
+        multiplayer = false;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
         hostController = null;
@@ -54,6 +57,7 @@ public class GameController extends InputAdapter {
         this.game = game;
         this.gameClient = gameClient;
         this.isHost = isHost;
+        multiplayer = true;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
         startServerListener();
@@ -108,6 +112,19 @@ public class GameController extends InputAdapter {
         };
     }
 
+    private TimerTask endOfTurn(){
+        return new TimerTask() {
+            @Override
+            public void run() {
+                if (multiplayer){
+                    gameClient.setReady();
+                }
+                gameModel.getPlayer(playerIndex).generateCardHand();
+                roundInProgress = false;
+            }
+        };
+    }
+
     private void startServerListener(){
         timer.schedule(listenToServer(), 0, 200);
     }
@@ -128,8 +145,8 @@ public class GameController extends InputAdapter {
     }
 
     private void lockInCards(){
-        if (gameClient == null){ // gameClient is null if in single player
-            gameModel.endTurn();
+        if (!multiplayer){
+            startRound();
             return;
         }
         gameClient.setProgrammingSlots(gameModel.getPlayer(playerIndex).getProgrammingSlots());
@@ -138,19 +155,26 @@ public class GameController extends InputAdapter {
 
     // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
-        Card[][] playerSlots = gameClient.getPlayerCards();
-        for (int playerI = 0; playerI < 1; playerI++){ // TEMPORARY: Only lets the host control the player
-            for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++){
-                gameModel.getPlayer(playerI).setCardinProgrammingSlot(cardSlotI, playerSlots[playerI][cardSlotI]);
+        roundInProgress = true;
+        if (multiplayer){
+            Card[][] playerSlots = gameClient.getPlayerCards();
+            for (int playerI = 0; playerI < numberOfPlayers; playerI++){
+                for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++){
+                    gameModel.getPlayer(playerI).setCardinProgrammingSlot(cardSlotI, playerSlots[playerI][cardSlotI]);
+                }
             }
         }
         gameModel.endTurn();
+        gameModel.timer.schedule(endOfTurn(), gameModel.delay * 500);
     }
 
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.SHIFT_LEFT) {
             shiftIsPressed = false;
+        }
+        if (roundInProgress){
+            return false;
         }
         handleCardInput(keycode);
         handleTestingInput(keycode);
