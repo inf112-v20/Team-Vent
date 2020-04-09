@@ -195,10 +195,6 @@ public class MapHandler {
         return null;
     }
 
-    public TiledMapTileLayer getRobotLayer() {
-        return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.ROBOT_LAYER);
-    }
-
     public TiledMapTileLayer getTileLayer() {
         return (TiledMapTileLayer) tiledMap.getLayers().get(Constants.TILE_LAYER);
     }
