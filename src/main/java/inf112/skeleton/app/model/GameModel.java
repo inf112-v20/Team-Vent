@@ -26,6 +26,7 @@ public class GameModel {
     public int delay;
     private List<Player> players;
 
+
     public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
         mapHandler = new MapHandler(map_filename);
         if (mapHandler.getStartLocations().size() < numberOfPlayers) {
@@ -323,4 +324,9 @@ public class GameModel {
             Gdx.app.log(this.getClass().getName(), message);
         }
     }
+
+    public int getFinalPhaseSize(){
+        return endOfPhaseSteps.get(4).size();
+    }
+
 }

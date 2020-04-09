@@ -18,52 +18,44 @@ public class GameController extends InputAdapter {
     private final RoboRallyGame game;
     private GameModel gameModel;
     private boolean shiftIsPressed = false;
-    private String map_filename;
     private GameClient gameClient;
-    private Boolean isHost;
-    private HostController hostController;
     private Boolean multiplayer;
     private String lastServerStatus = "START";
     private int numberOfPlayers;
     private int playerIndex;
     private boolean roundInProgress = false;
-    Timer timer = new Timer(true);
+    private Timer timer = new Timer(true);
 
     /**
      * Single player constructor
      */
     public GameController(RoboRallyGame game, String map_filename) {
-        this.map_filename = map_filename;
         this.numberOfPlayers = 4;
         playerIndex = 0;
         this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
         this.game = game;
         gameClient = null;
-        isHost = false;
         multiplayer = false;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
-        hostController = null;
     }
 
     /**
      * Online multiplayer constructor
      */
     public GameController(RoboRallyGame game, String map_filename, GameClient gameClient, Boolean isHost) {
-        this.map_filename = map_filename;
         this.numberOfPlayers = gameClient.getNumberOfPlayers();
         playerIndex = gameClient.getIndex();
         this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
         this.game = game;
         this.gameClient = gameClient;
-        this.isHost = isHost;
         multiplayer = true;
         game.setScreen(new GameScreen(gameModel));
         Gdx.input.setInputProcessor(this);
         startServerListener();
         gameClient.setReady(); // lets the server know that this client has started the game
         if (isHost){
-            this.hostController = new HostController(gameClient);
+            new HostController(gameClient);
         }
     }
 

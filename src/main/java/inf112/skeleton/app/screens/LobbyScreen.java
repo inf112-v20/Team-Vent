@@ -23,7 +23,7 @@ public class LobbyScreen extends ScreenAdapter {
     private GameClient gameClient;
     private List playerList;
     private RoboRallyGame game;
-    Timer timer = new Timer(true);
+    private Timer timer = new Timer(true);
 
     public LobbyScreen(RoboRallyGame game, Boolean isHost, String hostAddress) {
         this.isHost = isHost;

@@ -100,7 +100,7 @@ public class GameHost {
     public int numberConnectedPlayers(){
         int n = 0;
         for (String player : connectionList){
-            if (!player.equals(" ")){
+            if (!" ".equals(player)){
                 n++;
             }
         }
