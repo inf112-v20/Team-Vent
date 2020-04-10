@@ -208,8 +208,12 @@ public class MapHandler {
     }
 
     public boolean outOfBounds(Location loc) {
-        return (loc.getPosition().getX() >= getWidth() || loc.getPosition().getX() < 0
-                || loc.getPosition().getY() >= getHeight() || loc.getPosition().getY() < 0);
+        return outOfBounds(loc.getPosition());
+    }
+
+    public boolean outOfBounds(RVector2 pos) {
+        return (pos.getX() >= getWidth() || pos.getX() < 0
+                || pos.getY() >= getHeight() || pos.getY() < 0);
     }
 
     public List<Location> getLasersLocations() {

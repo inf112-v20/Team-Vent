@@ -5,6 +5,7 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
@@ -124,7 +125,6 @@ public class GameModel {
             laserBeamState = laserBeamState.update(toShoot.updateHP(-1));
             laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
                     !mapHandler.getLasersLocations().contains(origin));
-            log(toShoot.getRobot().toString() + " will be shot");
         }
         if (shotsFired) {
             laserSteps.get(phaseNumber).add(laserBeamState);
@@ -148,10 +148,36 @@ public class GameModel {
      */
     public void doReboot(GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
-            if (robotState.getDead()) {
-                gameState.edit(robotState.reboot());
+            if (!robotState.getDead()) continue;
+            Location saved = robotState.getSaveLocation();
+            Location respawn = saved;
+            // if the saved location is not available, use the closest available location
+            if (!available(gameState, saved.getPosition())) {
+                Set<RVector2> candidates = new HashSet<>();
+                for (int dx = -2; dx <= 2; dx++) {
+                    for (int dy = -2; dy <= 2; dy++) {
+                        candidates.add(saved.getPosition().translate(dx, dy));
+                    }
+                }
+                Optional<RVector2> closestAvailablePosition = candidates
+                        .stream()
+                        .filter(p -> available(gameState, p))
+                        .min(Comparator.comparingInt(o -> o.distance(saved.getPosition())));
+                respawn = closestAvailablePosition.map(vector2 -> new Location(vector2, saved.getDirection())).orElse(saved);
             }
+            gameState.edit(robotState.reboot(respawn));
         }
+    }
+
+    /**
+     * Return true if the position is within the board and no robot has that position
+     */
+    private boolean available(GameState gameState, RVector2 position) {
+        return !mapHandler.outOfBounds(position) && gameState.getRobotStates().stream()
+                .filter(state -> !state.getDead())
+                .map(RobotState::getLocation)
+                .map(Location::getPosition)
+                .noneMatch(pos -> pos.equals(position));
     }
 
     /**

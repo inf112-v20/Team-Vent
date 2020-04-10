@@ -80,10 +80,10 @@ public class RobotState {
      * Come alive if dead and move to the most recently captured flag, or to the starting position if there are no
      * captured flags
      */
-    public RobotState reboot() {
+    public RobotState reboot(Location loc) {
         if (this.lives <= 0) return this; // the robot is out of the game
         RobotState other = this.copy();
-        other.location = this.saveLocation;
+        other.location = loc;
         other.hp = Robot.getMaxHP();
         return other;
     }
@@ -96,5 +96,15 @@ public class RobotState {
 
     public int getLives() {
         return this.lives;
+    }
+
+    @Override
+    public String toString() {
+        return "RobotState{" +
+                robot.getName().toUpperCase() +
+                ": location=" + location +
+                ", hp=" + hp +
+                ", lives=" + lives +
+                '}';
     }
 }

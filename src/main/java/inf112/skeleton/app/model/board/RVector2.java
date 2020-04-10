@@ -63,4 +63,12 @@ public class RVector2 {
     public RVector2 cpy() {
         return new RVector2(this.vector.cpy());
     }
+
+    public int distance(RVector2 other) {
+        return Math.abs(this.getX() - other.getX()) + Math.abs(this.getY() - other.getY());
+    }
+
+    public RVector2 translate(int dx, int dy) {
+        return new RVector2(getX() + dx, getY() + dy);
+    }
 }

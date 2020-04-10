@@ -6,6 +6,7 @@ import inf112.skeleton.app.model.board.RVector2;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameState {
     private HashMap<Robot, RobotState> robotMap;
@@ -76,5 +77,10 @@ public class GameState {
             this.target = targetPosition;
             this.shooterIsRobot = shooterIsRobot;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "\n" + robotMap.values().stream().map(RobotState::toString).collect(Collectors.joining("\n"));
     }
 }
