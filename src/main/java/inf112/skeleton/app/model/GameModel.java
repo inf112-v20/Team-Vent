@@ -78,7 +78,6 @@ public class GameModel {
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
         for (int i = 0; i < PHASES; i++) {
-            log("CALCULATING PHASE " + i);
             for (Player player : players) {
                 Robot robot = player.getRobot();
                 doCard(i, gameState, gameState.getState(robot), player);
@@ -92,7 +91,9 @@ public class GameModel {
             gameState = updateLastState(gameState, laserSteps.get(i));
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
+            doBorders(gameState);
         }
+
         // end of turn effects
         doRepairs(gameState);
         doReboot(gameState);
@@ -128,6 +129,17 @@ public class GameModel {
         if (shotsFired) {
             laserSteps.get(phaseNumber).add(laserBeamState);
             laserSteps.get(phaseNumber).add(laserBeamState.clearLaserBeams()); // state without lasers
+        }
+    }
+
+    /**
+     * Edit a game state so that all robots that are outside the board die
+     */
+    private void doBorders(GameState gameState) {
+        for (RobotState state : gameState.getRobotStates()) {
+            if (!state.getDead() && mapHandler.outOfBounds(state.getLocation())) {
+                gameState.edit(state.updateDead());
+            }
         }
     }
 
@@ -319,10 +331,6 @@ public class GameModel {
         if (ENABLE_LOGGING) {
             Gdx.app.log(this.getClass().getName(), message);
         }
-    }
-
-    public int getFinalPhaseSize() {
-        return endOfPhaseSteps.get(4).size();
     }
 
     public Iterable<? extends GameState.LaserBeam> getLaserBeams() {

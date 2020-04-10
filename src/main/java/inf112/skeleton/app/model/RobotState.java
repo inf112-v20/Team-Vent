@@ -81,6 +81,7 @@ public class RobotState {
      * captured flags
      */
     public RobotState reboot() {
+        if (this.lives <= 0) return this; // the robot is out of the game
         RobotState other = this.copy();
         other.location = this.saveLocation;
         other.hp = Robot.getMaxHP();
