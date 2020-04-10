@@ -2,6 +2,7 @@ package inf112.skeleton.app.view;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -22,6 +23,10 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private final Cell HORIZONTAL_LASER_TILE_CELL = new Cell().setTile(getMap().getTileSets().getTile(39));
     private final Cell VERTICAL_LASER_TILE_CELL = new Cell().setTile(getMap().getTileSets().getTile(47));
     private final Cell CROSS_LASER_TILE_CELL = new Cell().setTile(getMap().getTileSets().getTile(40));
+    private final Cell HORIZONTAL_LASER_TILE_CELL_SHIFTED_EAST;
+    private final Cell HORIZONTAL_LASER_TILE_CELL_SHIFTED_WEST;
+    private final Cell VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH;
+    private final Cell VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH;
     private IdentityHashMap<Robot, Cell> robotsToCellsHashMap;
     private TiledMapTileLayer robotLayer;
     private TiledMapTileLayer laserLayer;
@@ -39,6 +44,22 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         this.laserLayer = new TiledMapTileLayer(tileLayer.getWidth(), tileLayer.getHeight(),
                 (int) tileLayer.getTileWidth(), (int) tileLayer.getTileHeight());
         laserLayer.setName(Constants.LASER_LAYER);
+
+        // initialize shifted tiles
+        float tileWidth = laserLayer.getTileWidth();
+        float tileHeight = laserLayer.getTileHeight();
+        TiledMapTile shiftedWest = new StaticTiledMapTile((StaticTiledMapTile) HORIZONTAL_LASER_TILE_CELL.getTile());
+        shiftedWest.setOffsetX(-tileWidth / 2);
+        TiledMapTile shiftedEast = new StaticTiledMapTile((StaticTiledMapTile) HORIZONTAL_LASER_TILE_CELL.getTile());
+        shiftedEast.setOffsetX(tileWidth / 2);
+        TiledMapTile shiftedNorth = new StaticTiledMapTile((StaticTiledMapTile) VERTICAL_LASER_TILE_CELL.getTile());
+        shiftedNorth.setOffsetY(tileHeight / 2);
+        TiledMapTile shiftedSouth = new StaticTiledMapTile((StaticTiledMapTile) VERTICAL_LASER_TILE_CELL.getTile());
+        shiftedSouth.setOffsetY(-tileHeight / 2);
+        HORIZONTAL_LASER_TILE_CELL_SHIFTED_EAST = new Cell().setTile(shiftedEast);
+        HORIZONTAL_LASER_TILE_CELL_SHIFTED_WEST = new Cell().setTile(shiftedWest);
+        VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH = new Cell().setTile(shiftedNorth);
+        VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH = new Cell().setTile(shiftedSouth);
     }
 
     @Override
@@ -91,13 +112,34 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     }
 
     public void updateLaserBeamLayer() {
+
         for (LaserBeam beam : gameModel.getLaserBeams()) {
-            Location next = beam.shooterIsRobot ? beam.origin.forward() : beam.origin;
-            while (!next.getPosition().equals(beam.target)) {
-                setLaserTile(next.getPosition(), beam.origin.getDirection() == Direction.WEST ||
-                        beam.origin.getDirection() == Direction.EAST);
+            Location next = beam.origin;
+            // draw lasers on the tiles in-between the shooter and the target
+            boolean horizontal = beam.origin.getDirection() == Direction.WEST ||
+                    beam.origin.getDirection() == Direction.EAST;
+            while (!next.forward().getPosition().equals(beam.target)) {
                 next = next.forward();
+                setLaserTile(next.getPosition(), horizontal);
             }
+            // then draw the positions of the shooter and target separately
+            Cell shooterCell;
+            Cell targetCell;
+            if (beam.origin.getDirection() == Direction.WEST) {
+                targetCell = HORIZONTAL_LASER_TILE_CELL_SHIFTED_EAST;
+                shooterCell = beam.shooterIsRobot ? HORIZONTAL_LASER_TILE_CELL_SHIFTED_WEST : HORIZONTAL_LASER_TILE_CELL;
+            } else if (beam.origin.getDirection() == Direction.EAST) {
+                targetCell = HORIZONTAL_LASER_TILE_CELL_SHIFTED_WEST;
+                shooterCell = beam.shooterIsRobot ? HORIZONTAL_LASER_TILE_CELL_SHIFTED_EAST : HORIZONTAL_LASER_TILE_CELL;
+            } else if (beam.origin.getDirection() == Direction.NORTH) {
+                targetCell = VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH;
+                shooterCell = beam.shooterIsRobot ? VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH : VERTICAL_LASER_TILE_CELL;
+            } else { // beam.origin.getDirection() == Direction.SOUTH
+                targetCell = VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH;
+                shooterCell = beam.shooterIsRobot ? VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH : VERTICAL_LASER_TILE_CELL;
+            }
+            laserLayer.setCell(beam.origin.getPosition().getX(), beam.origin.getPosition().getY(), shooterCell);
+            laserLayer.setCell(beam.target.getX(), beam.target.getY(), targetCell);
         }
     }
 
