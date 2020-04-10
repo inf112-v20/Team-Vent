@@ -13,7 +13,9 @@ public class GameHost {
     private Boolean running = true;
     private Server[] servers;
     private String gameStatus;
+    private String[] playerHands;
     public String[] connectionList;
+    public Boolean[] playersDone;
 
     public GameHost(String hostName) {
         ServerSocketHints serverHints = new ServerSocketHints();
@@ -24,7 +26,11 @@ public class GameHost {
         connectionList = new String[8];
         servers = new Server[8];
         gameStatus = "LOBBY WAITING";
-        Arrays.fill(connectionList, "");
+        playerHands = new String[8];
+        playersDone = new Boolean[8];
+        Arrays.fill(connectionList, " ");
+        Arrays.fill(playerHands, "*");
+        Arrays.fill(playersDone, false);
         while(running){
             // Waits until a new connection is established
             Socket connectedSocket;
@@ -41,7 +47,7 @@ public class GameHost {
             }
 
             for(int i = 0; i < 8; i++){
-                if(connectionList[i].equals("")){
+                if(connectionList[i].equals(" ")){
                     Server server = new Server(this, connectedSocket, i);
                     Thread thread = new Thread(server);
                     servers[i] = server;
@@ -60,9 +66,47 @@ public class GameHost {
     public String getGameStatus() {
         return gameStatus;
     }
+
     public void setGameStatus(String gameStatus) {
         this.gameStatus = gameStatus;
     }
+
+    public void setPlayerHand(String hand, int playerIndex){
+        playerHands[playerIndex] = hand;
+    }
+
+    public String[] getPlayerHands() {
+        return playerHands;
+    }
+
+    public int numberPlayersDone(){
+        int players = 0;
+        for (Boolean done : playersDone){
+            if (done) {
+                players++;
+            }
+        }
+        return players;
+    }
+
+    public void setDone(int playerIndex){
+        playersDone[playerIndex] = true;
+    }
+
+    public void unreadyAll(){
+        Arrays.fill(playersDone, false);
+    }
+
+    public int numberConnectedPlayers(){
+        int n = 0;
+        for (String player : connectionList){
+            if (!" ".equals(player)){
+                n++;
+            }
+        }
+        return n;
+    }
+
     public void stop(){
         for(Server s : servers){
             if(s != null){

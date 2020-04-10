@@ -7,12 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.network.GameHost;
+
+import java.util.*;
 
 public class LobbyScreen extends ScreenAdapter {
     private Stage stage;
@@ -21,6 +23,7 @@ public class LobbyScreen extends ScreenAdapter {
     private GameClient gameClient;
     private List playerList;
     private RoboRallyGame game;
+    private Timer timer = new Timer(true);
 
     public LobbyScreen(RoboRallyGame game, Boolean isHost, String hostAddress) {
         this.isHost = isHost;
@@ -97,8 +100,10 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
     private void startGame() {
-        Timer.instance().clear();
-        new GameController(game, "map-1.tmx", gameClient); //TODO: Add map selector in lobby
+        Gdx.app.postRunnable(() -> {
+            timer.cancel();
+            new GameController(game, "map-1.tmx", gameClient, isHost); //TODO: Add map selector in lobby
+        });
     }
 
     private void setGameStart() {
@@ -111,7 +116,7 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
     private void backToMenu() {
-        Timer.instance().clear();
+        timer.cancel();
         if (isHost) {
             gameClient.stopHost();
         } else {
@@ -124,21 +129,19 @@ public class LobbyScreen extends ScreenAdapter {
     @Override
     public void show() {
         if (isHost) {
-            Thread gameHostThread = new Thread(() -> {
-                GameHost gameHost = new GameHost(hostAddress);
-            });
+            Thread gameHostThread = new Thread(() -> new GameHost(hostAddress));
             gameHostThread.setName("'Game Host Server");
             gameHostThread.start();
         }
         gameClient = new GameClient(hostAddress);
 
         // Acts on changes in the game state of the game host every 200 ms
-        Timer.schedule(new Timer.Task() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 actOnGameStatus();
             }
-        }, 0, 0.2f);
+        }, 0, 200);
     }
 
     @Override

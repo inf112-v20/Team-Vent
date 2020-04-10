@@ -22,10 +22,12 @@ public class GameModel {
     private final ArrayList<Deque<GameState>> robotLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> wallLaserSteps = new ArrayList<>();
     private final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
-    Timer timer = new Timer(true);
+    public Timer timer = new Timer(true);
+    public int delay;
     private List<Player> players;
 
-    public GameModel(String map_filename, int numberOfPlayers) {
+
+    public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
         mapHandler = new MapHandler(map_filename);
         if (mapHandler.getStartLocations().size() < numberOfPlayers) {
             throw new IllegalStateException(String.format("There are not enough starting locations for %d players", numberOfPlayers));
@@ -33,6 +35,7 @@ public class GameModel {
         // initialize players and robots
         players = new LinkedList<>();
         robots = new LinkedList<>();
+        delay = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
             Player p = new Player(new Robot(mapHandler.getStartLocations().get(i)));
             p.generateCardHand();
@@ -52,14 +55,18 @@ public class GameModel {
         for (int i = 0; i < names.length && i < robots.size(); i++) {
             robots.get(i).setName(names[i]);
         }
-        player = players.get(0);
+        player = players.get(playerIndex);
     }
 
     public MapHandler getMapHandler() {
         return this.mapHandler;
     }
 
-    public Player getPlayer() {
+    public Player getPlayer(int index){
+        return players.get(index);
+    }
+
+    public Player getPlayer(){
         return this.player;
     }
 
@@ -69,11 +76,11 @@ public class GameModel {
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
         for (int i = 0; i < PHASES; i++) {
-
-           for (Robot robot : robots) {
-                doCard(i, gameState, gameState.getState(robot));
-                gameState = updateLastState(gameState, cardSteps.get(i));
-           }
+            for (Player player : players) {
+                Robot robot = player.getRobot();
+                 doCard(i, gameState, gameState.getState(robot), player);
+                 gameState = updateLastState(gameState, cardSteps.get(i));
+            }
             for (Robot robot : robots) {
                 doTiles(i, gameState, gameState.getState(robot));
                 gameState = updateLastState(gameState, tileSteps.get(i));
@@ -89,7 +96,7 @@ public class GameModel {
         doRepairs(gameState);
         doReboot(gameState);
 
-        int delay = 0;
+        delay = 0;
         for (int i = 0; i < PHASES; i++) {
             scheduleSteps(delay, i, cardSteps);
             delay += cardSteps.get(i).size();
@@ -101,7 +108,6 @@ public class GameModel {
             delay += wallLaserSteps.get(i).size();
             scheduleSteps(delay, i, endOfPhaseSteps);
         }
-        player.generateCardHand();
     }
 
     /**
@@ -169,7 +175,7 @@ public class GameModel {
         }
     }
 
-    private void doCard(int phaseNumber, GameState initialState, RobotState robotState) {
+    private void doCard(int phaseNumber, GameState initialState, RobotState robotState, Player player) {
         Card card = player.getCardInProgrammingSlot(phaseNumber);
         player.setCardinProgrammingSlot(phaseNumber, null);
         if (card == null) return;
@@ -318,4 +324,9 @@ public class GameModel {
             Gdx.app.log(this.getClass().getName(), message);
         }
     }
+
+    public int getFinalPhaseSize(){
+        return endOfPhaseSteps.get(4).size();
+    }
+
 }

@@ -36,6 +36,10 @@ public class Server implements Runnable {
         return response.toString();
     }
 
+    private String getNumberOfPlayers(){
+        return Integer.toString(gameHost.numberConnectedPlayers());
+    }
+
     private String getGameStatus(){
         return gameHost.getGameStatus();
     }
@@ -45,8 +49,35 @@ public class Server implements Runnable {
         return "";
     }
 
+    private String setHand(String hand){
+        gameHost.setPlayerHand(hand, index);
+        return "";
+    }
+
+    private String getHands(){
+        StringBuilder handsString = new StringBuilder();
+        for (String hand : gameHost.getPlayerHands()){
+            handsString.append(hand);
+            handsString.append("-");
+        }
+        return handsString.toString();
+    }
+
+    private Boolean allReady(){
+        return gameHost.numberPlayersDone() >= gameHost.numberConnectedPlayers();
+    }
+
+    private String setReady(){
+        gameHost.setDone(index);
+        return "";
+    }
+
+    private String resetReady(){
+        gameHost.unreadyAll();
+        return "";
+    }
      public void closeConnection(){
-        gameHost.connectionList[index] = "";
+        gameHost.connectionList[index] = " ";
         connectedSocket.dispose();
         Thread.currentThread().interrupt();
         connected = false;
@@ -56,7 +87,6 @@ public class Server implements Runnable {
         gameHost.stop();
         closeConnection();
     }
-
     @Override
     public void run()  {
         InputStream inputStream = connectedSocket.getInputStream();
@@ -74,19 +104,34 @@ public class Server implements Runnable {
                         response = ping();
                         break;
                     case "SET_H":
-                        response = ""; //TODO
+                        response = setHand(commands[1]);
                         break;
                     case "GET_H":
-                        response = ""; //TODO
+                        response = getHands();
                         break;
                     case "REF_P":
                         response = getConnectedPlayers();
+                        break;
+                    case "GET_N":
+                        response = getNumberOfPlayers();
+                        break;
+                    case "GET_I":
+                        response = Integer.toString(index);
                         break;
                     case "GET_S":
                         response = getGameStatus();
                         break;
                     case "SET_S":
                         response = setGameStatus(commands[1]);
+                        break;
+                    case "GET_R":
+                        response = Boolean.toString(allReady());
+                        break;
+                    case "SET_R":
+                        response = setReady();
+                        break;
+                    case "RESET_R":
+                        response = resetReady();
                         break;
                     case "STOP_C":
                         response = "CLOSING CONNECTION";

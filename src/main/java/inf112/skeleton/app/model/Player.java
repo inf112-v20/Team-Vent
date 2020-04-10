@@ -65,6 +65,10 @@ public class Player {
         return cardHand[handSlot];
     }
 
+    public Card[] getProgrammingSlots() {
+        return programmingSlots;
+    }
+
     //Methods below are for testing purposes atm, should be removed/moved to other classes later.
 
     //Cards are stored in a hashmap, where key is the priority which is distinct and random
