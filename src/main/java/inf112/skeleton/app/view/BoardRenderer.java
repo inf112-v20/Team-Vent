@@ -70,9 +70,8 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         super.render();  // render all static layers
         this.beginRender();
         this.renderMapLayer(laserLayer);
+        this.renderMapLayer(gameModel.getMapHandler().getWallLayer());  // re-render walls over laser beams
         this.renderMapLayer(robotLayer);
-        // re-render wall layer so that wall layers are on top of beams
-        this.renderMapLayer(gameModel.getMapHandler().getWallLayer());
         this.endRender();
     }
 
@@ -104,7 +103,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
 
     public void updateRobotLayer() {
         for (Robot robot : gameModel.getRobots()) {
-            if (!robot.alive()) continue;
+            if (robot.getState().getDead()) continue;
             Cell cell = robotsToCellsHashMap.get(robot);
             rotateCellToMatchRobot(robot, cell);
             robotLayer.setCell(robot.getX(), robot.getY(), cell);
