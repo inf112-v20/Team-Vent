@@ -182,14 +182,15 @@ public class MapHandler {
      * @return a robot that is in the line of vision or null
      */
     public RobotState robotInLineOfVision(Location location, GameState state) {
-        while (!(wallInPath(location) || outOfBounds(location.forward()))) {
+        Location currentLoc = location;
+        while (!(wallInPath(currentLoc) || outOfBounds(currentLoc.forward()))) {
             // if one of the robots is on the next tile then return it
             for (RobotState robotState : state.getRobotStates()) {
-                if (!robotState.getDead() && robotState.getLocation().getPosition().equals(location.forward().getPosition())) {
+                if (!robotState.getDead() && robotState.getLocation().getPosition().equals(currentLoc.forward().getPosition())) {
                     return robotState;
                 }
             }
-            location = location.forward();
+            currentLoc = currentLoc.forward();
         }
         return null;
     }

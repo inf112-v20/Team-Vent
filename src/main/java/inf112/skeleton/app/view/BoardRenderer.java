@@ -145,7 +145,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
 
     public void setLaserTile(RVector2 position, boolean horizontal) {
         Cell cell = laserLayer.getCell(position.getX(), position.getY());
-        if ((horizontal && cell == VERTICAL_LASER_TILE_CELL) || (!horizontal && cell == HORIZONTAL_LASER_TILE_CELL)) {
+        if ((horizontal && VERTICAL_LASER_TILE_CELL.equals(cell)) || (!horizontal && HORIZONTAL_LASER_TILE_CELL.equals(cell))) {
             cell = CROSS_LASER_TILE_CELL;
         } else if (horizontal) {
             cell = HORIZONTAL_LASER_TILE_CELL;
