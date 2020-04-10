@@ -7,11 +7,9 @@ import inf112.skeleton.app.model.board.Location;
 public class Robot {
     private String name = "Anonymous";
     private RobotState state;
-    private int robotLife;
     public Robot(Location location) {
-        this.state = new RobotState(this, location, getMaxHP(), false,
+        this.state = new RobotState(this, location, getMaxHP(), 3,
                 0, location);
-        this.robotLife = 3;
     }
 
     public Robot() {
@@ -41,12 +39,6 @@ public class Robot {
     public RobotState getState() {
         return state.copy();
     }
-
-    public boolean alive() {
-        return !state.getDead();
-    }
-
-    public int getRobotLife(){return robotLife;}
 
     public static int getMaxHP() {
         return 9;

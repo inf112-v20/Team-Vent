@@ -7,14 +7,14 @@ public class RobotState {
     private Location saveLocation;
     private Location location;
     private int hp;
-    private boolean dead;
     private Robot robot;
+    private int lives;
 
-    public RobotState(Robot robot, Location location, int hp, boolean dead, int capturedFlags, Location saveLocation) {
+    public RobotState(Robot robot, Location location, int hp, int lives, int capturedFlags, Location saveLocation) {
         this.robot = robot;
         this.location = location;
         this.hp = hp;
-        this.dead = dead;
+        this.lives = lives;
         this.saveLocation = saveLocation;
         this.capturedFlags = capturedFlags;
     }
@@ -25,22 +25,23 @@ public class RobotState {
         return other;
     }
 
-    public RobotState updateHP(int decrease) {
-        RobotState other = this.copy();
-        other.hp += decrease;
-        if (other.hp <= 0){
-            other.dead = true;
+    public RobotState updateHP(int difference) {
+        if (this.hp + difference <= 0) {
+            return this.updateDead();
         }
+        RobotState other = this.copy();
+        other.hp = Math.min(this.hp + difference, Robot.getMaxHP());
         return other;
     }
 
     public RobotState copy() {
-        return new RobotState(robot, location.copy(), this.hp, this.dead, capturedFlags, saveLocation);
+        return new RobotState(robot, location.copy(), this.hp, this.lives, capturedFlags, saveLocation);
     }
 
-    public RobotState updateDead(boolean dead) {
+    public RobotState updateDead() {
         RobotState other = this.copy();
-        other.dead = dead;
+        other.hp = 0;
+        other.lives = Math.max(other.lives - 1, 0);
         return other;
     }
 
@@ -65,7 +66,7 @@ public class RobotState {
     }
 
     public boolean getDead() {
-        return dead;
+        return hp <= 0;
     }
 
     public RobotState visitFlag() {
@@ -81,7 +82,6 @@ public class RobotState {
      */
     public RobotState reboot() {
         RobotState other = this.copy();
-        other.dead = false;
         other.location = this.saveLocation;
         other.hp = Robot.getMaxHP();
         return other;
@@ -91,5 +91,9 @@ public class RobotState {
         RobotState other = this.copy();
         other.saveLocation = this.location;
         return other;
+    }
+
+    public int getLives() {
+        return this.lives;
     }
 }

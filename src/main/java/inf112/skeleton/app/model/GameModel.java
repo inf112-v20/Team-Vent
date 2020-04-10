@@ -78,6 +78,7 @@ public class GameModel {
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
         for (int i = 0; i < PHASES; i++) {
+            log("CALCULATING PHASE " + i);
             for (Player player : players) {
                 Robot robot = player.getRobot();
                 doCard(i, gameState, gameState.getState(robot), player);
@@ -187,7 +188,7 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             case HOLE:
-                newState = initialState.update(robotState.updateDead(true));
+                newState = initialState.update(robotState.updateDead());
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             default:

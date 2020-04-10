@@ -12,7 +12,7 @@ public class RobotStateTest {
     @Before
     public void beforeEach() {
         Robot robot = new Robot();
-        state = new RobotState(robot, robot.getLocation(), 0, false, 0, robot.getLocation());
+        state = new RobotState(robot, robot.getLocation(), 0, 3, 0, robot.getLocation());
     }
 
     @Test

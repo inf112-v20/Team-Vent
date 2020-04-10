@@ -7,7 +7,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.board.Direction;
@@ -40,10 +39,8 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         TiledMapTileLayer tileLayer = gameModel.getMapHandler().getTileLayer();
         this.robotLayer = new TiledMapTileLayer(tileLayer.getWidth(), tileLayer.getHeight(),
                 (int) tileLayer.getTileWidth(), (int) tileLayer.getTileHeight());
-        robotLayer.setName(Constants.ROBOT_LAYER);
         this.laserLayer = new TiledMapTileLayer(tileLayer.getWidth(), tileLayer.getHeight(),
                 (int) tileLayer.getTileWidth(), (int) tileLayer.getTileHeight());
-        laserLayer.setName(Constants.LASER_LAYER);
 
         // initialize shifted tiles
         float tileWidth = laserLayer.getTileWidth();
