@@ -21,7 +21,7 @@ public class LobbyScreen extends ScreenAdapter {
     private Boolean isHost;
     private String hostAddress;
     private GameClient gameClient;
-    private List playerList;
+    private List<String> playerList;
     private RoboRallyGame game;
     private Timer timer = new Timer(true);
 
@@ -38,8 +38,8 @@ public class LobbyScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage);
 
         // Player in lobby list
-        playerList = new List<String>(skin);
-        playerList.setItems(new String[]{" ", " ", " ", " ", " ", " ", " ", " "});
+        playerList = new List<>(skin);
+        playerList.setItems(" ", " ", " ", " ", " ", " ", " ", " ");
 
         // Start game button
         Button startGameButton = new TextButton("Start Game", skin);
