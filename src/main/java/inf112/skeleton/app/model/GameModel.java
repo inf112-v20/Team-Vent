@@ -10,7 +10,6 @@ import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class GameModel {
@@ -113,19 +112,31 @@ public class GameModel {
 
     private void doLasers(int phaseNumber, GameState initialState) {
         GameState laserBeamState = initialState.copy();
-        List<Location> shootingLocations = initialState.getRobotStates().stream()
-                .filter(Predicate.not(RobotState::getDead))
+        List<Location> robotLocations = initialState.getRobotStates().stream()
+                .filter(state -> !state.getDead())
                 .map(RobotState::getLocation).collect(Collectors.toCollection(LinkedList::new));
-        shootingLocations.addAll(mapHandler.getLasersLocations());
+
         boolean shotsFired = false;
-        for (Location origin : shootingLocations) {
-            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState);
+
+        for (Location origin : robotLocations) {
+            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState, false);
             if (toShoot == null) continue;
             shotsFired = true;
-            laserBeamState = laserBeamState.update(toShoot.updateHP(-1));
+            laserBeamState.edit(toShoot.updateHP(-1));
             laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
                     !mapHandler.getLasersLocations().contains(origin));
         }
+
+
+        for (Location origin : mapHandler.getLasersLocations()) {
+            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState, true);
+            if (toShoot == null) continue;
+            shotsFired = true;
+            laserBeamState.edit(toShoot.updateHP(-1));
+            laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
+                    !mapHandler.getLasersLocations().contains(origin));
+        }
+
         if (shotsFired) {
             laserSteps.get(phaseNumber).add(laserBeamState);
             laserSteps.get(phaseNumber).add(laserBeamState.clearLaserBeams()); // state without lasers

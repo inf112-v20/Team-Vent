@@ -64,7 +64,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         clearObjectLayers();
         updateRobotLayer();
         updateLaserBeamLayer();
-        super.render();  // render all static layers
+        super.render();  // render the layers of the map
         this.beginRender();
         this.renderMapLayer(laserLayer);
         this.renderMapLayer(gameModel.getMapHandler().getWallLayer());  // re-render walls over laser beams
@@ -108,19 +108,13 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     }
 
     public void updateLaserBeamLayer() {
-
         for (LaserBeam beam : gameModel.getLaserBeams()) {
-            Location next = beam.origin;
-            // draw lasers on the tiles in-between the shooter and the target
-            boolean horizontal = beam.origin.getDirection() == Direction.WEST ||
-                    beam.origin.getDirection() == Direction.EAST;
-            while (!next.forward().getPosition().equals(beam.target)) {
-                next = next.forward();
-                setLaserTile(next.getPosition(), horizontal);
-            }
-            // then draw the positions of the shooter and target separately
-            Cell shooterCell;
-            Cell targetCell;
+            if (beam.origin.getPosition().equals(beam.target)) continue; // shooter and target are co-located
+            // draw laser beams on the tiles in-between the shooter and the target
+            updateTilesBetweenShooterAndTarget(beam);
+            // update the shooter and target tiles. shift the tiles so that the laser appears to come out of the shooter
+            // and into the target
+            Cell shooterCell, targetCell;
             if (beam.origin.getDirection() == Direction.WEST) {
                 targetCell = HORIZONTAL_LASER_TILE_CELL_SHIFTED_EAST;
                 shooterCell = beam.shooterIsRobot ? HORIZONTAL_LASER_TILE_CELL_SHIFTED_WEST : HORIZONTAL_LASER_TILE_CELL;
@@ -139,16 +133,23 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         }
     }
 
-    public void setLaserTile(RVector2 position, boolean horizontal) {
-        Cell cell = laserLayer.getCell(position.getX(), position.getY());
-        if ((horizontal && VERTICAL_LASER_TILE_CELL.equals(cell)) || (!horizontal && HORIZONTAL_LASER_TILE_CELL.equals(cell))) {
-            cell = CROSS_LASER_TILE_CELL;
-        } else if (horizontal) {
-            cell = HORIZONTAL_LASER_TILE_CELL;
-        } else {
-            cell = VERTICAL_LASER_TILE_CELL;
+    private void updateTilesBetweenShooterAndTarget(LaserBeam beam) {
+        Location next = beam.origin;
+        boolean horizontal = beam.origin.getDirection() == Direction.WEST ||
+                beam.origin.getDirection() == Direction.EAST;
+        while (!next.forward().getPosition().equals(beam.target)) {
+            next = next.forward();
+            RVector2 position = next.getPosition();
+            Cell cell = laserLayer.getCell(position.getX(), position.getY());
+            if ((horizontal && VERTICAL_LASER_TILE_CELL.equals(cell)) || (!horizontal && HORIZONTAL_LASER_TILE_CELL.equals(cell))) {
+                cell = CROSS_LASER_TILE_CELL;
+            } else if (horizontal) {
+                cell = HORIZONTAL_LASER_TILE_CELL;
+            } else {
+                cell = VERTICAL_LASER_TILE_CELL;
+            }
+            laserLayer.setCell(position.getX(), position.getY(), cell);
         }
-        laserLayer.setCell(position.getX(), position.getY(), cell);
     }
 
     private void clearObjectLayers() {

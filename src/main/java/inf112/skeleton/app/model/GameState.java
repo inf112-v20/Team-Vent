@@ -34,8 +34,6 @@ public class GameState {
         if (shooterLocation.getPosition().getX() != (targetPosition.getX()) &&
                 shooterLocation.getPosition().getY() != (targetPosition.getY())) {
             throw new IllegalArgumentException("Points must align vertically or horizontally");
-        } else if (shooterLocation.getPosition().equals(targetPosition)) {
-            throw new IllegalArgumentException("Points must be apart");
         }
         laserBeams.add(new LaserBeam(shooterLocation, targetPosition, shooterIsRobot));
     }
