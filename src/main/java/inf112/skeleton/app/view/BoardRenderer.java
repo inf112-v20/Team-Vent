@@ -31,9 +31,8 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private TiledMapTileLayer robotLayer;
     private TiledMapTileLayer laserLayer;
 
-    public BoardRenderer(GameModel gameModel) {
-        super(gameModel.getMapHandler().getMap(), 1 / gameModel.getMapHandler().getTileLayer().
-                getTileWidth());
+    public BoardRenderer(GameModel gameModel, float unitScale) {
+        super(gameModel.getMapHandler().getMap(), unitScale);
         this.gameModel = gameModel;
         loadTextures();
         // create additional layers for objects that move or change based on the game model
@@ -64,9 +63,9 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
 
     @Override
     public void render() {
-        clearObjectLayers();
-        updateRobotLayer();
-        updateLaserBeamLayer();
+        clearMap();
+        placeRobots();
+        placeLaserBeams();
         super.render();  // render all static layers
         this.beginRender();
         this.renderMapLayer(laserLayer);
@@ -102,7 +101,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         }
     }
 
-    public void updateRobotLayer() {
+    public void placeRobots() {
         for (Robot robot : gameModel.getRobots()) {
             if (!robot.alive()) continue;
             Cell cell = robotsToCellsHashMap.get(robot);
@@ -111,8 +110,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         }
     }
 
-    public void updateLaserBeamLayer() {
-
+    public void placeLaserBeams() {
         for (LaserBeam beam : gameModel.getLaserBeams()) {
             Location next = beam.origin;
             // draw lasers on the tiles in-between the shooter and the target
@@ -155,7 +153,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         laserLayer.setCell(position.getX(), position.getY(), cell);
     }
 
-    private void clearObjectLayers() {
+    private void clearMap() {
         for (int i = 0; i < gameModel.getMapHandler().getWidth(); i++) {
             for (int j = 0; j < gameModel.getMapHandler().getWidth(); j++) {
                 robotLayer.setCell(i, j, null);
