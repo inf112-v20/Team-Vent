@@ -177,22 +177,33 @@ public class MapHandler {
     /**
      * Return the first robot in the line of vision from a location, if there is one. Walls block the line of vision
      *
-     * @param location the point of view
-     * @param state    the game state
+     * @param location  the point of view
+     * @param gameState the game state
      * @return a robot that is in the line of vision or null
      */
-    public RobotState robotInLineOfVision(Location location, GameState state) {
+    public RobotState robotInLineOfVision(Location location, GameState gameState, boolean inclusive) {
+        if (inclusive) {
+            RobotState toShoot = getRobotToShoot(location, gameState);
+            if (toShoot != null) return toShoot;
+        }
         Location currentLoc = location;
         while (!(wallInPath(currentLoc) || outOfBounds(currentLoc.forward()))) {
             // if one of the robots is on the next tile then return it
-            for (RobotState robotState : state.getRobotStates()) {
-                if (!robotState.getDead() && robotState.getLocation().getPosition().equals(currentLoc.forward().getPosition())) {
-                    return robotState;
-                }
-            }
+            Location finalCurrentLoc = currentLoc;
+            RobotState toShoot = getRobotToShoot(finalCurrentLoc.forward(), gameState);
+            if (toShoot != null) return toShoot;
             currentLoc = currentLoc.forward();
         }
         return null;
+    }
+
+    private RobotState getRobotToShoot(Location location, GameState gameState) {
+        return gameState.getRobotStates()
+                .stream()
+                .filter(state -> !state.getDead())
+                .filter(state -> state.getLocation().getPosition().equals(location.getPosition()))
+                .findFirst()
+                .orElse(null);
     }
 
     public TiledMapTileLayer getTileLayer() {
@@ -208,9 +219,12 @@ public class MapHandler {
     }
 
     public boolean outOfBounds(Location loc) {
-        return (loc.getPosition().getX() > getWidth() || loc.getPosition().getX() < 0
-                || loc.getPosition().getY() > getHeight() || loc.getPosition().getY() < 0);
+        return outOfBounds(loc.getPosition());
+    }
 
+    public boolean outOfBounds(RVector2 pos) {
+        return (pos.getX() >= getWidth() || pos.getX() < 0
+                || pos.getY() >= getHeight() || pos.getY() < 0);
     }
 
     public List<Location> getLasersLocations() {

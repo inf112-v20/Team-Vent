@@ -5,11 +5,11 @@ import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 import inf112.skeleton.app.model.board.MapHandler;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.model.tiles.TileType;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class GameModel {
@@ -91,7 +91,9 @@ public class GameModel {
             gameState = updateLastState(gameState, laserSteps.get(i));
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
+            doBorders(gameState);
         }
+
         // end of turn effects
         doRepairs(gameState);
         doReboot(gameState);
@@ -110,23 +112,45 @@ public class GameModel {
 
     private void doLasers(int phaseNumber, GameState initialState) {
         GameState laserBeamState = initialState.copy();
-        List<Location> shootingLocations = initialState.getRobotStates().stream()
-                .filter(Predicate.not(RobotState::getDead))
+        List<Location> robotLocations = initialState.getRobotStates().stream()
+                .filter(state -> !state.getDead())
                 .map(RobotState::getLocation).collect(Collectors.toCollection(LinkedList::new));
-        shootingLocations.addAll(mapHandler.getLasersLocations());
+
         boolean shotsFired = false;
-        for (Location origin : shootingLocations) {
-            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState);
+
+        for (Location origin : robotLocations) {
+            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState, false);
             if (toShoot == null) continue;
             shotsFired = true;
-            laserBeamState = laserBeamState.update(toShoot.updateHP(-1));
+            laserBeamState.edit(toShoot.updateHP(-1));
             laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
                     !mapHandler.getLasersLocations().contains(origin));
-            log(toShoot.getRobot().toString() + " will be shot");
         }
+
+
+        for (Location origin : mapHandler.getLasersLocations()) {
+            RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState, true);
+            if (toShoot == null) continue;
+            shotsFired = true;
+            laserBeamState.edit(toShoot.updateHP(-1));
+            laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
+                    !mapHandler.getLasersLocations().contains(origin));
+        }
+
         if (shotsFired) {
             laserSteps.get(phaseNumber).add(laserBeamState);
             laserSteps.get(phaseNumber).add(laserBeamState.clearLaserBeams()); // state without lasers
+        }
+    }
+
+    /**
+     * Edit a game state so that all robots that are outside the board die
+     */
+    private void doBorders(GameState gameState) {
+        for (RobotState state : gameState.getRobotStates()) {
+            if (!state.getDead() && mapHandler.outOfBounds(state.getLocation())) {
+                gameState.edit(state.updateDead());
+            }
         }
     }
 
@@ -135,10 +159,36 @@ public class GameModel {
      */
     public void doReboot(GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
-            if (robotState.getDead()) {
-                gameState.edit(robotState.reboot());
+            if (!robotState.getDead()) continue;
+            Location saved = robotState.getSaveLocation();
+            Location respawn = saved;
+            // if the saved location is not available, use the closest available location
+            if (!available(gameState, saved.getPosition())) {
+                Set<RVector2> candidates = new HashSet<>();
+                for (int dx = -2; dx <= 2; dx++) {
+                    for (int dy = -2; dy <= 2; dy++) {
+                        candidates.add(saved.getPosition().translate(dx, dy));
+                    }
+                }
+                Optional<RVector2> closestAvailablePosition = candidates
+                        .stream()
+                        .filter(p -> available(gameState, p))
+                        .min(Comparator.comparingInt(o -> o.distance(saved.getPosition())));
+                respawn = closestAvailablePosition.map(vector2 -> new Location(vector2, saved.getDirection())).orElse(saved);
             }
+            gameState.edit(robotState.reboot(respawn));
         }
+    }
+
+    /**
+     * Return true if the position is within the board and no robot has that position
+     */
+    private boolean available(GameState gameState, RVector2 position) {
+        return !mapHandler.outOfBounds(position) && gameState.getRobotStates().stream()
+                .filter(state -> !state.getDead())
+                .map(RobotState::getLocation)
+                .map(Location::getPosition)
+                .noneMatch(pos -> pos.equals(position));
     }
 
     /**
@@ -187,7 +237,7 @@ public class GameModel {
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             case HOLE:
-                newState = initialState.update(robotState.updateDead(true));
+                newState = initialState.update(robotState.updateDead());
                 tileSteps.get(phaseNumber).add(newState);
                 break;
             default:
@@ -318,10 +368,6 @@ public class GameModel {
         if (ENABLE_LOGGING) {
             Gdx.app.log(this.getClass().getName(), message);
         }
-    }
-
-    public int getFinalPhaseSize() {
-        return endOfPhaseSteps.get(4).size();
     }
 
     public Iterable<? extends GameState.LaserBeam> getLaserBeams() {

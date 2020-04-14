@@ -6,6 +6,7 @@ import inf112.skeleton.app.model.board.RVector2;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameState {
     private HashMap<Robot, RobotState> robotMap;
@@ -33,8 +34,6 @@ public class GameState {
         if (shooterLocation.getPosition().getX() != (targetPosition.getX()) &&
                 shooterLocation.getPosition().getY() != (targetPosition.getY())) {
             throw new IllegalArgumentException("Points must align vertically or horizontally");
-        } else if (shooterLocation.getPosition().equals(targetPosition)) {
-            throw new IllegalArgumentException("Points must be apart");
         }
         laserBeams.add(new LaserBeam(shooterLocation, targetPosition, shooterIsRobot));
     }
@@ -76,5 +75,10 @@ public class GameState {
             this.target = targetPosition;
             this.shooterIsRobot = shooterIsRobot;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "\n" + robotMap.values().stream().map(RobotState::toString).collect(Collectors.joining("\n"));
     }
 }

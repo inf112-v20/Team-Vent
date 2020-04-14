@@ -84,7 +84,7 @@ public class GameScreen extends ScreenAdapter {
         return String.format("%s: %-8s  %s: %d  %s: %d  %s:  %s%n",
                 "NAME", robot.toString(),
                 "HP", robot.getState().getHp(),
-                "LIVES", robot.getRobotLife(),
+                "LIVES", robot.getState().getLives(),
                 "FLAGS", String.format("%d / %d", robot.getState().getCapturedFlags(),
                         gameModel.getMapHandler().getNumberOfFlags()));
     }
