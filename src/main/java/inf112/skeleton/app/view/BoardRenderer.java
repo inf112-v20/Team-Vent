@@ -63,15 +63,12 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         clearMap();
         placeRobots();
         placeLaserBeams();
-        super.render();  // render the layers of the map
-        clearMap();
-        placeRobots();
-        placeLaserBeams();
         super.render();  // render all static layers
         this.beginRender();
         this.renderMapLayer(laserLayer);
-        this.renderMapLayer(gameModel.getMapHandler().getWallLayer());  // re-render walls over laser beams
         this.renderMapLayer(robotLayer);
+        // re-render wall layer so that wall layers are on top of beams
+        this.renderMapLayer(gameModel.getMapHandler().getWallLayer());
         this.endRender();
     }
 
