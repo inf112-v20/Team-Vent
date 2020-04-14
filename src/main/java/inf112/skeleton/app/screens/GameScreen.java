@@ -33,7 +33,7 @@ public class GameScreen extends ScreenAdapter {
         stage = new Stage(viewport);
         float unitScale = 0.55f; // the unit scale determines the size of the map
         stage.addActor(new TiledMapActor(gameModel, unitScale));
-        stage.setDebugAll(true);
+        //stage.setDebugAll(true);
     }
 
     @Override
