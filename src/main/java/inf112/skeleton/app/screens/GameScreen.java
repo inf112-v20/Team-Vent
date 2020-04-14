@@ -4,61 +4,70 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
-import inf112.skeleton.app.view.BoardRenderer;
+import inf112.skeleton.app.view.TiledMapActor;
 
 public class GameScreen extends ScreenAdapter {
     private final GameModel gameModel;
     private SpriteBatch batch;
     private BitmapFont font;
-    private OrthogonalTiledMapRenderer renderer;
-    private int bottomTableHeight;
-    private OrthographicCamera camera;
+
+    private Viewport viewport;
+    private Stage stage;
 
 
     public GameScreen(GameModel gameModel) {
         this.gameModel = gameModel;
+    }
+
+    public void show() {
         loadFont();
-        // Note: the height of the bottom table is static and determines the size of the map
-        this.bottomTableHeight = Gdx.graphics.getWidth() / 8;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, ((float) Gdx.graphics.getWidth() / (Gdx.graphics.getHeight() -
-                bottomTableHeight)) * 10, 10);
-        camera.update();
-        renderer = new BoardRenderer(gameModel);
+        viewport = new ScreenViewport();
+        stage = new Stage(viewport);
+        float unitScale = 0.55f; // the unit scale determines the size of the map
+        stage.addActor(new TiledMapActor(gameModel, unitScale));
+        //stage.setDebugAll(true);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderer.setView(camera);
-        renderer.render();
-        Gdx.gl.glViewport(0, bottomTableHeight, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - bottomTableHeight);
-        camera.update();
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
         renderFont();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
     }
 
     private void loadFont() {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
-        font.getData().setScale(1.2f);
+        font.getData().setScale(1f);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
 
     private void renderFont() {
         float width = Gdx.graphics.getWidth();
         float height = Gdx.graphics.getHeight();
-        float horizontalAlign = width * 0.72f;
+        float horizontalAlign = width * 0.67f;
         float verticalPosition = height;
-        float lineHeight = width * 0.02f;
+        float lineHeight = width * 0.015f;
         batch.begin();
         verticalPosition -= lineHeight;
         // Draw the state of this player's robot
@@ -73,8 +82,8 @@ public class GameScreen extends ScreenAdapter {
         }
 
         // Draw the hand, and programming slots
-        font.draw(batch, gameModel.getPlayer().handAsString(), horizontalAlign, height * 0.7f);
-        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), horizontalAlign, height * 0.3f);
+        font.draw(batch, gameModel.getPlayer().handAsString(), horizontalAlign, height * 0.75f);
+        font.draw(batch, gameModel.getPlayer().programmingSlotsAsString(), horizontalAlign, height * 0.45f);
         batch.end();
     }
 
