@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import inf112.skeleton.app.model.GameModel;
@@ -31,9 +35,31 @@ public class GameScreen extends ScreenAdapter {
         loadFont();
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
-        float unitScale = 0.55f; // the unit scale determines the size of the map
-        stage.addActor(new TiledMapActor(gameModel, unitScale));
-        //stage.setDebugAll(true);
+        float unitScale = 0.5f; // the unit scale determines the size of the map
+        Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
+
+        // stats sidebar
+        Table sidebar = new Table();
+        sidebar.add(new Label("STATS", skin)).expand();
+
+        // dashboard
+        Table dashboard = new Table();
+        dashboard.add(new Label("CARDS", skin)).expand();
+
+        // map
+        Actor board = new TiledMapActor(gameModel, unitScale);
+
+        // root table
+        Table table = new Table();
+        table.setFillParent(true);
+        table.defaults().pad(10);
+        table.add(board).top().left();
+        table.add(sidebar).expandX();
+        table.row();
+        table.add(dashboard).colspan(2).expand();
+
+        stage.addActor(table);
+        stage.setDebugAll(true);
     }
 
     @Override
@@ -41,7 +67,7 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-        renderFont();
+        //renderFont();
     }
 
     @Override

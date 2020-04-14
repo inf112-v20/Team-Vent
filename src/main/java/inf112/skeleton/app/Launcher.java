@@ -7,10 +7,10 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class Launcher {
     public static void main(String[] args) {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        cfg.title = "RoboRally";
+        cfg.title = "Team Vent's RoboRally";
         cfg.width = 1366;
         cfg.height = 768;
-        cfg.resizable = false;
+        cfg.resizable = true;
         new LwjglApplication(new RoboRallyGame(), cfg);
     }
 }
