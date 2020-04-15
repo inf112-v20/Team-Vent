@@ -68,7 +68,7 @@ public class GameModel {
         return players.get(index);
     }
 
-    public Player getPlayer(){
+    public Player getMyPlayer() {
         return this.player;
     }
 
