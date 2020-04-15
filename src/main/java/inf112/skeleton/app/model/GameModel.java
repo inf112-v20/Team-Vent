@@ -72,6 +72,14 @@ public class GameModel {
         return this.player;
     }
 
+    public void emptyPlayersProgrammingSlots(){
+        for (Player player : players){
+            for (int i = 0; i < 5; i++){
+                player.setCardinProgrammingSlot(i, null);
+            }
+        }
+    }
+
     public void endTurn() {
         GameState gameState = getInitialGameState();
 
@@ -247,7 +255,6 @@ public class GameModel {
 
     private void doCard(int phaseNumber, GameState initialState, RobotState robotState, Player player) {
         Card card = player.getCardInProgrammingSlot(phaseNumber);
-        player.setCardinProgrammingSlot(phaseNumber, null);
         if (card == null) return;
         RobotState nextRobotState = robotState;
         switch (card) {

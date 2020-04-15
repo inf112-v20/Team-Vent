@@ -3,6 +3,7 @@ package inf112.skeleton.app.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
@@ -25,6 +26,7 @@ public class GameController extends InputAdapter {
     private int playerIndex;
     private boolean roundInProgress = false;
     private Timer timer = new Timer(true);
+    private InputMultiplexer inputMultiPlexer;
 
     /**
      * Single player constructor
@@ -36,8 +38,10 @@ public class GameController extends InputAdapter {
         this.game = game;
         gameClient = null;
         multiplayer = false;
-        game.setScreen(new GameScreen(gameModel));
-        Gdx.input.setInputProcessor(this);
+        inputMultiPlexer = new InputMultiplexer();
+        inputMultiPlexer.addProcessor(this);
+        game.setScreen(new GameScreen(gameModel, inputMultiPlexer));
+        Gdx.input.setInputProcessor(inputMultiPlexer);
     }
 
     /**
@@ -50,8 +54,10 @@ public class GameController extends InputAdapter {
         this.game = game;
         this.gameClient = gameClient;
         multiplayer = true;
-        game.setScreen(new GameScreen(gameModel));
-        Gdx.input.setInputProcessor(this);
+        inputMultiPlexer = new InputMultiplexer();
+        inputMultiPlexer.addProcessor(this);
+        game.setScreen(new GameScreen(gameModel, inputMultiPlexer));
+        Gdx.input.setInputProcessor(inputMultiPlexer);
         startServerListener();
         gameClient.setReady(); // lets the server know that this client has started the game
         if (isHost){
@@ -108,6 +114,7 @@ public class GameController extends InputAdapter {
         return new TimerTask() {
             @Override
             public void run() {
+                gameModel.emptyPlayersProgrammingSlots();
                 if (multiplayer){
                     gameClient.setReady();
                 }
