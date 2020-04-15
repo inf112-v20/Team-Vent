@@ -30,7 +30,7 @@ public class GameController extends InputAdapter {
      * Single player constructor
      */
     public GameController(RoboRallyGame game, String map_filename) {
-        this.numberOfPlayers = 4;
+        this.numberOfPlayers = 8;
         playerIndex = 0;
         this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
         this.game = game;

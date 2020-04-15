@@ -77,6 +77,10 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         TextureRegion robot2FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech2.png"));
         TextureRegion robot3FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech3.png"));
         TextureRegion robot4FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech4.png"));
+        TextureRegion robot5FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech5png.png"));
+        TextureRegion robot6FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech6png.png"));
+        TextureRegion robot7FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech7.png"));
+        TextureRegion robot8FacingNorth = new TextureRegion(new Texture("Player/Mechs/Mech8.png"));
         Cell robotCell;
         robotsToCellsHashMap = new IdentityHashMap<>();
         int i = 0;
@@ -93,6 +97,18 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
             }
             if (i==4){
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot4FacingNorth));
+            }
+            if (i==5) {
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot5FacingNorth));
+            }
+            if (i==6){
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot6FacingNorth));
+            }
+            if (i==7){
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot7FacingNorth));
+            }
+            if (i==8){
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot8FacingNorth));
             }
             robotsToCellsHashMap.put(robot, robotCell);
         }
