@@ -15,9 +15,7 @@ import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.view.TiledMapActor;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class GameScreen extends ScreenAdapter {
     private final GameModel gameModel;
@@ -27,9 +25,14 @@ public class GameScreen extends ScreenAdapter {
     private Viewport viewport;
     private Stage stage;
 
+    private HashMap<Robot, Label> robotStatuses;
+    private Label programmingSlotsLabel;
+    private Label handLabel;
+
 
     public GameScreen(GameModel gameModel) {
         this.gameModel = gameModel;
+        robotStatuses = new HashMap<>();
     }
 
     public void show() {
@@ -44,15 +47,19 @@ public class GameScreen extends ScreenAdapter {
         List<Robot> sortedRobots = new LinkedList<>(gameModel.getRobots());
         Collections.swap(sortedRobots, 0, sortedRobots.indexOf(gameModel.getMyPlayer().getRobot()));
         for (Robot robot : gameModel.getRobots()) {
-            stats.add(new Label(formatRobotState(robot), skin));
+            Label robotLabel = new Label(formatRobotState(robot), skin);
+            robotStatuses.put(robot, robotLabel);
+            stats.add(robotLabel);
             stats.row();
         }
 
         // inside sidebar: test utils
         Table utils = new Table();
-        utils.add(new Label(gameModel.getMyPlayer().handAsString(), skin));
+        handLabel = new Label(gameModel.getMyPlayer().handAsString(), skin);
+        utils.add(handLabel);
         utils.row();
-        utils.add(new Label(gameModel.getMyPlayer().programmingSlotsAsString(), skin));
+        programmingSlotsLabel = new Label(gameModel.getMyPlayer().programmingSlotsAsString(), skin);
+        utils.add(programmingSlotsLabel);
 
         // beside the board: stats table
         Table sideTable = new Table();
@@ -83,6 +90,7 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        updateText();
     }
 
     @Override
@@ -93,6 +101,14 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    private void updateText(){
+        for (Robot robot : gameModel.getRobots()) {
+            robotStatuses.get(robot).setText(formatRobotState(robot));
+        }
+        handLabel.setText(gameModel.getMyPlayer().handAsString());
+        programmingSlotsLabel.setText(gameModel.getMyPlayer().programmingSlotsAsString());
     }
 
     private String formatRobotState(Robot robot) {
