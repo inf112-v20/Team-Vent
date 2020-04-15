@@ -13,8 +13,6 @@ public class Player {
     private final Card[] programmingSlots = new Card[5];
     private final HashMap<Integer, Card> cardH = new HashMap<>();
     private final Robot robot;
-    private int playerLife;
-    private int playerHP;
 
     public Player() {
         this(new Robot());
@@ -22,31 +20,26 @@ public class Player {
 
     public Player(Robot robot) {
         this.robot = robot;
-        this.playerLife = 3;
-        this.playerHP = 9;
     }
 
-    // Boolean finishedPlacingCards = false;
-
     public void placeCardFromHandToSlot(int handSlot) {
-        findOpenSlot(handSlot, cardHand, programmingSlots);
+        placeCardInFirstOpenSlot(handSlot, cardHand, programmingSlots);
     }
 
     public void undoProgrammingSlotPlacement(int programmingSlot) {
-        findOpenSlot(programmingSlot, programmingSlots, cardHand);
+        placeCardInFirstOpenSlot(programmingSlot, programmingSlots, cardHand);
     }
 
-    private boolean findOpenSlot(int cardSlotInOriginArray, Card[] originArray, Card[] destinationArray) {
+    private void placeCardInFirstOpenSlot(int cardSlotInOriginArray, Card[] originArray, Card[] destinationArray) {
         if (originArray[cardSlotInOriginArray] != null) {
             for (int i = 0; i < destinationArray.length; i++) {
                 if (destinationArray[i] == null) {
                     destinationArray[i] = originArray[cardSlotInOriginArray];
                     originArray[cardSlotInOriginArray] = null;
-                    return true;
+                    return;
                 }
             }
         }
-        return false;
     }
 
     public void setCardinProgrammingSlot(int programmingSlot, Card programCard) {
@@ -100,60 +93,11 @@ public class Player {
         }
     }
 
-    public String handAsString() {
-        StringBuilder handAsString = new StringBuilder();
-        cardArrayToString(handAsString, cardHand);
-        handAsString.append("\nG  Generate New Hand");
-        return handAsString.toString();
-    }
-
-    public String programmingSlotsAsString() {
-        StringBuilder programmingSlotsAsString = new StringBuilder();
-        programmingSlotsAsString.append("PROGRAMMING SLOTS: \n");
-        cardArrayToString(programmingSlotsAsString, programmingSlots);
-        programmingSlotsAsString.append("\nE  Execute (order 66)");
-        return programmingSlotsAsString.toString();
-    }
-
-    private void cardArrayToString(StringBuilder TargetString, Card[] cardArray) {
-        for (int i = 0; i < cardArray.length; i++) {
-            TargetString.append(i + 1);
-            TargetString.append("  ");
-            if (cardArray[i] != null) {
-                TargetString.append(cardArray[i].toString());
-
-            }
-            TargetString.append("\n");
-        }
-    }
-    //Methods below might be useful, but as of 31.03 we use robotsHP instead, delete if not useful
-    public int getPlayerLife() {
-        return playerLife;
-    }
-
-    public void setPlayerLife(int playerLife) {
-        this.playerLife = playerLife;
-    }
-
-    public int getPlayerHP() {
-        return playerHP;
-    }
-
-    public void setPlayerHP(int playerLife) {
-        this.playerHP = playerLife;
-    }
-
-    public String playerLifeAsString(int lives) {
-        String p = "playerLife: " + lives + "\n";
-        return p;
-    }
-
-    public String playerHPAsString(int args) {
-        String p = "playerHP: " + args + "\n";
-        return p;
-    }
-
     public Robot getRobot() {
         return robot;
+    }
+
+    public Card[] getHand() {
+        return cardHand;
     }
 }
