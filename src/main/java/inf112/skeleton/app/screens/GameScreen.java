@@ -132,7 +132,7 @@ public class GameScreen extends ScreenAdapter {
         rootTable.add(cardTable).colspan(2).expandY().left();
 
         stage.addActor(rootTable);
-        stage.setDebugAll(true);
+        stage.setDebugAll(false);
 
     }
 
