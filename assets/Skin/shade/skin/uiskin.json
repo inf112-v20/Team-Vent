@@ -1,48 +1,63 @@
 {
-com.badlogic.gdx.graphics.Color: {
-	green: { g: 1, a: 1 },
-	light_grey: { r: 0.8, g: 0.8, b: 0.8, a: 1 },
-	white: { r: 1, g: 1, b: 1, a: 1 },
-	red: { r: 1, a: 1 },
-	grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 },
-	teamVentLogo: { a: 1.0, b: 0.25490198, g: 1.0, r: 0.91764706 },
-	black: { a: 1 }
-},
-com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	font-button: { file: font-button.fnt },
-	font-label: { file: font-label.fnt },
-	font-title: { file: font-title.fnt }
-},
-com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
-	dialogDim: {
-		name: white,
-		color: { a: 1, b: 0.2, g: 0.2, r: 0.2 }
+Color: {
+	black: {
+		a: 1
 	}
+	white: { r: 1, g: 1, b: 1, a: 1 },
+	grey: { r: 0.7, g: 0.7, b: 0.7, a: 1 },
+	yellow: { a: 1.0, b: 0.25490198, g: 1.0, r: 0.91764706 },
+	red: { hex: "#440c08ff" },
+	blue: { hex: "#0c0c50ff" }
 },
-com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
-	default-horizontal: { background: loading-bar, knob: loading-bar-knob, knobBefore: loading-bar-fill }
-	default-vertical: { background: loading-bar, knob: loading-bar-knob, knobBefore: loading-bar-fill }
-},
-com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: {
-		font: font-button,
-		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		downFontColor: teamVentLogo,
-		disabledFontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 },
-		up: button,
-		down: button-down
+	BitmapFont: {
+		font-button: {
+			file: font-button.fnt
+		},
+		font-label: {
+			file: font-label.fnt
+		},
+		font-title: {
+			file: font-title.fnt
+		}
 	},
-	round: {
-		font: font-title,
-		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		downFontColor: teamVentLogo,
-		up: round-button,
-		down: round-button-down
+	TintedDrawable: {
+		dialogDim: {
+			name: white,
+			color: { a: 1, b: 0.2, g: 0.2, r: 0.2 }
+		}
 	},
+	ProgressBarStyle: {
+		default-horizontal: {
+			background: loading-bar,
+			knob: loading-bar-knob,
+			knobBefore: loading-bar-fill
+		}
+		default-vertical: {
+			background: loading-bar,
+			knob: loading-bar-knob,
+			knobBefore: loading-bar-fill
+		}
+	},
+	TextButtonStyle: {
+		default: {
+			font: font-button,
+			fontColor: { a: 1, b: 1, g: 1, r: 1 },
+			downFontColor: yellow,
+			disabledFontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 },
+			up: button,
+			down: button-down
+		},
+		round: {
+			font: font-title,
+			fontColor: { a: 1, b: 1, g: 1, r: 1 },
+			downFontColor: yellow,
+			up: round-button,
+			down: round-button-down
+		},
 	toggle: {
 		font: font-button,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		downFontColor: teamVentLogo,
+		downFontColor: yellow,
 		up: toggle-button-off,
 		down: toggle-button-down,
 		checked: toggle-button
@@ -50,80 +65,113 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	radio: {
 		font: font-label,
 		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		downFontColor: teamVentLogo,
+		downFontColor: yellow,
 		up: radio-button-off,
 		down: radio-button,
 		checked: radio-button
 	}
 },
-com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
-	default: { up: button, down: button-down }
-},
-com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
-	default-vertical: { handle: vertical-splitpane },
-	default-horizontal: { handle: horizontal-splitplane }
-},
-com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
-	default: { background: touchpad, knob: touchpad-knob }
-},
-com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
-	default: { up: button, down: button-down },
-	music: { up: music-off, down: music-down, checked: music },
-	left: { up: left-button, down: left-button-down },
-	sound: { up: sound-off, down: sound-down, checked: sound },
-	toggle: { up: toggle-button-off, down: toggle-button-down, checked: toggle-button },
-	right: { up: right-button, down: right-button-down }
-},
-com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
-	default: {
-		background: window,
-		titleFont: font-title,
-		titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
+	ImageButtonStyle: {
+		default: {
+			up: button,
+			down: button-down
+		}
 	},
-	dialog: {
-		background: window,
-		titleFont: font-title,
-		titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
-		stageBackground: list
+	SplitPaneStyle: {
+		default-vertical: {
+			handle: vertical-splitpane
+		},
+		default-horizontal: {
+			handle: horizontal-splitplane
+		}
+	},
+	TouchpadStyle: {
+		default: {
+			background: touchpad,
+			knob: touchpad-knob
+		}
+	},
+	ButtonStyle: {
+		default: {
+			up: button,
+			down: button-down
+		},
+		music: {
+			up: music-off,
+			down: music-down,
+			checked: music
+		},
+		left: {
+			up: left-button,
+			down: left-button-down
+		},
+		sound: {
+			up: sound-off,
+			down: sound-down,
+			checked: sound
+		},
+		toggle: {
+			up: toggle-button-off,
+			down: toggle-button-down,
+			checked: toggle-button
+		},
+		right: {
+			up: right-button,
+			down: right-button-down
+		}
+	},
+	WindowStyle: {
+		default: {
+			background: window,
+			titleFont: font-title,
+			titleFontColor: { a: 1, b: 1, g: 1, r: 1 }
+		},
+		dialog: {
+			background: window,
+			titleFont: font-title,
+			titleFontColor: { a: 1, b: 1, g: 1, r: 1 },
+			stageBackground: list
 	}
 },
-com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-	default: {
-		font: font-label,
-		fontColor: { a: 1 },
-		background: textfield,
-		cursor: cursor,
-		selection: text-selection,
-		messageFont: font-label
-	}
-},
-com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
-	default: {
-		background: panel1,
-		hScroll: horizontal-scrollbar,
-		hScrollKnob: horizontal-scrollbar-knob,
-		vScroll: vertical-scrollbar,
-		vScrollKnob: vertical-scrollbar-knob
+	TextFieldStyle: {
+		default: {
+			font: font-label,
+			fontColor: {
+				a: 1
+			},
+			background: textfield,
+			cursor: cursor,
+			selection: text-selection,
+			messageFont: font-label
+		}
 	},
-	android: {
-		background: panel1,
-		hScroll: android-horizontal-scrollbar,
+	ScrollPaneStyle: {
+		default: {
+			background: panel1,
+			hScroll: horizontal-scrollbar,
+			hScrollKnob: horizontal-scrollbar-knob,
+			vScroll: vertical-scrollbar,
+			vScrollKnob: vertical-scrollbar-knob
+		},
+		android: {
+			background: panel1,
+			hScroll: android-horizontal-scrollbar,
 		hScrollKnob: android-horizontal-scrollbar-knob,
 		vScroll: android-vertical-scrollbar,
 		vScrollKnob: android-vertical-scrollbar-knob
 	}
 },
-com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	optional: {
-		font: font-label,
-		fontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 }
-	},
-	default: {
-		font: font-label,
-		fontColor: { a: 1, b: 1, g: 1, r: 1 }
-	},
-	error: {
-		font: font-label,
+	LabelStyle: {
+		optional: {
+			font: font-label,
+			fontColor: { a: 1, b: 0.8, g: 0.8, r: 0.8 }
+		},
+		default: {
+			font: font-label,
+			fontColor: { a: 1, b: 1, g: 1, r: 1 }
+		},
+		error: {
+			font: font-label,
 		fontColor: { a: 1, r: 1 }
 	},
 	title-plain: {
@@ -141,52 +189,65 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		background: panel2
 	}
 },
-com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
-	default: {
-		font: font-label,
-		fontColorSelected: teamVentLogo,
-		fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
-		selection: list-selection
+	ListStyle: {
+		default: {
+			font: font-label,
+			fontColorSelected: yellow,
+			fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
+			selection: list-selection
+		},
+		dimmed: {
+			font: font-label,
+			fontColorSelected: yellow,
+			fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
+			selection: list-selection,
+			background: list
+		}
+},
+	CheckBoxStyle: {
+		default: {
+			checkboxOn: check-on,
+			checkboxOff: check-off,
+			font: font-label,
+			fontColor: { a: 1, b: 1, g: 1, r: 1 },
+			downFontColor: yellow
+		},
+		switch: {
+			checkboxOn: switch,
+			checkboxOff: switch-off,
+			font: font-label,
+			fontColor: { a: 1, b: 1, g: 1, r: 1 },
+			downFontColor: yellow
+		}
+},
+	TreeStyle: {
+		default: {
+			plus: plus,
+			minus: minus,
+			selection: list-selection,
+			background: list
+		}
 	},
-	dimmed: {
-		font: font-label,
-		fontColorSelected: teamVentLogo,
-		fontColorUnselected: { a: 1, b: 1, g: 1, r: 1 },
-		selection: list-selection,
-		background: list
-	}
-},
-com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-	default: {
-		checkboxOn: check-on,
-		checkboxOff: check-off,
-		font: font-label,
-		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		downFontColor: teamVentLogo
+	SliderStyle: {
+		default-vertical: {
+			background: slider-bar,
+			knob: slider-bar-knob,
+			knobBefore: slider-bar-fill
+		},
+		default-horizontal: {
+			background: slider-bar,
+			knob: slider-bar-knob,
+			knobBefore: slider-bar-fill
+		}
 	},
-	switch: {
-		checkboxOn: switch,
-		checkboxOff: switch-off,
-		font: font-label,
-		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		downFontColor: teamVentLogo
+	SelectBoxStyle: {
+		default: {
+			font: font-button,
+			fontColor: { a: 1, b: 1, g: 1, r: 1 },
+			background: select-box,
+			scrollStyle: default,
+			listStyle: default,
+			backgroundOpen: select-box-down
+		}
 	}
-},
-com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
-	default: { plus: plus, minus: minus, selection: list-selection, background: list }
-},
-com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
-	default-vertical: { background: slider-bar, knob: slider-bar-knob, knobBefore: slider-bar-fill },
-	default-horizontal: { background: slider-bar, knob: slider-bar-knob, knobBefore: slider-bar-fill }
-},
-com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
-	default: {
-		font: font-button,
-		fontColor: { a: 1, b: 1, g: 1, r: 1 },
-		background: select-box,
-		scrollStyle: default,
-		listStyle: default,
-		backgroundOpen: select-box-down
-	}
-}
 }
