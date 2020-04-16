@@ -1,0 +1,55 @@
+
+Cards.png
+size: 512,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+card_back_up
+  rotate: false
+  xy: 2, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: -1
+card_move
+  rotate: false
+  xy: 136, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: 1
+card_move
+  rotate: false
+  xy: 203, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: 2
+card_move
+  rotate: false
+  xy: 270, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: 3
+card_null
+  rotate: false
+  xy: 337, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: -1
+card_rotate_left
+  rotate: false
+  xy: 404, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: -1
+card_rotate_right
+  rotate: false
+  xy: 69, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: -1
