@@ -258,12 +258,12 @@ public class GameModel {
         switch (card) {
             case MOVE_THREE:
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
-                initialState = cardSteps.get(phaseNumber).getLast();
+                initialState = updateLastState(initialState, cardSteps.get(phaseNumber));
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE_TWO:
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
-                initialState = cardSteps.get(phaseNumber).getLast();
+                initialState = updateLastState(initialState, cardSteps.get(phaseNumber));
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE_ONE:
