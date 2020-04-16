@@ -84,6 +84,7 @@ public class Player {
 
     //Cards are stored in a hashmap, where key is the priority which is distinct and random
     public void generateCardHand() {
+        Arrays.fill(cardHand, null);
         int LIMIT = 120;
         ArrayList<Integer> numb = new ArrayList<>();
         for (int i = 0; i < LIMIT; i++) {
@@ -105,7 +106,8 @@ public class Player {
                 cardH.put(numb.get(i), Card.ROTATE_RIGHT);
             }
         }
-        for (int i = 0; i < 9; i++) {
+        int hp = robot.getState().getHp();
+        for (int i = 0; i < hp-1; i++) {
             int k = (int) (Math.random() * LIMIT);
             cardHand[i] = cardH.get(k);
         }

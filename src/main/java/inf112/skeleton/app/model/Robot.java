@@ -41,7 +41,7 @@ public class Robot {
     }
 
     public static int getMaxHP() {
-        return 9;
+        return 10;
     }
 
     @Override
