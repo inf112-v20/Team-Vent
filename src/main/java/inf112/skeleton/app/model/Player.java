@@ -4,6 +4,7 @@ package inf112.skeleton.app.model;
 import inf112.skeleton.app.model.cards.Card;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -11,6 +12,7 @@ public class Player {
 
     private final Card[] cardHand = new Card[9];
     private final Card[] programmingSlots = new Card[5];
+    private final boolean[] programmingSlotsLocked = new boolean[5];
     private final HashMap<Integer, Card> cardH = new HashMap<>();
     private final Robot robot;
 
@@ -27,7 +29,9 @@ public class Player {
     }
 
     public void undoProgrammingSlotPlacement(int programmingSlot) {
-        placeCardInFirstOpenSlot(programmingSlot, programmingSlots, cardHand);
+        if (!programmingSlotsLocked[programmingSlot]) {
+            placeCardInFirstOpenSlot(programmingSlot, programmingSlots, cardHand);
+        }
     }
 
     private void placeCardInFirstOpenSlot(int cardSlotInOriginArray, Card[] originArray, Card[] destinationArray) {
@@ -38,6 +42,20 @@ public class Player {
                     originArray[cardSlotInOriginArray] = null;
                     return;
                 }
+            }
+        }
+    }
+
+    public void clearProgrammingSlots() {
+        Arrays.fill(programmingSlotsLocked, false);
+
+        int hp = robot.getState().getHp();
+        for (int i = 5; i >= hp && i >= 1; i--) {
+            programmingSlotsLocked[i-1] = true;
+        }
+        for (int i = 0; i < programmingSlots.length; i++) {
+            if (!programmingSlotsLocked[i]) {
+                programmingSlots[i] = null;
             }
         }
     }
