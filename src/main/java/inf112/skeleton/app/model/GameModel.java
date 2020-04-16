@@ -74,9 +74,7 @@ public class GameModel {
 
     public void emptyPlayersProgrammingSlots(){
         for (Player player : players){
-            for (int i = 0; i < 5; i++){
-                player.setCardinProgrammingSlot(i, null);
-            }
+            player.clearProgrammingSlots();
         }
     }
 
