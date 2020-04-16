@@ -19,26 +19,21 @@ public class StatsTable extends Table {
     public StatsTable(GameModel gameModel, Skin skin) {
         this.gameModel = gameModel;
         this.labelsToRobots = new HashMap<>();
-        this.defaults().left().padBottom(10);
+        this.defaults().left().padBottom(5);
         List<Robot> sortedRobots = new LinkedList<>(gameModel.getRobots());
         Collections.swap(sortedRobots, 0, sortedRobots.indexOf(gameModel.getMyPlayer().getRobot()));
-
-        this.add(new Label("STATS", skin));
-        this.row();
-        for (Robot robot : sortedRobots) {
+        sortedRobots.forEach(robot -> {
             Label label = new Label("", skin);
             labelsToRobots.put(label, robot);
             this.add(label);
             this.row();
-        }
+        });
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        for (Entry<Label, Robot> entry : labelsToRobots.entrySet()) {
-            entry.getKey().setText(formatRobotState(entry.getValue()));
-        }
+        labelsToRobots.forEach((key, value) -> key.setText(formatRobotState(value)));
     }
 
     private String formatRobotState(Robot robot) {
