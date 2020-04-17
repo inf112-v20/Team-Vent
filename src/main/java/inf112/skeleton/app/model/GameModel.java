@@ -89,10 +89,10 @@ public class GameModel {
                 doCard(i, gameState, gameState.getState(robot), player);
                 gameState = updateLastState(gameState, cardSteps.get(i));
             }
-            for (Robot robot : robots) {
-                doTiles(i, gameState, gameState.getState(robot));
-                gameState = updateLastState(gameState, tileSteps.get(i));
-            }
+
+            doTiles(i, gameState);
+            gameState = updateLastState(gameState, tileSteps.get(i));
+
             doLasers(i, gameState);
             gameState = updateLastState(gameState, laserSteps.get(i));
             doFlags(i, gameState);
@@ -209,48 +209,6 @@ public class GameModel {
         }
     }
 
-    private void doTiles(int phaseNumber, GameState initialState, RobotState robotState) {
-        Location loc = robotState.getLocation();
-        // Calculate next steps based on current position
-        GameState newState;
-        TileType currentTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
-        Direction currentTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
-        switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
-            case CONVEYOR_NORMAL:
-                doMovement(phaseNumber, initialState, robotState, tileSteps, currentTileDirection);
-                break;
-            case CONVEYOR_EXPRESS:
-                doMovement(phaseNumber, initialState, robotState, tileSteps, currentTileDirection);
-                newState = initialState.update(robotState.updateLocation(loc.moveDirection(currentTileDirection)));
-
-                loc = newState.getState(robotState.getRobot()).getLocation();
-                RobotState newRobotState = newState.getState(robotState.getRobot());
-
-                TileType nextTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
-                Direction nextTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
-                if (currentTileType.equals(nextTileType)) {
-                    doMovement(phaseNumber, newState, newRobotState, tileSteps, nextTileDirection);
-                }
-                break;
-            case GEAR_CLOCKWISE:
-                Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
-                newState = initialState.update(robotState.updateLocation(turnRight));
-                tileSteps.get(phaseNumber).add(newState);
-                break;
-            case GEAR_COUNTERCLOCKWISE:
-                Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
-                newState = initialState.update(robotState.updateLocation(turnLeft));
-                tileSteps.get(phaseNumber).add(newState);
-                break;
-            case HOLE:
-                newState = initialState.update(robotState.updateDead());
-                tileSteps.get(phaseNumber).add(newState);
-                break;
-            default:
-                break;
-        }
-    }
-
     private void doCard(int phaseNumber, GameState initialState, RobotState robotState, Player player) {
         Card card = player.getCardInProgrammingSlot(phaseNumber);
         if (card == null) return;
@@ -315,6 +273,96 @@ public class GameModel {
             xSteps.get(phaseNumber).add(initialState);
         }
 
+    }
+
+    private void doTiles(int phaseNumber, GameState initialState) {
+        GameState state = initialState.copy();
+        if (doConveyorMovement(state,true)) {
+            tileSteps.get(phaseNumber).add(state);
+            state = tileSteps.get(phaseNumber).getLast().copy();
+        }
+        boolean tilesActivated = false;
+        for (Robot robot: robots) {
+            if (doOtherTiles(state, state.getState(robot))) {
+                tilesActivated = true;
+            }
+        }
+        if (doConveyorMovement(state, false)) tilesActivated = true;
+        if (tilesActivated) {
+            tileSteps.get(phaseNumber).add(state);
+        }
+    }
+
+    private boolean doOtherTiles(GameState initialState, RobotState robotState) {
+        Location loc = robotState.getLocation();
+        // Calculate next steps based on current position
+        TileType currentTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+        switch (currentTileType != null ? currentTileType : TileType.BASE_TILE) {
+            case GEAR_CLOCKWISE:
+                Location turnRight = new Location(loc.getPosition(), loc.getDirection().right());
+                initialState.edit(robotState.updateLocation(turnRight));
+                return true;
+            case GEAR_COUNTERCLOCKWISE:
+                Location turnLeft = new Location(loc.getPosition(), loc.getDirection().left());
+                initialState.edit(robotState.updateLocation(turnLeft));
+                return true;
+            case HOLE:
+                initialState.edit(robotState.updateDead());
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean doConveyorMovement(GameState state, boolean onlyExpress) {
+        HashMap<Robot, Boolean> moveChecked = new HashMap<>();
+        boolean somethingHappened = false;
+        for (Robot robot : robots) {
+            moveChecked.put(robot, false);
+        }
+        for (Robot robot: robots) {
+            if (doConveyorMove(state, state.getState(robot), moveChecked, onlyExpress))
+            somethingHappened = true;
+        }
+        return somethingHappened;
+    }
+
+    private boolean doConveyorMove(GameState initialState, RobotState robotState, HashMap<Robot, Boolean> moveChecked, boolean onlyExpress) {
+        Location loc = robotState.getLocation();
+        TileType currentTileType = mapHandler.getTileType(loc.getPosition(), Constants.TILE_LAYER);
+        Direction currentTileDirection = mapHandler.getDirection(loc.getPosition(), Constants.TILE_LAYER);
+
+        if (TileType.CONVEYOR_EXPRESS.equals(currentTileType) || (TileType.CONVEYOR_NORMAL.equals(currentTileType) && !onlyExpress)) {
+            Location locWithDir = new Location(robotState.getLocation().getPosition(), currentTileDirection);
+            if (mapHandler.wallInPath(locWithDir)) {
+                moveChecked.put(robotState.getRobot(), true);
+                return false;
+            }
+
+            Location pointOfContention = robotState.getLocation().moveDirection(currentTileDirection);
+            for (RobotState state : initialState.getRobotStates()) {
+                if (state.getLocation().getPosition().equals(pointOfContention.getPosition())) {
+                    if (moveChecked.get(state.getRobot())) {
+                        moveChecked.put(robotState.getRobot(), true);
+                        return false;
+                    }
+                    if (doConveyorMove(initialState, state, moveChecked, onlyExpress)) {
+                        moveChecked.put(robotState.getRobot(), true);
+                        initialState.edit(robotState.updateLocation(robotState.getLocation().moveDirection(currentTileDirection)));
+                        return true;
+                    }
+                    moveChecked.put(robotState.getRobot(), true);
+                    return false;
+                }
+            }
+
+            moveChecked.put(robotState.getRobot(), true);
+            initialState.edit(robotState.updateLocation(robotState.getLocation().moveDirection(currentTileDirection)));
+            return true;
+
+        }
+        moveChecked.put(robotState.getRobot(), true);
+        return false;
     }
 
     private void doFlags(int phase, GameState gameState) {
