@@ -1,6 +1,5 @@
 package inf112.skeleton.app.model;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
