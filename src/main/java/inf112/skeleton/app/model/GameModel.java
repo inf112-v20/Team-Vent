@@ -1,5 +1,6 @@
 package inf112.skeleton.app.model;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.model.board.Direction;
@@ -340,7 +341,19 @@ public class GameModel {
             }
 
             Location pointOfContention = robotState.getLocation().moveDirection(currentTileDirection);
+            Location twoRobotsFacingPoint = pointOfContention.moveDirection(currentTileDirection);
             for (RobotState state : initialState.getRobotStates()) {
+
+                if (state.getLocation().getPosition().equals(twoRobotsFacingPoint.getPosition())) {
+                    TileType otherRobotTileType = mapHandler.getTileType(state.getLocation().getPosition(), Constants.TILE_LAYER);
+                    Direction otherRobotTileDirection = mapHandler.getDirection(state.getLocation().getPosition(), Constants.TILE_LAYER);
+                    if ((TileType.CONVEYOR_EXPRESS.equals(otherRobotTileType) || (TileType.CONVEYOR_NORMAL.equals(otherRobotTileType) && !onlyExpress))
+                    && otherRobotTileDirection.equals(currentTileDirection.opposite())) {
+                        moveChecked.put(robotState.getRobot(), true);
+                        return false;
+                    }
+                }
+
                 if (state.getLocation().getPosition().equals(pointOfContention.getPosition())) {
                     if (moveChecked.get(state.getRobot())) {
                         moveChecked.put(robotState.getRobot(), true);
@@ -348,8 +361,7 @@ public class GameModel {
                     }
                     if (doConveyorMove(initialState, state, moveChecked, onlyExpress)) {
                         moveChecked.put(robotState.getRobot(), true);
-                        initialState.edit(robotState.updateLocation(robotState.getLocation().moveDirection(currentTileDirection)));
-                        return true;
+                        return finalizeMovementWithRotation(initialState, robotState, currentTileDirection);
                     }
                     moveChecked.put(robotState.getRobot(), true);
                     return false;
@@ -357,13 +369,33 @@ public class GameModel {
             }
 
             moveChecked.put(robotState.getRobot(), true);
-            initialState.edit(robotState.updateLocation(robotState.getLocation().moveDirection(currentTileDirection)));
-            return true;
-
+            return finalizeMovementWithRotation(initialState, robotState, currentTileDirection);
         }
         moveChecked.put(robotState.getRobot(), true);
         return false;
     }
+
+    private boolean finalizeMovementWithRotation (GameState initialState, RobotState robotState, Direction currentTileDirection) {
+
+        Location targetLocation = robotState.getLocation().moveDirection(currentTileDirection);
+        TileType targetTileType = mapHandler.getTileType(targetLocation.getPosition(), Constants.TILE_LAYER);
+        Direction targetTileDirection = mapHandler.getDirection(targetLocation.getPosition(), Constants.TILE_LAYER);
+
+        if ((TileType.CONVEYOR_EXPRESS.equals(targetTileType) || (TileType.CONVEYOR_NORMAL.equals(targetTileType)))
+        && !targetTileDirection.equals(currentTileDirection)) {
+            if (targetTileDirection.equals(currentTileDirection.left())) {
+                Location newLoc = new Location(targetLocation.getPosition(), robotState.getLocation().getDirection().left());
+                initialState.edit(robotState.updateLocation(newLoc));
+                return true;
+            }
+            Location newLoc = new Location(targetLocation.getPosition(), robotState.getLocation().getDirection().right());
+            initialState.edit(robotState.updateLocation(newLoc));
+            return true;
+        }
+        initialState.edit(robotState.updateLocation(targetLocation));
+        return true;
+    }
+
 
     private void doFlags(int phase, GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
