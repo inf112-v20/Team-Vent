@@ -153,7 +153,7 @@ public class GameController extends InputAdapter {
             return;
         }
         lastServerStatus = status;
-        if (status.equals("START ROUND")) startRound();
+        if ("START ROUND".equals(status)) startRound();
     }
 
     private void lockInCards() {
