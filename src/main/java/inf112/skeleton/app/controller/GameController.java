@@ -153,13 +153,7 @@ public class GameController extends InputAdapter {
             return;
         }
         lastServerStatus = status;
-        switch (status) {
-            case "START ROUND":
-                startRound();
-                break;
-            default:
-                break;
-        }
+        if (status.equals("START ROUND")) startRound();
     }
 
     private void lockInCards() {
@@ -224,7 +218,7 @@ public class GameController extends InputAdapter {
             return false;
         }
         handleCardInput(keycode);
-        handleTestingInput(keycode);
+        if (devMode) handleTestingInput(keycode);
         return true;
     }
 
@@ -236,6 +230,4 @@ public class GameController extends InputAdapter {
         }
         return false;
     }
-
-
 }
