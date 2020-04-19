@@ -120,4 +120,19 @@ public class Player {
     public Card[] getHand() {
         return cardHand;
     }
+
+    public void fillEmptySlots() {
+        for (Card card : programmingSlots) {
+            if (card == null) {
+                int randomPick = (int)(Math.random()*9);
+                while (true) {
+                    if (getCardinHand(randomPick) != null) {
+                        placeCardFromHandToSlot(randomPick);
+                        break;
+                    }
+                    randomPick = (randomPick + 1)%9;
+                }
+            }
+        }
+    }
 }
