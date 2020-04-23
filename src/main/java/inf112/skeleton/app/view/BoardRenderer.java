@@ -1,5 +1,7 @@
 package inf112.skeleton.app.view;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -29,10 +31,12 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private IdentityHashMap<Robot, Cell> robotsToCellsHashMap;
     private TiledMapTileLayer robotLayer;
     private TiledMapTileLayer laserLayer;
+    private Music music;
 
     public BoardRenderer(GameModel gameModel, float unitScale) {
         super(gameModel.getMapHandler().getMap(), unitScale);
         this.gameModel = gameModel;
+        music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
         loadTextures();
         // create additional layers for objects that move or change based on the game model
         TiledMapTileLayer tileLayer = gameModel.getMapHandler().getTileLayer();
@@ -69,6 +73,9 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         this.renderMapLayer(robotLayer);
         // re-render wall layer so that wall layers are on top of beams
         this.renderMapLayer(gameModel.getMapHandler().getWallLayer());
+        music.play();
+        music.setVolume(0.25f);
+        music.setLooping(true);
         this.endRender();
     }
 
