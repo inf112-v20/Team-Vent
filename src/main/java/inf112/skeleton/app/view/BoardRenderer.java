@@ -74,6 +74,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         // re-render wall layer so that wall layers are on top of beams
         this.renderMapLayer(gameModel.getMapHandler().getWallLayer());
         music.play();
+        music.setVolume(0.25f);
         music.setLooping(true);
         this.endRender();
     }
