@@ -39,7 +39,7 @@ public class StatsTable extends Table {
     private String formatRobotState(Robot robot) {
         // note: because of a problem with the the font the string there is no way to align the strings perfectly
         String format = "%-8s  %s %d  %s %d  %s  %s";
-        if (robot.equals(gameModel.getMyPlayer().getRobot())) format += "*";  // emphasize the player's own robot
+        if (robot.equals(gameModel.getMyPlayer().getRobot())) format += " THIS IS YOU";  // emphasize the player's own robot
         return String.format(format,
                 robot.toString(),
                 "HP:", robot.getState().getHp(),
