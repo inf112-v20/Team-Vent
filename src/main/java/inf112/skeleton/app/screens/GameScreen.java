@@ -3,7 +3,10 @@ package inf112.skeleton.app.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -27,16 +30,24 @@ public class GameScreen extends ScreenAdapter {
 
     private Viewport viewport;
     private Stage stage;
-
     private ImageButton[] programmingSlotButtons;
     private ImageButton[] handSlotButtons;
     private HashMap<String, TextureRegionDrawable> cardTextures;
+    private String time;
+
+    private SpriteBatch batch;
+    private BitmapFont font;
 
     public GameScreen(GameModel gameModel, InputMultiplexer inputMultiplexer) {
+        time = "";
         this.gameModel = gameModel;
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
         inputMultiplexer.addProcessor(stage);
+
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
     }
 
     public void show() {
@@ -111,6 +122,10 @@ public class GameScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         updateCards();
+        batch.begin();
+        font.draw(batch, time, 900, 200);
+        batch.end();
+
     }
 
     @Override
@@ -121,6 +136,10 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    public void updateTime(String time) {
+        this.time = time;
     }
 
     private void addCardButtonsFunctionality() {
