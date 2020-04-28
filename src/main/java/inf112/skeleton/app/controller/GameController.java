@@ -93,6 +93,7 @@ public class GameController extends InputAdapter {
             if (devMode) gameModel.getPlayer(playerIndex).generateCardHand();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
+            gameScreen.updateTime("TIME LEFT:  ");
             countDownTimer.cancel();
             countDownTimer = new Timer(true);
         }
