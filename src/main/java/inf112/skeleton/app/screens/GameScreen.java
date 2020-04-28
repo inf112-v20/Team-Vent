@@ -3,10 +3,7 @@ package inf112.skeleton.app.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -35,8 +32,7 @@ public class GameScreen extends ScreenAdapter {
     private HashMap<String, TextureRegionDrawable> cardTextures;
     private String time;
 
-    private SpriteBatch batch;
-    private BitmapFont font;
+    private Label timeLabel;
 
     public GameScreen(GameModel gameModel, InputMultiplexer inputMultiplexer) {
         time = "";
@@ -44,10 +40,6 @@ public class GameScreen extends ScreenAdapter {
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
         inputMultiplexer.addProcessor(stage);
-
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
     }
 
     public void show() {
@@ -70,6 +62,7 @@ public class GameScreen extends ScreenAdapter {
         Table sideTable = new Table();
         sideTable.defaults().left();
         sideTable.add(new StatsTable(gameModel, skin));
+        sideTable.row();
 
         // below the board: card table
         Table cardTable = new Table();
@@ -96,6 +89,8 @@ public class GameScreen extends ScreenAdapter {
             handSlotButtons[i] = handSlot;
         }
         addCardButtonsFunctionality();
+        timeLabel = new Label("Time: " + time, skin);
+        cardTable.add(timeLabel).left().padLeft(20);
         cardTable.row();
         // 1-5 labels under programming slots
         for (int i = 1; i < 6; i++) {
@@ -107,13 +102,14 @@ public class GameScreen extends ScreenAdapter {
         rootTable.setFillParent(true);
         rootTable.defaults().padTop(10).padLeft(10);
         rootTable.add(new TiledMapActor(gameModel, unitScale)).left();
-        rootTable.add(sideTable).expandX().top().left();
+        rootTable.add(sideTable).expandX().top().left().padLeft(50);
         rootTable.row();
         rootTable.add(cardTable).colspan(2).expandY().left();
 
         stage.addActor(rootTable);
         stage.setDebugAll(false);
     }
+
 
     @Override
     public void render(float delta) {
@@ -122,10 +118,7 @@ public class GameScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         updateCards();
-        batch.begin();
-        font.draw(batch, time, 900, 200);
-        batch.end();
-
+        timeLabel.setText(time);
     }
 
     @Override
