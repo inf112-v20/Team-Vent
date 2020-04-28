@@ -10,7 +10,7 @@ public class Launcher {
         cfg.title = "Team Vent's RoboRally";
         cfg.width = 1366;
         cfg.height = 768;
-        cfg.resizable = true;
+        cfg.resizable = false;
         new LwjglApplication(new RoboRallyGame(), cfg);
     }
 }
