@@ -19,10 +19,10 @@ public class GameModel {
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
     private final Player player;
-    private final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
     public Timer timer = new Timer(true);
     public int delay;
     private List<Player> players;
@@ -103,17 +103,6 @@ public class GameModel {
         // end of turn effects
         doRepairs(gameState);
         doReboot(gameState);
-
-        delay = 0;
-        for (int i = 0; i < PHASES; i++) {
-            scheduleSteps(delay, i, cardSteps);
-            delay += cardSteps.get(i).size();
-            scheduleSteps(delay, i, tileSteps);
-            delay += tileSteps.get(i).size();
-            scheduleSteps(delay, i, laserSteps);
-            delay += laserSteps.get(i).size();
-            scheduleSteps(delay, i, endOfPhaseSteps);
-        }
     }
 
     private void doLasers(int phaseNumber, GameState initialState) {

@@ -33,6 +33,7 @@ public class GameController extends InputAdapter {
     private boolean devMode = false;
     private final int turnLimit = 60;
     private int countDown;
+    private int delay = 0;
 
     /**
      * Single player constructor
@@ -195,6 +196,15 @@ public class GameController extends InputAdapter {
         };
     }
 
+    private TimerTask togglePhasePopUp(int phase, boolean show) {
+        return  new TimerTask() {
+            @Override
+            public void run() {
+                gameScreen.phasesImages[phase].setShow(show);
+            }
+        };
+    }
+
     // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
         roundInProgress = true;
@@ -207,7 +217,21 @@ public class GameController extends InputAdapter {
             }
         }
         gameModel.endTurn();
-        gameModel.timer.schedule(endOfTurn(), gameModel.delay * 500);
+        delay = 0;
+        for (int i = 0; i < 5; i++) {
+            timer.schedule(togglePhasePopUp(i, true), delay * 500);
+            delay += 4;
+            timer.schedule(togglePhasePopUp(i, false), delay * 500);
+            delay += 2;
+            gameModel.scheduleSteps(delay, i, gameModel.cardSteps);
+            delay += gameModel.cardSteps.get(i).size();
+            gameModel.scheduleSteps(delay, i, gameModel.tileSteps);
+            delay += gameModel.tileSteps.get(i).size();
+            gameModel.scheduleSteps(delay, i, gameModel.laserSteps);
+            delay += gameModel.laserSteps.get(i).size();
+            gameModel.scheduleSteps(delay, i, gameModel.endOfPhaseSteps);
+        }
+        gameModel.timer.schedule(endOfTurn(), delay * 500);
     }
 
     @Override
