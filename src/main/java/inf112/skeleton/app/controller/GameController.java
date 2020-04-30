@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.Player;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.board.Location;
@@ -214,6 +215,11 @@ public class GameController extends InputAdapter {
                 for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++){
                     gameModel.getPlayer(playerI).setCardinProgrammingSlot(cardSlotI, playerSlots[playerI][cardSlotI]);
                 }
+            }
+        }
+        if (!multiplayer) {
+            for (Player player : gameModel.players) {
+                player.fillEmptySlots();
             }
         }
         gameModel.endTurn();

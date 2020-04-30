@@ -25,7 +25,7 @@ public class GameModel {
     public final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
     public Timer timer = new Timer(true);
     public int delay;
-    private List<Player> players;
+    public List<Player> players;
     private GameState currentGameState;
 
 
