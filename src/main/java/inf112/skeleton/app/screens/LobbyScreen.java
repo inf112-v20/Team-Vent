@@ -102,7 +102,7 @@ public class LobbyScreen extends ScreenAdapter {
     private void startGame() {
         Gdx.app.postRunnable(() -> {
             timer.cancel();
-            new GameController(game, "map-1.tmx", gameClient, isHost); //TODO: Add map selector in lobby
+            new GameController(game, "map-1.tmx", gameClient, isHost);
         });
     }
 

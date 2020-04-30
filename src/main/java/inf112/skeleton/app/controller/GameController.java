@@ -195,7 +195,6 @@ public class GameController extends InputAdapter {
         };
     }
 
-    // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
         roundInProgress = true;
         if (multiplayer){
