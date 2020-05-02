@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.Player;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.board.Location;
@@ -23,7 +24,6 @@ public class GameController extends InputAdapter {
     private Boolean multiplayer;
     private String lastServerStatus = "START";
     private int numberOfPlayers;
-    private int playerIndex;
     private boolean roundInProgress = false;
 
     private Timer timer = new Timer(true);
@@ -40,8 +40,7 @@ public class GameController extends InputAdapter {
      */
     public GameController(RoboRallyGame game, String map_filename) {
         this.numberOfPlayers = 8;
-        playerIndex = 0;
-        this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
+        this.gameModel = new GameModel(map_filename, numberOfPlayers, 0);
         this.game = game;
         gameClient = null;
         multiplayer = false;
@@ -60,8 +59,7 @@ public class GameController extends InputAdapter {
      */
     public GameController(RoboRallyGame game, String map_filename, GameClient gameClient, Boolean isHost) {
         this.numberOfPlayers = gameClient.getNumberOfPlayers();
-        playerIndex = gameClient.getIndex();
-        this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
+        this.gameModel = new GameModel(map_filename, numberOfPlayers, gameClient.getIndex());
         this.game = game;
         this.gameClient = gameClient;
         multiplayer = true;
@@ -87,11 +85,11 @@ public class GameController extends InputAdapter {
      */
     private void handleCardInput(int keycode) {
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) { // undo cards
-            gameModel.getPlayer(playerIndex).undoProgrammingSlotPlacement(keycode - 8);
+            gameModel.getMyPlayer().undoProgrammingSlotPlacement(keycode - 8);
         } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
-            gameModel.getPlayer(playerIndex).placeCardFromHandToSlot(keycode - 8);
+            gameModel.getMyPlayer().placeCardFromHandToSlot(keycode - 8);
         } else if (keycode == Input.Keys.G) {  // deal new cards
-            if (devMode) gameModel.getPlayer(playerIndex).generateCardHand();
+            if (devMode) gameModel.getMyPlayer().generateCardHand();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
         }
@@ -134,7 +132,7 @@ public class GameController extends InputAdapter {
                 gameModel.emptyPlayersProgrammingSlots();
                 if (multiplayer){
                     gameClient.setReady();
-                    gameModel.getPlayer(playerIndex).generateCardHand();
+                    gameModel.getMyPlayer().generateCardHand();
                 }
                 else { gameModel.generateCardHands();}
                 roundInProgress = false;
@@ -162,7 +160,7 @@ public class GameController extends InputAdapter {
             startRound();
             return;
         }
-        gameClient.setProgrammingSlots(gameModel.getPlayer(playerIndex).getProgrammingSlots());
+        gameClient.setProgrammingSlots(gameModel.getMyPlayer().getProgrammingSlots());
         gameClient.setReady();
     }
 
