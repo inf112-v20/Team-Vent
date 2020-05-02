@@ -96,9 +96,6 @@ public class GameController extends InputAdapter {
             gameModel.getPlayer(playerIndex).generateCardHand();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
-            gameScreen.updateTime("");
-            countDownTimer.cancel();
-            countDownTimer = new Timer(true);
         }
     }
 
@@ -141,7 +138,7 @@ public class GameController extends InputAdapter {
                 if (multiplayer){
                     gameClient.setReady();
                 }
-                gameModel.getPlayer(playerIndex).generateCardHand();
+                gameModel.getPlayer(playerIndex).dealCards();
                 roundInProgress = false;
                 scheduleCountDowns();
             }
@@ -164,6 +161,9 @@ public class GameController extends InputAdapter {
 
     public void lockInCards() {
         gameScreen.lockCards();
+        gameScreen.updateTime("");
+        countDownTimer.cancel();
+        countDownTimer = new Timer(true);
         if (!devMode) gameModel.getMyPlayer().fillEmptySlots();
         if (!multiplayer){
             startRound();

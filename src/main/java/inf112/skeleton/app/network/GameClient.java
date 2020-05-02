@@ -83,6 +83,8 @@ public class GameClient {
                 return Card.ROTATE_LEFT;
             case "ROTATE RIGHT":
                 return Card.ROTATE_RIGHT;
+            case "U TURN":
+                return Card.U_TURN;
             default:
                 return null;
         }
