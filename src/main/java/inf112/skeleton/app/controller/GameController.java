@@ -154,7 +154,6 @@ public class GameController extends InputAdapter {
         if (status.equals(lastServerStatus)){ // avoids executing on same server status more than once
             return;
         }
-        gameScreen.updateServerStatusLabel(status);
         lastServerStatus = status;
         if ("START ROUND".equals(status)) startRound();
     }

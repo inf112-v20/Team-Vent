@@ -32,7 +32,6 @@ public class GameScreen extends ScreenAdapter {
     private String time;
     private InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
-    private Label serverStatusLabel;
 
     private Label timeLabel;
 
@@ -66,10 +65,8 @@ public class GameScreen extends ScreenAdapter {
         // beside the board: stats table
         Table sideTable = new Table();
         sideTable.defaults().left();
-        serverStatusLabel = new Label("", skin);
         sideTable.add(new StatsTable(gameModel, skin));
         sideTable.row();
-        sideTable.add(serverStatusLabel).padTop(25);
 
 
         // below the board: card table
@@ -203,10 +200,6 @@ public class GameScreen extends ScreenAdapter {
     public void unlockCards(){
         inputMultiplexer.addProcessor(stage);
         lockedInLabel.setText("");
-    }
-
-    public void updateServerStatusLabel(String status){
-        serverStatusLabel.setText("Server status: " + status);
     }
 
     private void updateCards() {
