@@ -87,7 +87,7 @@ public class GameModel {
 
     public void generateCardHands() {
         for (Player player : players) {
-            player.generateCardHand();
+            player.dealCards();
         }
     }
 
