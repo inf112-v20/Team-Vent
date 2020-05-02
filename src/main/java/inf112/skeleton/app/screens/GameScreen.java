@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import inf112.skeleton.app.controller.GameController;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.view.StatsTable;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 
 public class GameScreen extends ScreenAdapter {
     private final GameModel gameModel;
+    private final GameController gameController;
 
     private Viewport viewport;
     private Stage stage;
@@ -30,6 +32,8 @@ public class GameScreen extends ScreenAdapter {
     private ImageButton[] handSlotButtons;
     private HashMap<String, TextureRegionDrawable> cardTextures;
     private String time;
+    private InputMultiplexer inputMultiplexer;
+    private Label lockedInLabel;
 
     private SpriteBatch popImages;
     public PopImage[] phasesImages;
@@ -38,11 +42,13 @@ public class GameScreen extends ScreenAdapter {
 
     private Label timeLabel;
 
-    public GameScreen(GameModel gameModel, InputMultiplexer inputMultiplexer) {
+    public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
         time = "";
         this.gameModel = gameModel;
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
+        this.gameController = gameController;
+        this.inputMultiplexer = inputMultiplexer;
         inputMultiplexer.addProcessor(stage);
     }
 
@@ -79,11 +85,14 @@ public class GameScreen extends ScreenAdapter {
         sideTable.add(new StatsTable(gameModel, skin));
         sideTable.row();
 
+
         // below the board: card table
         Table cardTable = new Table();
         Label programmingSlotLabel = new Label("Programming Slots:", skin);
         Label cardHandLabel = new Label("Hand:", skin);
-        cardTable.add(programmingSlotLabel).colspan(6).left();
+        lockedInLabel = new Label("", skin);
+        cardTable.add(programmingSlotLabel).colspan(3).left();
+        cardTable.add(lockedInLabel).colspan(3).left();
         cardTable.add(cardHandLabel).colspan(9).left();
         cardTable.row();
 
@@ -104,6 +113,11 @@ public class GameScreen extends ScreenAdapter {
             handSlotButtons[i] = handSlot;
         }
         addCardButtonsFunctionality();
+
+        // right of player's card hand
+        Table sideButtonsTable = new Table();
+        cardTable.add(sideButtonsTable).expandX().expandY();
+
         timeLabel = new Label("Time: " + time, skin);
         cardTable.add(timeLabel).left().padLeft(20);
         cardTable.row();
@@ -111,6 +125,20 @@ public class GameScreen extends ScreenAdapter {
         for (int i = 1; i < 6; i++) {
             cardTable.add(new Label(Integer.toString(i), skin));
         }
+
+        Button endTurnButton = new TextButton("End turn", skin);
+        endTurnButton.addListener(new InputListener() {
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                gameController.lockInCards();
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+        sideButtonsTable.add(endTurnButton).padLeft(25);
 
         // root table
         Table rootTable = new Table();
@@ -124,7 +152,6 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(rootTable);
         stage.setDebugAll(false);
     }
-
 
     @Override
     public void render(float delta) {
@@ -181,6 +208,16 @@ public class GameScreen extends ScreenAdapter {
                 }
             });
         }
+    }
+
+    public void lockCards(){
+        inputMultiplexer.removeProcessor(stage);
+        lockedInLabel.setText("LOCKED IN");
+    }
+
+    public void unlockCards(){
+        inputMultiplexer.addProcessor(stage);
+        lockedInLabel.setText("");
     }
 
     private void updateCards() {

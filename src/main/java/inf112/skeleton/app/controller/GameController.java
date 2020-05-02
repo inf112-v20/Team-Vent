@@ -46,7 +46,7 @@ public class GameController extends InputAdapter {
         inputMultiPlexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiPlexer);
 
-        gameScreen = new GameScreen(gameModel, inputMultiPlexer);
+        gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
         countDown = turnLimit;
         scheduleCountDowns();
@@ -64,7 +64,7 @@ public class GameController extends InputAdapter {
         inputMultiPlexer = new InputMultiplexer();
         inputMultiPlexer.addProcessor(this);
 
-        gameScreen = new GameScreen(gameModel, inputMultiPlexer);
+        gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
 
         Gdx.input.setInputProcessor(inputMultiPlexer);
@@ -82,12 +82,15 @@ public class GameController extends InputAdapter {
      * Program the robot using the keyboard input.
      */
     private void handleCardInput(int keycode) {
+        if (!devMode){
+            return;
+        }
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) { // undo cards
             gameModel.getMyPlayer().undoProgrammingSlotPlacement(keycode - 8);
         } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
             gameModel.getMyPlayer().placeCardFromHandToSlot(keycode - 8);
         } else if (keycode == Input.Keys.G) {  // deal new cards
-            if (devMode) gameModel.getMyPlayer().dealCards();
+            gameModel.getMyPlayer().dealCards();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
         }
@@ -127,6 +130,7 @@ public class GameController extends InputAdapter {
         return new TimerTask() {
             @Override
             public void run() {
+                gameScreen.unlockCards();
                 gameModel.emptyPlayersProgrammingSlots();
                 if (multiplayer){
                     gameClient.setReady();
@@ -152,7 +156,8 @@ public class GameController extends InputAdapter {
         if ("START ROUND".equals(status)) startRound();
     }
 
-    private void lockInCards() {
+    public void lockInCards() {
+        gameScreen.lockCards();
         if (!devMode) gameModel.getMyPlayer().fillEmptySlots();
         if (!multiplayer){
             startRound();
@@ -185,12 +190,14 @@ public class GameController extends InputAdapter {
         return new TimerTask() {
             @Override
             public void run() {
-                handleCardInput(Input.Keys.E);
+                lockInCards();
             }
         };
     }
 
     private void startRound(){
+        countDownTimer.cancel();
+        countDownTimer = new Timer(true);
         roundInProgress = true;
         if (multiplayer){
             Card[][] playerSlots = gameClient.getPlayerCards();
