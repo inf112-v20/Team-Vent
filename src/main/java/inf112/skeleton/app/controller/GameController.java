@@ -158,9 +158,6 @@ public class GameController extends InputAdapter {
 
     public void lockInCards() {
         gameScreen.lockCards();
-        gameScreen.updateTime("");
-        countDownTimer.cancel();
-        countDownTimer = new Timer(true);
         if (!devMode) gameModel.getMyPlayer().fillEmptySlots();
         if (!multiplayer){
             startRound();
