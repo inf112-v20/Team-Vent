@@ -96,6 +96,9 @@ public class GameController extends InputAdapter {
             gameModel.getPlayer(playerIndex).generateCardHand();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
+            gameScreen.updateTime("");
+            countDownTimer.cancel();
+            countDownTimer = new Timer(true);
         }
     }
 
@@ -198,7 +201,6 @@ public class GameController extends InputAdapter {
         };
     }
 
-    // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
         countDownTimer.cancel();
         countDownTimer = new Timer(true);

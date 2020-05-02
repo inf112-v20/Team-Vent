@@ -7,13 +7,18 @@ import inf112.skeleton.app.model.board.Location;
 public class Robot {
     private String name = "Anonymous";
     private RobotState state;
+
     public Robot(Location location) {
-        this.state = new RobotState(this, location, getMaxHP(), 3,
+        this.state = new RobotState(this, location, getMaxHP(), getMaxLives(),
                 0, location);
     }
 
     public Robot() {
         this(new Location());
+    }
+
+    public static int getMaxLives() {
+        return 3;
     }
 
     public Location getLocation() {

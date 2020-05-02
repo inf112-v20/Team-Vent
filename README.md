@@ -68,3 +68,8 @@ when the java version used is >8. This has no effect on function or performance,
 ## Resources
 The tiles are provided by [yeoldewebsiteknight](http://www.yeoldewebsiteknight.co.uk/roborally​).  
 Skin resources by [***Raymond "Raeleus" Buckley***](http://www.badlogicgames.com/forum/viewtopic.php?f=22&t=21568) [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
+
+Music: 
+Hustle Kevin MacLeod
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/

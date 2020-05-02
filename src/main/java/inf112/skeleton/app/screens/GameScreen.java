@@ -3,10 +3,7 @@ package inf112.skeleton.app.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -37,8 +34,7 @@ public class GameScreen extends ScreenAdapter {
     private Label lockedInLabel;
     private Label serverStatusLabel;
 
-    private SpriteBatch batch;
-    private BitmapFont font;
+    private Label timeLabel;
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
         time = "";
@@ -48,10 +44,6 @@ public class GameScreen extends ScreenAdapter {
         this.gameController = gameController;
         this.inputMultiplexer = inputMultiplexer;
         inputMultiplexer.addProcessor(stage);
-
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
     }
 
     public void show() {
@@ -111,6 +103,8 @@ public class GameScreen extends ScreenAdapter {
         Table sideButtonsTable = new Table();
         cardTable.add(sideButtonsTable).expandX().expandY();
 
+        timeLabel = new Label("Time: " + time, skin);
+        cardTable.add(timeLabel).left().padLeft(20);
         cardTable.row();
         // 1-5 labels under programming slots
         for (int i = 1; i < 6; i++) {
@@ -136,7 +130,7 @@ public class GameScreen extends ScreenAdapter {
         rootTable.setFillParent(true);
         rootTable.defaults().padTop(10).padLeft(10);
         rootTable.add(new TiledMapActor(gameModel, unitScale)).left();
-        rootTable.add(sideTable).expandX().top().left();
+        rootTable.add(sideTable).expandX().top().left().padLeft(50);
         rootTable.row();
         rootTable.add(cardTable).colspan(2).expandY().left();
 
@@ -151,9 +145,7 @@ public class GameScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         updateCards();
-        batch.begin();
-        font.draw(batch, time, 900, 200);
-        batch.end();
+        timeLabel.setText(time);
     }
 
     @Override
