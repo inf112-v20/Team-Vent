@@ -15,7 +15,6 @@ import inf112.skeleton.app.controller.GameController;
 
 public class MenuScreen extends ScreenAdapter {
     private Stage stage;
-    Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
     private Label messageLabel;
 
     public MenuScreen(RoboRallyGame game) {
@@ -30,6 +29,7 @@ public class MenuScreen extends ScreenAdapter {
         Image logo = new Image(logoTexture);
 
         // Resolution selector
+        Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
         Label resolutionLabel = new Label("Resolution: ", skin);
         SelectBox<String> resolutionBox = new SelectBox<>(skin);
         String[] resolutionOptions = {"1366x768"};

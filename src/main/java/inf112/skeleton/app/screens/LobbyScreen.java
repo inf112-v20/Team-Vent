@@ -17,7 +17,6 @@ import inf112.skeleton.app.controller.GameController;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.network.GameHost;
 
-import java.awt.*;
 import java.util.*;
 
 public class LobbyScreen extends ScreenAdapter {
