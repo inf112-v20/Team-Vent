@@ -1,6 +1,8 @@
 package inf112.skeleton.app.model;
 
+import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
+import inf112.skeleton.app.model.board.RVector2;
 
 public class RobotState {
     private int capturedFlags;
@@ -42,7 +44,12 @@ public class RobotState {
         RobotState other = this.copy();
         other.hp = 0;
         other.lives = Math.max(other.lives - 1, 0);
+        other.updateLocation(new Location(new RVector2(-1,-1), Direction.NORTH));
         return other;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     public Robot getRobot() {

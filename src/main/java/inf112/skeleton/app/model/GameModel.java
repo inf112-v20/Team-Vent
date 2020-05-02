@@ -19,15 +19,16 @@ public class GameModel {
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
     private final Player player;
-    private final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
-    private final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
+    public final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
     public Timer timer = new Timer(true);
     public int delay;
-    private List<Player> players;
-    private GameState currentGameState;
+    public LinkedList<Player> players;
 
+    private GameState currentGameState;
+    public GameState gameState;
 
     public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
         mapHandler = new MapHandler(map_filename);
@@ -78,8 +79,20 @@ public class GameModel {
         }
     }
 
+    public void fillPLayersProgrammingSlots() {
+        for (Player player : players) {
+            player.fillEmptySlots();
+        }
+    }
+
+    public void generateCardHands() {
+        for (Player player : players) {
+            player.dealCards();
+        }
+    }
+
     public void endTurn() {
-        GameState gameState = getInitialGameState();
+        gameState = getInitialGameState();
 
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
@@ -104,16 +117,8 @@ public class GameModel {
         doRepairs(gameState);
         doReboot(gameState);
 
-        delay = 0;
-        for (int i = 0; i < PHASES; i++) {
-            scheduleSteps(delay, i, cardSteps);
-            delay += cardSteps.get(i).size();
-            scheduleSteps(delay, i, tileSteps);
-            delay += tileSteps.get(i).size();
-            scheduleSteps(delay, i, laserSteps);
-            delay += laserSteps.get(i).size();
-            scheduleSteps(delay, i, endOfPhaseSteps);
-        }
+        //Change order of players to prepare for next turn.
+        players.add(players.pop());
     }
 
     private void doLasers(int phaseNumber, GameState initialState) {
@@ -414,6 +419,25 @@ public class GameModel {
         for (int i = 0; i < steps.get(phase).size(); i++) {
             timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
         }
+    }
+
+    public boolean checkWinnerOrLoser() {
+        for (RobotState robotState : gameState.getRobotStates()) {
+            if (robotState.getCapturedFlags() == mapHandler.getNumberOfFlags()) {
+                for (RobotState robotState2 : gameState.getRobotStates()) {
+                    if (!robotState2.equals(robotState)) {
+                        robotState2.setLives(1);
+                        gameState.add(robotState2.updateDead());
+                        //robot.updateState(robot.getState().updateDead());
+                    }
+                }
+                return true;
+            }
+            else if (robotState.getLives() == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public TimerTask doStep(int phase, ArrayList<Deque<GameState>> steps) {

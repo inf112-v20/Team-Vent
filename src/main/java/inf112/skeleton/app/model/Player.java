@@ -12,6 +12,12 @@ public class Player {
     private final boolean[] programmingSlotsLocked = new boolean[5];
     private final Robot robot;
     private List<Card> deck;
+    public boolean wonOrLost = false;
+
+    public Player() {
+        this(new Robot());
+    }
+
 
     public Player(Robot robot) {
         this.robot = robot;
