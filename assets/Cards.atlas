@@ -1,6 +1,6 @@
 
 Cards.png
-size: 512,128
+size: 1024,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -34,14 +34,14 @@ card_move
   index: 3
 card_null
   rotate: false
-  xy: 337, 2
+  xy: 404, 2
   size: 65, 98
   orig: 65, 98
   offset: 0, 0
   index: -1
 card_rotate_left
   rotate: false
-  xy: 404, 2
+  xy: 471, 2
   size: 65, 98
   orig: 65, 98
   offset: 0, 0
@@ -49,6 +49,13 @@ card_rotate_left
 card_rotate_right
   rotate: false
   xy: 69, 2
+  size: 65, 98
+  orig: 65, 98
+  offset: 0, 0
+  index: -1
+card_u_turn
+  rotate: false
+  xy: 337, 2
   size: 65, 98
   orig: 65, 98
   offset: 0, 0
