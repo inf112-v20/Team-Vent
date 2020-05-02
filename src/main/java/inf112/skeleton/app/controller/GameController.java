@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
-import inf112.skeleton.app.model.Player;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.board.Location;
@@ -34,7 +33,7 @@ public class GameController extends InputAdapter {
     private boolean devMode = false;
     private final int turnLimit = 60;
     private int countDown;
-    private int delay = 0;
+    private int delay;
 
     /**
      * Single player constructor
