@@ -25,7 +25,7 @@ public class GameModel {
     public final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
     public Timer timer = new Timer(true);
     public int delay;
-    public List<Player> players;
+    public LinkedList<Player> players;
     private GameState currentGameState;
 
 
@@ -115,6 +115,9 @@ public class GameModel {
         // end of turn effects
         doRepairs(gameState);
         doReboot(gameState);
+
+        //Change order of players to prepare for next turn.
+        players.add(players.pop());
     }
 
     private void doLasers(int phaseNumber, GameState initialState) {
