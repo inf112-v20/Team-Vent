@@ -31,7 +31,7 @@ public class GameScreen extends ScreenAdapter {
     private ImageButton[] programmingSlotButtons;
     private ImageButton[] handSlotButtons;
     private HashMap<String, TextureRegionDrawable> cardTextures;
-    private String time;
+    private String timeString;
     private InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
 
@@ -41,9 +41,10 @@ public class GameScreen extends ScreenAdapter {
     public PopImage lose;
 
     private Label timeLabel;
+    private TextButton endTurnButton;
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
-        time = "";
+        timeString = "";
         this.gameModel = gameModel;
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
@@ -116,17 +117,15 @@ public class GameScreen extends ScreenAdapter {
 
         // right of player's card hand
         Table sideButtonsTable = new Table();
-        cardTable.add(sideButtonsTable).expandX().expandY();
-
-        timeLabel = new Label("Time: " + time, skin);
-        cardTable.add(timeLabel).left().padLeft(20);
+        cardTable.add(sideButtonsTable).expandX().top();
         cardTable.row();
+
         // 1-5 labels under programming slots
         for (int i = 1; i < 6; i++) {
             cardTable.add(new Label(Integer.toString(i), skin));
         }
 
-        Button endTurnButton = new TextButton("End turn", skin);
+        endTurnButton = new TextButton("DONE", skin);
         endTurnButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -138,7 +137,11 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
         });
-        sideButtonsTable.add(endTurnButton).padLeft(25);
+        sideButtonsTable.add(endTurnButton).padLeft(25).left().prefWidth(100);
+        sideButtonsTable.row().padTop(10);
+        timeLabel = new Label("Time: " + timeString, skin);
+        //sideButtonsTable.add(timeLabel).left().padLeft(25).left(); todo: move time to button?
+        sideButtonsTable.row();
 
         // root table
         Table rootTable = new Table();
@@ -160,7 +163,8 @@ public class GameScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         updateCards();
-        timeLabel.setText(time);
+        timeLabel.setText(timeString);
+        endTurnButton.setText(timeString);
         renderPopups();
     }
 
@@ -175,7 +179,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     public void updateTime(String time) {
-        this.time = time;
+        this.timeString = time;
     }
 
     private void addCardButtonsFunctionality() {

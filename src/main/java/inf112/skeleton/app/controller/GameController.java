@@ -29,7 +29,7 @@ public class GameController extends InputAdapter {
     private Timer countDownTimer = new Timer(true);
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
-    private boolean devMode = false;
+    private boolean devMode = true;
     private final int turnLimit = 60;
     private int countDown;
 
@@ -181,7 +181,7 @@ public class GameController extends InputAdapter {
         return new TimerTask() {
             @Override
             public void run() {
-                gameScreen.updateTime("TIME LEFT:  "+ count);
+                gameScreen.updateTime("DONE ("+ count + ")");
             }
         };
     }
@@ -212,7 +212,7 @@ public class GameController extends InputAdapter {
         }
         gameModel.endTurn();
 
-        gameScreen.updateTime("");
+        gameScreen.updateTime("EXECUTING");
         countDownTimer.cancel();
         countDownTimer = new Timer(true);
 
