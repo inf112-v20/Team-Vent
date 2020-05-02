@@ -3,6 +3,7 @@ package inf112.skeleton.app.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -31,7 +32,6 @@ public class GameScreen extends ScreenAdapter {
     private ImageButton[] programmingSlotButtons;
     private ImageButton[] handSlotButtons;
     private HashMap<String, TextureRegionDrawable> cardTextures;
-    private String timeString;
     private InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
 
@@ -40,11 +40,11 @@ public class GameScreen extends ScreenAdapter {
     public PopImage win;
     public PopImage lose;
 
-    private Label timeLabel;
     private TextButton endTurnButton;
+    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
+    private boolean muted = true;
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
-        timeString = "";
         this.gameModel = gameModel;
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
@@ -85,7 +85,6 @@ public class GameScreen extends ScreenAdapter {
         sideTable.defaults().left();
         sideTable.add(new StatsTable(gameModel, skin));
         sideTable.row();
-
 
         // below the board: card table
         Table cardTable = new Table();
@@ -139,8 +138,6 @@ public class GameScreen extends ScreenAdapter {
         });
         sideButtonsTable.add(endTurnButton).padLeft(25).left().prefWidth(100);
         sideButtonsTable.row().padTop(10);
-        timeLabel = new Label("Time: " + timeString, skin);
-        //sideButtonsTable.add(timeLabel).left().padLeft(25).left(); todo: move time to button?
         sideButtonsTable.row();
 
         // root table
@@ -154,6 +151,12 @@ public class GameScreen extends ScreenAdapter {
 
         stage.addActor(rootTable);
         stage.setDebugAll(false);
+
+        if(!muted) {
+            music.play();
+            music.setVolume(0.25f);
+            music.setLooping(true);
+        }
     }
 
     @Override
@@ -163,8 +166,6 @@ public class GameScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         updateCards();
-        timeLabel.setText(timeString);
-        endTurnButton.setText(timeString);
         renderPopups();
     }
 
@@ -178,8 +179,8 @@ public class GameScreen extends ScreenAdapter {
         stage.dispose();
     }
 
-    public void updateTime(String time) {
-        this.timeString = time;
+    public void setEndTurnButtonText(String string) {
+        this.endTurnButton.setText(string);
     }
 
     private void addCardButtonsFunctionality() {
