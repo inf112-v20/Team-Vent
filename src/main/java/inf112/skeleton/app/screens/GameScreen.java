@@ -33,6 +33,8 @@ public class GameScreen extends ScreenAdapter {
 
     private SpriteBatch popImages;
     public PopImage[] phasesImages;
+    public PopImage win;
+    public PopImage lose;
 
     private Label timeLabel;
 
@@ -52,11 +54,13 @@ public class GameScreen extends ScreenAdapter {
 
         popImages = new SpriteBatch();
         phasesImages = new PopImage[5];
-        phasesImages[0] = new PopImage(new Texture("PhaseImages/Phase1.png"));
-        phasesImages[1] = new PopImage(new Texture("PhaseImages/Phase2.png"));
-        phasesImages[2] = new PopImage(new Texture("PhaseImages/Phase3.png"));
-        phasesImages[3] = new PopImage(new Texture("PhaseImages/Phase4.png"));
-        phasesImages[4] = new PopImage(new Texture("PhaseImages/Phase5.png"));
+        phasesImages[0] = new PopImage(new Texture("PopUpImages/Phase1.png"));
+        phasesImages[1] = new PopImage(new Texture("PopUpImages/Phase2.png"));
+        phasesImages[2] = new PopImage(new Texture("PopUpImages/Phase3.png"));
+        phasesImages[3] = new PopImage(new Texture("PopUpImages/Phase4.png"));
+        phasesImages[4] = new PopImage(new Texture("PopUpImages/Phase5.png"));
+        win = new PopImage(new Texture("PopUpImages/Win.png"));
+        lose = new PopImage(new Texture("PopUpImages/lose.png"));
 
         // load card textures
         cardTextures = new HashMap<>();
@@ -204,6 +208,12 @@ public class GameScreen extends ScreenAdapter {
             if (phaseImage.getShow()) {
                 phaseImage.getSprite().draw(popImages);
             }
+        }
+        if (win.getShow()) {
+            win.getSprite().draw(popImages);
+        }
+        else if (lose.getShow()) {
+            lose.getSprite().draw(popImages);
         }
         popImages.end();
     }

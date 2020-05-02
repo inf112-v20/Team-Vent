@@ -15,6 +15,7 @@ public class Player {
     private final boolean[] programmingSlotsLocked = new boolean[5];
     private final HashMap<Integer, Card> cardH = new HashMap<>();
     private final Robot robot;
+    public boolean wonOrLost = false;
 
     public Player() {
         this(new Robot());

@@ -26,8 +26,9 @@ public class GameModel {
     public Timer timer = new Timer(true);
     public int delay;
     public LinkedList<Player> players;
-    private GameState currentGameState;
 
+    private GameState currentGameState;
+    public GameState gameState;
 
     public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
         mapHandler = new MapHandler(map_filename);
@@ -91,7 +92,7 @@ public class GameModel {
     }
 
     public void endTurn() {
-        GameState gameState = getInitialGameState();
+        gameState = getInitialGameState();
 
         //Does the logic, goes through each robot in the list for each phase.
         //gameState is a list off all robot's state, robotState is the specific robot being done a move for.
@@ -418,6 +419,25 @@ public class GameModel {
         for (int i = 0; i < steps.get(phase).size(); i++) {
             timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
         }
+    }
+
+    public boolean checkWinnerOrLoser() {
+        for (RobotState robotState : gameState.getRobotStates()) {
+            if (robotState.getCapturedFlags() == mapHandler.getNumberOfFlags()) {
+                for (RobotState robotState2 : gameState.getRobotStates()) {
+                    if (!robotState2.equals(robotState)) {
+                        robotState2.setLives(1);
+                        gameState.add(robotState2.updateDead());
+                        //robot.updateState(robot.getState().updateDead());
+                    }
+                }
+                return true;
+            }
+            else if (robotState.getLives() == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public TimerTask doStep(int phase, ArrayList<Deque<GameState>> steps) {

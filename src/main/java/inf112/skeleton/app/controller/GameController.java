@@ -192,15 +192,6 @@ public class GameController extends InputAdapter {
         };
     }
 
-    private TimerTask togglePhasePopUp(int phase, boolean show) {
-        return  new TimerTask() {
-            @Override
-            public void run() {
-                gameScreen.phasesImages[phase].setShow(show);
-            }
-        };
-    }
-
     // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
         roundInProgress = true;
@@ -235,7 +226,21 @@ public class GameController extends InputAdapter {
             delay += gameModel.laserSteps.get(i).size();
             gameModel.scheduleSteps(delay, i, gameModel.endOfPhaseSteps);
         }
-        gameModel.timer.schedule(endOfTurn(), delay * 500);
+
+        if (gameModel.checkWinnerOrLoser()) {
+            if(gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
+                timer.schedule(toggleWinOrLosePopUp(true, true), delay * 500);
+                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * 500);
+                gameModel.getMyPlayer().wonOrLost = true;
+            }
+            else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
+                timer.schedule(toggleWinOrLosePopUp(false, true), delay * 500);
+                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * 500);
+                gameModel.getMyPlayer().wonOrLost = true;
+            }
+            delay += 6;
+        }
+        timer.schedule(endOfTurn(), delay * 500);
     }
 
     @Override
@@ -259,4 +264,26 @@ public class GameController extends InputAdapter {
         }
         return false;
     }
+
+    private TimerTask togglePhasePopUp(int phase, boolean show) {
+        return  new TimerTask() {
+            @Override
+            public void run() {
+                gameScreen.phasesImages[phase].setShow(show);
+            }
+        };
+    }
+
+    private TimerTask toggleWinOrLosePopUp(boolean won, boolean show) {
+        return  new TimerTask() {
+            @Override
+            public void run() {
+                if (won) {
+                    gameScreen.win.setShow(show);
+                }
+                else { gameScreen.lose.setShow(show); }
+            }
+        };
+    }
+
 }
