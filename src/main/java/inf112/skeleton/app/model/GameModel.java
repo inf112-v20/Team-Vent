@@ -78,6 +78,18 @@ public class GameModel {
         }
     }
 
+    public void fillPLayersProgrammingSlots() {
+        for (Player player : players) {
+            player.fillEmptySlots();
+        }
+    }
+
+    public void generateCardHands() {
+        for (Player player : players) {
+            player.generateCardHand();
+        }
+    }
+
     public void endTurn() {
         GameState gameState = getInitialGameState();
 

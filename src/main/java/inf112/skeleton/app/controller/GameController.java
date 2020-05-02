@@ -135,8 +135,9 @@ public class GameController extends InputAdapter {
                 gameModel.emptyPlayersProgrammingSlots();
                 if (multiplayer){
                     gameClient.setReady();
+                    gameModel.getPlayer(playerIndex).generateCardHand();
                 }
-                gameModel.getPlayer(playerIndex).generateCardHand();
+                else { gameModel.generateCardHands();}
                 roundInProgress = false;
                 scheduleCountDowns();
             }
@@ -215,9 +216,7 @@ public class GameController extends InputAdapter {
             }
         }
         if (!multiplayer) {
-            for (Player player : gameModel.players) {
-                player.fillEmptySlots();
-            }
+            gameModel.fillPLayersProgrammingSlots();
         }
         gameModel.endTurn();
 
