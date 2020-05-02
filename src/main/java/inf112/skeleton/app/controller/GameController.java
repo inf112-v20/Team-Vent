@@ -90,7 +90,7 @@ public class GameController extends InputAdapter {
         } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
             gameModel.getPlayer(playerIndex).placeCardFromHandToSlot(keycode - 8);
         } else if (keycode == Input.Keys.G) {  // deal new cards
-            if (devMode) gameModel.getPlayer(playerIndex).generateCardHand();
+            if (devMode) gameModel.getPlayer(playerIndex).dealCards();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
             gameScreen.updateTime("");
@@ -137,7 +137,7 @@ public class GameController extends InputAdapter {
                 if (multiplayer){
                     gameClient.setReady();
                 }
-                gameModel.getPlayer(playerIndex).generateCardHand();
+                gameModel.getPlayer(playerIndex).dealCards();
                 roundInProgress = false;
                 scheduleCountDowns();
             }
