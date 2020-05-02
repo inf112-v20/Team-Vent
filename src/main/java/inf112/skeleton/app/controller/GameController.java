@@ -95,9 +95,6 @@ public class GameController extends InputAdapter {
             if (devMode) gameModel.getPlayer(playerIndex).generateCardHand();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
-            gameScreen.updateTime("");
-            countDownTimer.cancel();
-            countDownTimer = new Timer(true);
         }
     }
 
@@ -223,6 +220,11 @@ public class GameController extends InputAdapter {
             }
         }
         gameModel.endTurn();
+
+        gameScreen.updateTime("");
+        countDownTimer.cancel();
+        countDownTimer = new Timer(true);
+
         delay = 0;
         for (int i = 0; i < 5; i++) {
             timer.schedule(togglePhasePopUp(i, true), delay * 500);
