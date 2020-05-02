@@ -3,6 +3,7 @@ package inf112.skeleton.app.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -31,7 +32,6 @@ public class GameScreen extends ScreenAdapter {
     private ImageButton[] programmingSlotButtons;
     private ImageButton[] handSlotButtons;
     private HashMap<String, TextureRegionDrawable> cardTextures;
-    private String time;
     private InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
 
@@ -40,10 +40,11 @@ public class GameScreen extends ScreenAdapter {
     public PopImage win;
     public PopImage lose;
 
-    private Label timeLabel;
+    private TextButton endTurnButton;
+    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
+    private boolean muted = true;
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
-        time = "";
         this.gameModel = gameModel;
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
@@ -85,7 +86,6 @@ public class GameScreen extends ScreenAdapter {
         sideTable.add(new StatsTable(gameModel, skin));
         sideTable.row();
 
-
         // below the board: card table
         Table cardTable = new Table();
         Label programmingSlotLabel = new Label("Programming Slots:", skin);
@@ -116,17 +116,15 @@ public class GameScreen extends ScreenAdapter {
 
         // right of player's card hand
         Table sideButtonsTable = new Table();
-        cardTable.add(sideButtonsTable).expandX().expandY();
-
-        timeLabel = new Label("Time: " + time, skin);
-        cardTable.add(timeLabel).left().padLeft(20);
+        cardTable.add(sideButtonsTable).expandX().top();
         cardTable.row();
+
         // 1-5 labels under programming slots
         for (int i = 1; i < 6; i++) {
             cardTable.add(new Label(Integer.toString(i), skin));
         }
 
-        Button endTurnButton = new TextButton("End turn", skin);
+        endTurnButton = new TextButton("DONE", skin);
         endTurnButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -138,7 +136,9 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
         });
-        sideButtonsTable.add(endTurnButton).padLeft(25);
+        sideButtonsTable.add(endTurnButton).padLeft(25).left().prefWidth(100);
+        sideButtonsTable.row().padTop(10);
+        sideButtonsTable.row();
 
         // root table
         Table rootTable = new Table();
@@ -151,6 +151,12 @@ public class GameScreen extends ScreenAdapter {
 
         stage.addActor(rootTable);
         stage.setDebugAll(false);
+
+        if(!muted) {
+            music.play();
+            music.setVolume(0.25f);
+            music.setLooping(true);
+        }
     }
 
     @Override
@@ -160,7 +166,6 @@ public class GameScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         updateCards();
-        timeLabel.setText(time);
         renderPopups();
     }
 
@@ -174,8 +179,8 @@ public class GameScreen extends ScreenAdapter {
         stage.dispose();
     }
 
-    public void updateTime(String time) {
-        this.time = time;
+    public void setEndTurnButtonText(String string) {
+        this.endTurnButton.setText(string);
     }
 
     private void addCardButtonsFunctionality() {

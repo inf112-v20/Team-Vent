@@ -16,7 +16,6 @@ import inf112.skeleton.app.screens.GameScreen;
 import java.util.*;
 
 public class GameController extends InputAdapter {
-    private final RoboRallyGame game;
     private GameModel gameModel;
     private boolean shiftIsPressed = false;
     private GameClient gameClient;
@@ -29,7 +28,7 @@ public class GameController extends InputAdapter {
     private Timer countDownTimer = new Timer(true);
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
-    private boolean devMode = false;
+    private boolean devMode = true;
     private final int turnLimit = 60;
     private int countDown;
 
@@ -39,7 +38,6 @@ public class GameController extends InputAdapter {
     public GameController(RoboRallyGame game, String map_filename) {
         this.numberOfPlayers = 8;
         this.gameModel = new GameModel(map_filename, numberOfPlayers, 0);
-        this.game = game;
         gameClient = null;
         multiplayer = false;
         inputMultiPlexer = new InputMultiplexer();
@@ -58,7 +56,6 @@ public class GameController extends InputAdapter {
     public GameController(RoboRallyGame game, String map_filename, GameClient gameClient, Boolean isHost) {
         this.numberOfPlayers = gameClient.getNumberOfPlayers();
         this.gameModel = new GameModel(map_filename, numberOfPlayers, gameClient.getIndex());
-        this.game = game;
         this.gameClient = gameClient;
         multiplayer = true;
         inputMultiPlexer = new InputMultiplexer();
@@ -82,9 +79,6 @@ public class GameController extends InputAdapter {
      * Program the robot using the keyboard input.
      */
     private void handleCardInput(int keycode) {
-        if (!devMode){
-            return;
-        }
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) { // undo cards
             gameModel.getMyPlayer().undoProgrammingSlotPlacement(keycode - 8);
         } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
@@ -181,7 +175,7 @@ public class GameController extends InputAdapter {
         return new TimerTask() {
             @Override
             public void run() {
-                gameScreen.updateTime("TIME LEFT:  "+ count);
+                gameScreen.setEndTurnButtonText("DONE ("+ count + ")");
             }
         };
     }
@@ -212,7 +206,7 @@ public class GameController extends InputAdapter {
         }
         gameModel.endTurn();
 
-        gameScreen.updateTime("");
+        gameScreen.setEndTurnButtonText("EXECUTING");
         countDownTimer.cancel();
         countDownTimer = new Timer(true);
 
@@ -255,7 +249,7 @@ public class GameController extends InputAdapter {
         if (roundInProgress){
             return false;
         }
-        handleCardInput(keycode);
+        if (devMode) handleCardInput(keycode);
         if (devMode) handleTestingInput(keycode);
         return true;
     }

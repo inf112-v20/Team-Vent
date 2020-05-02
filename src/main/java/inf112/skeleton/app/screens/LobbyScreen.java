@@ -1,13 +1,16 @@
 package inf112.skeleton.app.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
@@ -133,15 +136,26 @@ public class LobbyScreen extends ScreenAdapter {
             gameHostThread.setName("'Game Host Server");
             gameHostThread.start();
         }
-        gameClient = new GameClient(hostAddress);
 
-        // Acts on changes in the game state of the game host every 200 ms
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                actOnGameStatus();
-            }
-        }, 0, 200);
+        try {
+            gameClient = new GameClient(hostAddress);
+            // Acts on changes in the game state of the game host every 200 ms
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    actOnGameStatus();
+                }
+            }, 0, 200);
+
+
+        } catch (GdxRuntimeException e) {
+            // restart the menu screen instead of crashing when failing to connect to host
+            Gdx.app.log(this.getClass().getName(), e.toString());
+
+            MenuScreen menuScreen = new MenuScreen(game);
+            menuScreen.displayConnectionError();
+            game.setScreen(menuScreen);
+        }
     }
 
     @Override
