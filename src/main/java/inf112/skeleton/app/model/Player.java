@@ -3,26 +3,44 @@ package inf112.skeleton.app.model;
 
 import inf112.skeleton.app.model.cards.Card;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class Player {
 
     private final Card[] cardHand = new Card[9];
     private final Card[] programmingSlots = new Card[5];
     private final boolean[] programmingSlotsLocked = new boolean[5];
-    private final HashMap<Integer, Card> cardH = new HashMap<>();
     private final Robot robot;
+    private List<Card> deck;
     public boolean wonOrLost = false;
 
     public Player() {
         this(new Robot());
     }
 
+
     public Player(Robot robot) {
         this.robot = robot;
+        deck = deckOfCards();
+    }
+
+    public List<Card> deckOfCards() {
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < 18; i++) {
+            if (i < 6) {
+                cards.add(Card.BACK_UP);
+                cards.add(Card.MOVE_THREE);
+                cards.add(Card.U_TURN);
+            }
+            if (i < 12) {
+                cards.add(Card.MOVE_TWO);
+            }
+            cards.add(Card.MOVE_ONE);
+            cards.add(Card.ROTATE_LEFT);
+            cards.add(Card.ROTATE_RIGHT);
+        }
+        Collections.shuffle(cards);
+        return cards;
     }
 
     public void placeCardFromHandToSlot(int handSlot) {
@@ -81,45 +99,16 @@ public class Player {
         return programmingSlots;
     }
 
-    //Methods below are for testing purposes atm, should be removed/moved to other classes later.
-
-    //Cards are stored in a hashmap, where key is the priority which is distinct and random
-    public void generateCardHand() {
+    public void dealCards() {
         Arrays.fill(cardHand, null);
-        int LIMIT = 120;
-        ArrayList<Integer> numb = new ArrayList<>();
-        for (int i = 0; i < LIMIT; i++) {
-            numb.add(i);
-        }
-        Collections.shuffle(numb);
-        for (int i = 0; i < LIMIT; i++) {
-            if (i < 20) {
-                cardH.put(numb.get(i), Card.MOVE_ONE);
-            } else if (i < 40) {
-                cardH.put(numb.get(i), Card.MOVE_TWO);
-            } else if (i < 60) {
-                cardH.put(numb.get(i), Card.MOVE_THREE);
-            } else if (i < 80) {
-                cardH.put(numb.get(i), Card.BACK_UP);
-            } else if (i < 100) {
-                cardH.put(numb.get(i), Card.ROTATE_LEFT);
-            } else {
-                cardH.put(numb.get(i), Card.ROTATE_RIGHT);
-            }
-        }
-        int hp = robot.getState().getHp();
-        for (int i = 0; i < hp-1; i++) {
-            int k = (int) (Math.random() * LIMIT);
-            cardHand[i] = cardH.get(k);
+        Collections.shuffle(deck);
+        for (int i = 0; i < robot.getState().getHp() - 1; i++) {
+            cardHand[i] = deck.get(i);
         }
     }
 
     public Robot getRobot() {
         return robot;
-    }
-
-    public Card[] getHand() {
-        return cardHand;
     }
 
     public void fillEmptySlots() {

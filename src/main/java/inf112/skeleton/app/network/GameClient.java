@@ -38,7 +38,6 @@ public class GameClient {
         return sendAndReceiveMessage("GET_S");
     }
 
-    // TODO: Implement priorities
     public void setProgrammingSlots(Card[] playerSlots){
         StringBuilder message = new StringBuilder();
         for (Card card : playerSlots){
@@ -70,7 +69,6 @@ public class GameClient {
         return allCardSlots;
     }
 
-    // TODO: This might be break when adding or removing new cards. Come up with a better idea
     public Card stringToCard(String cardString){
         switch (cardString){
             case "BACK UP":
@@ -85,6 +83,8 @@ public class GameClient {
                 return Card.ROTATE_LEFT;
             case "ROTATE RIGHT":
                 return Card.ROTATE_RIGHT;
+            case "U TURN":
+                return Card.U_TURN;
             default:
                 return null;
         }

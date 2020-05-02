@@ -41,7 +41,7 @@ public class GameModel {
         delay = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
             Player p = new Player(new Robot(mapHandler.getStartLocations().get(i)));
-            p.generateCardHand();
+            p.dealCards();
             players.add(p);
             robots.add(p.getRobot());
         }

@@ -87,7 +87,7 @@ public class GameController extends InputAdapter {
         } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
             gameModel.getMyPlayer().placeCardFromHandToSlot(keycode - 8);
         } else if (keycode == Input.Keys.G) {  // deal new cards
-            if (devMode) gameModel.getMyPlayer().generateCardHand();
+            if (devMode) gameModel.getMyPlayer().dealCards();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
         }
@@ -130,7 +130,7 @@ public class GameController extends InputAdapter {
                 gameModel.emptyPlayersProgrammingSlots();
                 if (multiplayer){
                     gameClient.setReady();
-                    gameModel.getMyPlayer().generateCardHand();
+                    gameModel.getMyPlayer().dealCards();
                 }
                 else { gameModel.generateCardHands();}
                 roundInProgress = false;
@@ -190,7 +190,6 @@ public class GameController extends InputAdapter {
         };
     }
 
-    // TODO: Fix this in cases where a player slot is empty between two players; Player1 i = 0, Player2 i = 2
     private void startRound(){
         roundInProgress = true;
         if (multiplayer){

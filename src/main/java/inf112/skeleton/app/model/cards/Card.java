@@ -7,14 +7,7 @@ public enum Card {
     BACK_UP,
     ROTATE_RIGHT,
     ROTATE_LEFT,
-    U_TURN {
-        @Override
-        public String toString() {
-            return "U-TURN";
-        }
-    },
-    ;
-
+    U_TURN;
 
     @Override
     public String toString() {

@@ -70,6 +70,7 @@ public class GameScreen extends ScreenAdapter {
         cardTextures.put("BACK UP", new TextureRegionDrawable(cardsAtlas.findRegion("card_back_up")));
         cardTextures.put("ROTATE LEFT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_left")));
         cardTextures.put("ROTATE RIGHT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_right")));
+        cardTextures.put("U TURN", new TextureRegionDrawable(cardsAtlas.findRegion("card_u_turn")));
         cardTextures.put("NULL", new TextureRegionDrawable(cardsAtlas.findRegion("card_null")));
 
         // beside the board: stats table

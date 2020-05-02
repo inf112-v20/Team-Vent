@@ -19,7 +19,7 @@ public class GameHost {
 
     public GameHost(String hostName) {
         ServerSocketHints serverHints = new ServerSocketHints();
-        // Accepting connections never time out. TODO: Probably a good idea to find another solution
+        // Accepting connections never time out
         serverHints.acceptTimeout = 0;
         int port = 10243;
         serverSocket = Gdx.net.newServerSocket(Net.Protocol.TCP, hostName, port, serverHints);
@@ -55,7 +55,6 @@ public class GameHost {
                     thread.start();
                     break;
                 } else if (i == 7){
-                    // TODO: Send close command to client and then close the connection
                     System.out.println("Refused connection. Lobby is full");
                 }
             }
