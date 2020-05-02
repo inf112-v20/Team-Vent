@@ -23,7 +23,6 @@ public class GameController extends InputAdapter {
     private Boolean multiplayer;
     private String lastServerStatus = "START";
     private int numberOfPlayers;
-    private int playerIndex;
     private boolean roundInProgress = false;
 
     private Timer timer = new Timer(true);
@@ -39,8 +38,7 @@ public class GameController extends InputAdapter {
      */
     public GameController(RoboRallyGame game, String map_filename) {
         this.numberOfPlayers = 8;
-        playerIndex = 0;
-        this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
+        this.gameModel = new GameModel(map_filename, numberOfPlayers, 0);
         this.game = game;
         gameClient = null;
         multiplayer = false;
@@ -59,8 +57,7 @@ public class GameController extends InputAdapter {
      */
     public GameController(RoboRallyGame game, String map_filename, GameClient gameClient, Boolean isHost) {
         this.numberOfPlayers = gameClient.getNumberOfPlayers();
-        playerIndex = gameClient.getIndex();
-        this.gameModel = new GameModel(map_filename, numberOfPlayers, playerIndex);
+        this.gameModel = new GameModel(map_filename, numberOfPlayers, gameClient.getIndex());
         this.game = game;
         this.gameClient = gameClient;
         multiplayer = true;
@@ -89,11 +86,11 @@ public class GameController extends InputAdapter {
             return;
         }
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) { // undo cards
-            gameModel.getPlayer(playerIndex).undoProgrammingSlotPlacement(keycode - 8);
+            gameModel.getMyPlayer().undoProgrammingSlotPlacement(keycode - 8);
         } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
-            gameModel.getPlayer(playerIndex).placeCardFromHandToSlot(keycode - 8);
+            gameModel.getMyPlayer().placeCardFromHandToSlot(keycode - 8);
         } else if (keycode == Input.Keys.G) {  // deal new cards
-            gameModel.getPlayer(playerIndex).dealCards();
+            gameModel.getMyPlayer().dealCards();
         } else if (keycode == Input.Keys.E) { // end turn
             lockInCards();
         }
@@ -137,8 +134,9 @@ public class GameController extends InputAdapter {
                 gameModel.emptyPlayersProgrammingSlots();
                 if (multiplayer){
                     gameClient.setReady();
+                    gameModel.getMyPlayer().dealCards();
                 }
-                gameModel.getPlayer(playerIndex).dealCards();
+                else { gameModel.generateCardHands();}
                 roundInProgress = false;
                 scheduleCountDowns();
             }
@@ -168,7 +166,7 @@ public class GameController extends InputAdapter {
             startRound();
             return;
         }
-        gameClient.setProgrammingSlots(gameModel.getPlayer(playerIndex).getProgrammingSlots());
+        gameClient.setProgrammingSlots(gameModel.getMyPlayer().getProgrammingSlots());
         gameClient.setReady();
     }
 
@@ -212,8 +210,44 @@ public class GameController extends InputAdapter {
                 }
             }
         }
+        if (!multiplayer) {
+            gameModel.fillPLayersProgrammingSlots();
+        }
         gameModel.endTurn();
-        gameModel.timer.schedule(endOfTurn(), gameModel.delay * 500);
+
+        gameScreen.updateTime("");
+        countDownTimer.cancel();
+        countDownTimer = new Timer(true);
+
+        int delay = 0;
+        for (int i = 0; i < 5; i++) {
+            timer.schedule(togglePhasePopUp(i, true), delay * 500);
+            delay += 4;
+            timer.schedule(togglePhasePopUp(i, false), delay * 500);
+            delay += 2;
+            gameModel.scheduleSteps(delay, i, gameModel.cardSteps);
+            delay += gameModel.cardSteps.get(i).size();
+            gameModel.scheduleSteps(delay, i, gameModel.tileSteps);
+            delay += gameModel.tileSteps.get(i).size();
+            gameModel.scheduleSteps(delay, i, gameModel.laserSteps);
+            delay += gameModel.laserSteps.get(i).size();
+            gameModel.scheduleSteps(delay, i, gameModel.endOfPhaseSteps);
+        }
+
+        if (gameModel.checkWinnerOrLoser()) {
+            if(gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
+                timer.schedule(toggleWinOrLosePopUp(true, true), delay * 500);
+                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * 500);
+                gameModel.getMyPlayer().wonOrLost = true;
+            }
+            else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
+                timer.schedule(toggleWinOrLosePopUp(false, true), delay * 500);
+                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * 500);
+                gameModel.getMyPlayer().wonOrLost = true;
+            }
+            delay += 6;
+        }
+        timer.schedule(endOfTurn(), delay * 500);
     }
 
     @Override
@@ -237,4 +271,26 @@ public class GameController extends InputAdapter {
         }
         return false;
     }
+
+    private TimerTask togglePhasePopUp(int phase, boolean show) {
+        return  new TimerTask() {
+            @Override
+            public void run() {
+                gameScreen.phasesImages[phase].setShow(show);
+            }
+        };
+    }
+
+    private TimerTask toggleWinOrLosePopUp(boolean won, boolean show) {
+        return  new TimerTask() {
+            @Override
+            public void run() {
+                if (won) {
+                    gameScreen.win.setShow(show);
+                }
+                else { gameScreen.lose.setShow(show); }
+            }
+        };
+    }
+
 }

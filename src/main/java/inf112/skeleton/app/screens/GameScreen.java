@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -33,6 +35,11 @@ public class GameScreen extends ScreenAdapter {
     private InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
 
+    private SpriteBatch popImages;
+    public PopImage[] phasesImages;
+    public PopImage win;
+    public PopImage lose;
+
     private Label timeLabel;
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
@@ -50,6 +57,16 @@ public class GameScreen extends ScreenAdapter {
         float unitScale = 0.5f; // the unit scale determines the size of the map
         Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
         TextureAtlas cardsAtlas = new TextureAtlas(Gdx.files.internal("Cards.atlas"));
+
+        popImages = new SpriteBatch();
+        phasesImages = new PopImage[5];
+        phasesImages[0] = new PopImage(new Texture("PopUpImages/Phase1.png"));
+        phasesImages[1] = new PopImage(new Texture("PopUpImages/Phase2.png"));
+        phasesImages[2] = new PopImage(new Texture("PopUpImages/Phase3.png"));
+        phasesImages[3] = new PopImage(new Texture("PopUpImages/Phase4.png"));
+        phasesImages[4] = new PopImage(new Texture("PopUpImages/Phase5.png"));
+        win = new PopImage(new Texture("PopUpImages/Win.png"));
+        lose = new PopImage(new Texture("PopUpImages/lose.png"));
 
         // load card textures
         cardTextures = new HashMap<>();
@@ -144,6 +161,7 @@ public class GameScreen extends ScreenAdapter {
         stage.draw();
         updateCards();
         timeLabel.setText(time);
+        renderPopups();
     }
 
     @Override
@@ -219,5 +237,22 @@ public class GameScreen extends ScreenAdapter {
             style.imageUp = cardTextures.get(cardName);
             handSlotButtons[i].setStyle(style);
         }
+    }
+
+    private void renderPopups() {
+        popImages.begin();
+        popImages.enableBlending();
+        for (PopImage phaseImage : phasesImages) {
+            if (phaseImage.getShow()) {
+                phaseImage.getSprite().draw(popImages);
+            }
+        }
+        if (win.getShow()) {
+            win.getSprite().draw(popImages);
+        }
+        else if (lose.getShow()) {
+            lose.getSprite().draw(popImages);
+        }
+        popImages.end();
     }
 }
