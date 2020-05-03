@@ -116,9 +116,6 @@ public class GameModel {
         // end of turn effects
         doRepairs(gameState);
         doReboot(gameState);
-
-        //Change order of players to prepare for next turn.
-        players.add(players.pop());
     }
 
     private void doLasers(int phaseNumber, GameState initialState) {
