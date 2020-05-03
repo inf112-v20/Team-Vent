@@ -28,7 +28,7 @@ public class GameController extends InputAdapter {
     private Timer countDownTimer = new Timer(true);
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
-    private boolean devMode = true;
+    private boolean devMode = false;
     private final int turnLimit = 60;
     private int countDown;
 
