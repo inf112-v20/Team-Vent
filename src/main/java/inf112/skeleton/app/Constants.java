@@ -9,6 +9,8 @@ public final class Constants {
     public static final String LASER_LAYER = "Laser";
     public static final String FLAG_LAYER = "Flag";
 
+    public static final boolean DEVELOPER_MODE = true;
+
     private Constants() { // do not instantiate
     }
 }

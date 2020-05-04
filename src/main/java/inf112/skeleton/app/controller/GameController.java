@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
@@ -28,7 +29,6 @@ public class GameController extends InputAdapter {
     private Timer countDownTimer = new Timer(true);
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
-    private boolean devMode = false;
     private final int turnLimit = 60;
     private int countDown;
 
@@ -152,7 +152,7 @@ public class GameController extends InputAdapter {
 
     public void lockInCards() {
         gameScreen.lockCards();
-        if (!devMode) gameModel.getMyPlayer().fillEmptySlots();
+        if (!Constants.DEVELOPER_MODE) gameModel.getMyPlayer().fillEmptySlots();
         if (!multiplayer){
             startRound();
             return;
@@ -249,8 +249,8 @@ public class GameController extends InputAdapter {
         if (roundInProgress){
             return false;
         }
-        if (devMode) handleCardInput(keycode);
-        if (devMode) handleTestingInput(keycode);
+        if (Constants.DEVELOPER_MODE) handleCardInput(keycode);
+        if (Constants.DEVELOPER_MODE) handleTestingInput(keycode);
         return true;
     }
 
