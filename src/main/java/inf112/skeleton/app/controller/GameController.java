@@ -18,7 +18,6 @@ import java.util.*;
 
 public class GameController extends InputAdapter {
     private GameModel gameModel;
-    private boolean shiftIsPressed = false;
     private GameClient gameClient;
     private Boolean multiplayer;
     private String lastServerStatus = "START";
@@ -72,42 +71,6 @@ public class GameController extends InputAdapter {
 
         countDown = Constants.TIME_LIMIT;
         scheduleCountDowns();
-    }
-
-    /**
-     * Program the robot using the keyboard input.
-     */
-    private void handleCardInput(int keycode) {
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) { // undo cards
-            gameModel.getMyPlayer().undoProgrammingSlotPlacement(keycode - 8);
-        } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
-            gameModel.getMyPlayer().placeCardFromHandToSlot(keycode - 8);
-        } else if (keycode == Input.Keys.G) {  // deal new cards
-            gameModel.getMyPlayer().dealCards();
-        } else if (keycode == Input.Keys.E) { // end turn
-            lockInCards();
-        }
-    }
-
-    /**
-     * Place the robot anywhere with the arrow keys. The rules of the game do not apply.
-     */
-    private void handleTestingInput(int keycode) {
-        Robot robot = gameModel.getRobots().get(0);
-        RobotState newState = robot.getState().copy();
-        Location current = newState.getLocation();
-        switch (keycode) {
-            case Input.Keys.LEFT:
-                robot.updateState(robot.getState().updateLocation(current.rotateLeft()));
-                break;
-            case Input.Keys.UP:
-                robot.updateState(robot.getState().updateLocation(current.forward()));
-                break;
-            case Input.Keys.RIGHT:
-                robot.updateState(robot.getState().updateLocation(current.rotateRight()));
-                break;
-            default:
-        }
     }
 
     private TimerTask listenToServer(){
@@ -246,24 +209,30 @@ public class GameController extends InputAdapter {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = false;
+        if (!roundInProgress && Constants.DEVELOPER_MODE) {
+            Robot robot = gameModel.getRobots().get(0);
+            RobotState newState = robot.getState().copy();
+            Location current = newState.getLocation();
+            switch (keycode) {
+                case Input.Keys.LEFT:
+                    robot.updateState(robot.getState().updateLocation(current.rotateLeft()));
+                    break;
+                case Input.Keys.UP:
+                    robot.updateState(robot.getState().updateLocation(current.forward()));
+                    break;
+                case Input.Keys.RIGHT:
+                    robot.updateState(robot.getState().updateLocation(current.rotateRight()));
+                    break;
+                case Input.Keys.G:
+                    gameModel.getMyPlayer().dealCards();
+                    break;
+                case Input.Keys.E:
+                    lockInCards();
+                    break;
+                default:
+            }
         }
-        if (roundInProgress){
-            return false;
-        }
-        if (Constants.DEVELOPER_MODE) handleCardInput(keycode);
-        if (Constants.DEVELOPER_MODE) handleTestingInput(keycode);
         return true;
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = true;
-            return true;
-        }
-        return false;
     }
 
     private TimerTask togglePhasePopUp(int phase, boolean show) {
