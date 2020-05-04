@@ -4,17 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.board.Location;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.screens.GameScreen;
 
-import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameController extends InputAdapter {
     private GameModel gameModel;
@@ -46,6 +50,25 @@ public class GameController extends InputAdapter {
         game.setScreen(gameScreen);
         countDown = Constants.TIME_LIMIT;
         scheduleCountdowns();
+
+        // this modification allows a tester to control any robot. you can switch perspective by clicking on a tile
+        // with a robot
+        if (Constants.DEVELOPER_MODE) {
+            gameScreen.tiledMapActor.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    int pixelsPerTileX = (int) (gameScreen.tiledMapActor.getWidth() / gameModel.getMapHandler().getWidth());
+                    int pixelsPerTileY = (int) (gameScreen.tiledMapActor.getHeight() / gameModel.getMapHandler().getHeight());
+                    RVector2 clickedPosition = new RVector2((int) (x / pixelsPerTileX), (int) (y / pixelsPerTileY));
+                    gameModel.getPlayers()
+                            .stream()
+                            .filter(player -> player.getRobot().getLocation().getPosition().equals(clickedPosition))
+                            .findFirst()
+                            .ifPresent(gameModel::setMyPlayer);
+                }
+            });
+        }
     }
 
     /**
@@ -210,7 +233,7 @@ public class GameController extends InputAdapter {
     @Override
     public boolean keyUp(int keycode) {
         if (!roundInProgress && Constants.DEVELOPER_MODE) {
-            Robot robot = gameModel.getRobots().get(0);
+            Robot robot = gameModel.getMyPlayer().getRobot();
             RobotState newState = robot.getState().copy();
             Location current = newState.getLocation();
             switch (keycode) {
@@ -245,15 +268,20 @@ public class GameController extends InputAdapter {
     }
 
     private TimerTask toggleWinOrLosePopUp(boolean won, boolean show) {
-        return  new TimerTask() {
+        return new TimerTask() {
             @Override
             public void run() {
                 if (won) {
                     gameScreen.win.setShow(show);
+                } else {
+                    gameScreen.lose.setShow(show);
                 }
-                else { gameScreen.lose.setShow(show); }
             }
         };
+    }
+
+    public boolean gameIsMultiplayer() {
+        return multiplayer;
     }
 
 }

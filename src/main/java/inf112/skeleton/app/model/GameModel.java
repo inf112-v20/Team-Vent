@@ -17,7 +17,7 @@ public class GameModel {
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
-    private final Player player;
+    private Player player;
     public final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
@@ -51,7 +51,6 @@ public class GameModel {
             laserSteps.add(new LinkedList<>());
             endOfPhaseSteps.add(new LinkedList<>());
         }
-        // legacy code
         String[] names = {"Blue", "Yellow", "Red", "Green", "Orange", "Pink", "Golden", "Black" };
         for (int i = 0; i < names.length && i < robots.size(); i++) {
             robots.get(i).setName(names[i]);
@@ -476,5 +475,21 @@ public class GameModel {
 
     public Iterable<? extends GameState.LaserBeam> getLaserBeams() {
         return currentGameState.getLaserBeams();
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    /**
+     * Change the player that this user controls. This allows testers to control multiple robots and to create specific
+     * scenarios for testing game mechanics in single player games. It will not work with multiplayer games.
+     */
+    public void setMyPlayer(Player player) {
+        if (!Constants.DEVELOPER_MODE) {
+            throw new IllegalStateException("Changing player mid-game is a testing feature that is only available in" +
+                    "developer mode, and should only be used for single player games");
+        }
+        this.player = player;
     }
 }
