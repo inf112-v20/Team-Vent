@@ -29,7 +29,6 @@ public class GameController extends InputAdapter {
     private Timer countDownTimer = new Timer(true);
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
-    private final int turnLimit = 60;
     private int countDown;
 
     /**
@@ -46,7 +45,7 @@ public class GameController extends InputAdapter {
 
         gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
-        countDown = turnLimit;
+        countDown = Constants.TIME_LIMIT;
         scheduleCountDowns();
     }
 
@@ -71,7 +70,7 @@ public class GameController extends InputAdapter {
             new HostController(gameClient);
         }
 
-        countDown = turnLimit;
+        countDown = Constants.TIME_LIMIT;
         scheduleCountDowns();
     }
 
@@ -162,13 +161,13 @@ public class GameController extends InputAdapter {
     }
 
     private void scheduleCountDowns() {
-        countDown = turnLimit;
-        for (int i = 0; i <= turnLimit; i++) {
+        countDown = Constants.TIME_LIMIT;
+        for (int i = 0; i <= Constants.TIME_LIMIT; i++) {
             int count = countDown;
             countDownTimer.schedule(countDownStep(count), i*1000);
             countDown = countDown -1;
         }
-        countDownTimer.schedule(forcedEndTurn(), (turnLimit+1)*1000);
+        countDownTimer.schedule(forcedEndTurn(), (Constants.TIME_LIMIT+1)*1000);
     }
 
     private TimerTask countDownStep(int count) {
