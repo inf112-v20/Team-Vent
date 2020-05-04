@@ -45,7 +45,7 @@ public class GameController extends InputAdapter {
         gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
         countDown = Constants.TIME_LIMIT;
-        scheduleCountDowns();
+        scheduleCountdowns();
     }
 
     /**
@@ -70,7 +70,7 @@ public class GameController extends InputAdapter {
         }
 
         countDown = Constants.TIME_LIMIT;
-        scheduleCountDowns();
+        scheduleCountdowns();
     }
 
     private TimerTask listenToServer(){
@@ -94,7 +94,7 @@ public class GameController extends InputAdapter {
                 }
                 else { gameModel.generateCardHands();}
                 roundInProgress = false;
-                scheduleCountDowns();
+                scheduleCountdowns();
             }
         };
     }
@@ -123,7 +123,7 @@ public class GameController extends InputAdapter {
         gameClient.setReady();
     }
 
-    private void scheduleCountDowns() {
+    private void scheduleCountdowns() {
         if (Constants.ENABLE_TIME_LIMIT) {
             countDown = Constants.TIME_LIMIT;
             for (int i = 0; i <= Constants.TIME_LIMIT; i++) {
