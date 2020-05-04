@@ -161,13 +161,17 @@ public class GameController extends InputAdapter {
     }
 
     private void scheduleCountDowns() {
-        countDown = Constants.TIME_LIMIT;
-        for (int i = 0; i <= Constants.TIME_LIMIT; i++) {
-            int count = countDown;
-            countDownTimer.schedule(countDownStep(count), i*1000);
-            countDown = countDown -1;
+        if (Constants.ENABLE_TIME_LIMIT) {
+            countDown = Constants.TIME_LIMIT;
+            for (int i = 0; i <= Constants.TIME_LIMIT; i++) {
+                int count = countDown;
+                countDownTimer.schedule(countDownStep(count), i * 1000);
+                countDown = countDown - 1;
+            }
+            countDownTimer.schedule(forcedEndTurn(), (Constants.TIME_LIMIT + 1) * 1000);
+        } else {
+            gameScreen.setEndTurnButtonText("DONE");
         }
-        countDownTimer.schedule(forcedEndTurn(), (Constants.TIME_LIMIT+1)*1000);
     }
 
     private TimerTask countDownStep(int count) {

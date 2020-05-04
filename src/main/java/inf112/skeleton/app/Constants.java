@@ -10,6 +10,7 @@ public final class Constants {
     public static final String FLAG_LAYER = "Flag";
 
     public static final boolean DEVELOPER_MODE = false;
+    public static final boolean ENABLE_TIME_LIMIT = false;
     public static final int TIME_LIMIT = 60; // time limit for programming in seconds
     public static final boolean ENABLE_LOGGING = false;
 
