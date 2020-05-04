@@ -192,15 +192,15 @@ public class GameController extends InputAdapter {
         countDownTimer.cancel();
         countDownTimer = new Timer(true);
         roundInProgress = true;
-        if (multiplayer){
+        if (multiplayer) {
             Card[][] playerSlots = gameClient.getPlayerCards();
-            for (int playerI = 0; playerI < numberOfPlayers; playerI++){
-                for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++){
+            for (int playerI = 0; playerI < numberOfPlayers; playerI++) {
+                for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++) {
                     gameModel.getPlayer(playerI).setCardinProgrammingSlot(cardSlotI, playerSlots[playerI][cardSlotI]);
                 }
             }
         }
-        if (!multiplayer) {
+        if (!multiplayer && !Constants.DEVELOPER_MODE) {
             gameModel.fillPLayersProgrammingSlots();
         }
         gameModel.endTurn();
