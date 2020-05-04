@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 public class GameModel {
 
-    private static final boolean ENABLE_LOGGING = true;
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
@@ -470,7 +469,7 @@ public class GameModel {
     }
 
     private void log(String message) {
-        if (ENABLE_LOGGING) {
+        if (Constants.ENABLE_LOGGING) {
             Gdx.app.log(this.getClass().getName(), message);
         }
     }

@@ -11,6 +11,7 @@ public final class Constants {
 
     public static final boolean DEVELOPER_MODE = false;
     public static final int TIME_LIMIT = 60; // time limit for programming in seconds
+    public static final boolean ENABLE_LOGGING = false;
 
     private Constants() { // do not instantiate
     }
