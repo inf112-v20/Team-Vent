@@ -94,10 +94,6 @@ public class MapHandler {
                 getTileLayer().getCell(i, j).setTile(tile);
             }
         }
-        // create the object layer
-        TiledMapTileLayer robotLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
-        robotLayer.setName(Constants.ROBOT_LAYER);
-        layers.add(robotLayer);
     }
 
     public int getWidth() {
