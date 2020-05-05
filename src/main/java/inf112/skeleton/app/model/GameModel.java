@@ -110,8 +110,15 @@ public class GameModel {
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
             doBorders(gameState);
         }
-
         // end of turn effects
+
+        // make sure the end of turn effects happen in the last phase even when robots don't play cards.
+        // this is only an issue when testing. without this, robots can re-spawn too early
+        if (endOfPhaseSteps.get(PHASES - 1).isEmpty()) {
+            gameState = gameState.copy();
+            endOfPhaseSteps.get(PHASES - 1).add(gameState);
+        }
+
         doRepairs(gameState);
         doReboot(gameState);
     }
