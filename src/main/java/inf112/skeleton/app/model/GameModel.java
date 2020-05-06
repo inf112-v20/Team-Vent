@@ -230,6 +230,7 @@ public class GameModel {
     }
 
     private void doCard(int phaseNumber, GameState initialState, RobotState robotState, Player player) {
+        if (robotState.getDead()) return;
         Card card = player.getCardInProgrammingSlot(phaseNumber);
         if (card == null) return;
         RobotState nextRobotState = robotState;
