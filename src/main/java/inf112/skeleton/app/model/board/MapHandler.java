@@ -238,7 +238,7 @@ public class MapHandler {
 
     public boolean hasRepairSite(RVector2 position) {
         TileType tileType = getTileType(position, Constants.TILE_LAYER);
-        return tileType == TileType.REPAIR_ONE || tileType == TileType.REPAIR_TWO;
+        return tileType == TileType.REPAIR_ONE || tileType == TileType.REPAIR_TWO || getFlag(position) != null;
     }
 
     public int getNumberOfFlags() {
