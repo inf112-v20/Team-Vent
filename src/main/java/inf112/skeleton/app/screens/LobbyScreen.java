@@ -126,7 +126,7 @@ public class LobbyScreen extends ScreenAdapter {
             gameClient.closeConnection();
         }
         gameClient = null;
-        game.setScreen(new MenuScreen(game));
+        Gdx.app.postRunnable(() -> game.setScreen(new MenuScreen(game)));
     }
 
     @Override
