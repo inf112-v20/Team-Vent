@@ -105,16 +105,19 @@ public class GameModel {
                 Robot robot = player.getRobot();
                 doCard(i, gameState, gameState.getState(robot), player);
                 gameState = updateLastState(gameState, cardSteps.get(i));
+                doBorders(gameState);
             }
 
             doTiles(i, gameState);
             gameState = updateLastState(gameState, tileSteps.get(i));
+            doBorders(gameState);
 
             doLasers(i, gameState);
             gameState = updateLastState(gameState, laserSteps.get(i));
+            doBorders(gameState);
+
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
-            doBorders(gameState);
         }
 
         // end of turn effects
@@ -129,6 +132,7 @@ public class GameModel {
         doRepairs(gameState);
         doReboot(gameState);
 
+        //Change priority of players.
         players.add(players.pop());
     }
 
