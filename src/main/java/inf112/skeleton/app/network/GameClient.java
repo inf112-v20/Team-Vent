@@ -125,6 +125,9 @@ public class GameClient {
             response = "";
             e.printStackTrace();
         }
+        if (response == null){
+            response = "";
+        }
         return response;
     }
 }
