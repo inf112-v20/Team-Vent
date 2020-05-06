@@ -33,6 +33,7 @@ public class GameController extends InputAdapter {
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
     private int countDown;
+    private int intervalTime;
 
     /**
      * Single player constructor
@@ -45,11 +46,13 @@ public class GameController extends InputAdapter {
         inputMultiPlexer = new InputMultiplexer();
         inputMultiPlexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiPlexer);
+        intervalTime = Constants.INTERVAL_TIME;
 
         gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
         countDown = Constants.TIME_LIMIT;
         scheduleCountdowns();
+
 
         // this modification allows a tester to control any robot. you can switch perspective by clicking on a tile
         // with a robot
@@ -201,9 +204,9 @@ public class GameController extends InputAdapter {
 
         int delay = 0;
         for (int i = 0; i < 5; i++) {
-            timer.schedule(togglePhasePopUp(i, true), delay * 500);
+            timer.schedule(togglePhasePopUp(i, true), delay * intervalTime);
             delay += 4;
-            timer.schedule(togglePhasePopUp(i, false), delay * 500);
+            timer.schedule(togglePhasePopUp(i, false), delay * intervalTime);
             delay += 2;
             gameModel.scheduleSteps(delay, i, gameModel.cardSteps);
             delay += gameModel.cardSteps.get(i).size();
@@ -216,18 +219,18 @@ public class GameController extends InputAdapter {
 
         if (gameModel.checkWinnerOrLoser()) {
             if(gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
-                timer.schedule(toggleWinOrLosePopUp(true, true), delay * 500);
-                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * 500);
+                timer.schedule(toggleWinOrLosePopUp(true, true), delay * intervalTime);
+                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * intervalTime);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
-                timer.schedule(toggleWinOrLosePopUp(false, true), delay * 500);
-                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * 500);
+                timer.schedule(toggleWinOrLosePopUp(false, true), delay * intervalTime);
+                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * intervalTime);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             delay += 6;
         }
-        timer.schedule(endOfTurn(), delay * 500);
+        timer.schedule(endOfTurn(), delay * intervalTime);
     }
 
     @Override

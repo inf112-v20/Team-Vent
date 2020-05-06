@@ -25,6 +25,8 @@ public class GameModel {
     public Timer timer = new Timer(true);
     public int delay;
     public LinkedList<Player> players;
+    private HashMap<Integer, Player> playerMap;
+    private int intervalTime;
 
     private GameState currentGameState;
     public GameState gameState;
@@ -34,14 +36,17 @@ public class GameModel {
         if (mapHandler.getStartLocations().size() < numberOfPlayers) {
             throw new IllegalStateException(String.format("There are not enough starting locations for %d players", numberOfPlayers));
         }
+        intervalTime = Constants.INTERVAL_TIME;
         // initialize players and robots
         players = new LinkedList<>();
         robots = new LinkedList<>();
+        playerMap = new HashMap<>();
         delay = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
             Player p = new Player(new Robot(mapHandler.getStartLocations().get(i)));
             p.dealCards();
             players.add(p);
+            playerMap.put(i, p);
             robots.add(p.getRobot());
         }
         // initialize phase lists
@@ -51,6 +56,7 @@ public class GameModel {
             laserSteps.add(new LinkedList<>());
             endOfPhaseSteps.add(new LinkedList<>());
         }
+        // legacy code
         String[] names = {"Blue", "Yellow", "Red", "Green", "Orange", "Pink", "Golden", "Black" };
         for (int i = 0; i < names.length && i < robots.size(); i++) {
             robots.get(i).setName(names[i]);
@@ -64,7 +70,7 @@ public class GameModel {
     }
 
     public Player getPlayer(int index){
-        return players.get(index);
+        return playerMap.get(index);
     }
 
     public Player getMyPlayer() {
@@ -110,6 +116,7 @@ public class GameModel {
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
             doBorders(gameState);
         }
+
         // end of turn effects
 
         // make sure the end of turn effects happen in the last phase even when robots don't play cards.
@@ -121,6 +128,8 @@ public class GameModel {
 
         doRepairs(gameState);
         doReboot(gameState);
+
+        players.add(players.pop());
     }
 
     private void doLasers(int phaseNumber, GameState initialState) {
@@ -419,7 +428,7 @@ public class GameModel {
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
+            timer.schedule(doStep(phase, steps), delay * intervalTime + intervalTime * i);
         }
     }
 
