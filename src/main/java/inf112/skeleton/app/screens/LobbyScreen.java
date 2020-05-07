@@ -122,6 +122,9 @@ public class LobbyScreen extends ScreenAdapter {
 
     private void updatePlayerList() {
         String[] players = gameClient.getPlayersInLobby();
+        if (players == null){
+            players = new String[] {"","","","","","","",""};
+        }
         playerList.setItems(players);
     }
 
