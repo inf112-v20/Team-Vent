@@ -11,6 +11,7 @@ public class HostController {
 
     public HostController(GameClient gameClient) {
         this.gameClient = gameClient;
+        this.gameClient.setGameStatus("START");
         timer.schedule(listenToServer(), 0, 200);
 
     }
