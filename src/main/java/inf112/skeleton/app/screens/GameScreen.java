@@ -43,7 +43,6 @@ public class GameScreen extends ScreenAdapter {
 
     private TextButton endTurnButton;
     private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
-    private boolean muted = true;
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
         this.gameModel = gameModel;
@@ -156,11 +155,9 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(rootTable);
         stage.setDebugAll(false);
 
-        if(!muted) {
-            music.play();
-            music.setVolume(0.25f);
-            music.setLooping(true);
-        }
+        music.play();
+        music.setVolume(0.2f);
+        music.setLooping(true);
     }
 
     @Override
