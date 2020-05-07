@@ -17,9 +17,15 @@ http://www.boardgamecapital.com/game_rules/robo-rally.pdf
 
 - When the Menu Screen comes up you have some options:
 
-To play **Singleplayer** just press "Singleplayer"".
+To play **Singleplayer**
+
+-  Select the map you want to play in the dropdown list
+
+-  Press the "Singleplayer" button
   
-To play **Multiplayer:**
+To play **Multiplayer:** 
+
+**LAN:**
 
 -  Decide who will be hosting
 
@@ -27,11 +33,21 @@ To play **Multiplayer:**
 
 -  The other players can then join the lobby by typing in the host's IPv4 Adress and pressing the "Multiplayer" button
 
+-  The host selects what map to play in the lobby using the dropdown list
+
 -  When all the players are in the lobby, the host can press the "Start Game" button
 
--  The game itself does not currently support mutiplayer so this only starts a single player game for every player in the lobby
-
 (For testing purposes, 127.0.0.1 can be used to test the mutiplayer by running the program in parallel with one host and up to 7 other players)
+
+**Online Multiplayer**
+
+- Install Hamachi
+
+- Create a VPN tunnel in Hamachi. (Network>Create a new network...)
+
+- Other players needs to join your Hamachi network. (Network>Join an existing network...)
+
+- Same step as above but using your Hamachi network ip
 
 # How to do manual testing
 
