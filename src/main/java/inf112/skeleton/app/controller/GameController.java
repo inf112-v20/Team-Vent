@@ -134,7 +134,12 @@ public class GameController extends InputAdapter {
                 roundInProgress = false;
                 scheduleCountDowns();
                 if (gameModel.getMyPlayer().wonOrLost){
-                    lockInCards();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            lockInCards();
+                        }
+                    }, 5000);
                 }
             }
         };
