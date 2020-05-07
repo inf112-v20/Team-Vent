@@ -122,8 +122,11 @@ public class GameClient {
         } catch (java.net.SocketException e){
             response = "CLOSE";
         } catch (IOException e) {
-            response = "";
+            response = "CLOSE";
             e.printStackTrace();
+        }
+        if (response == null){
+            response = "CLOSE";
         }
         return response;
     }

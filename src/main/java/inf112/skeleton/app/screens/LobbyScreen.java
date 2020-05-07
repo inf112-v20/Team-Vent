@@ -1,7 +1,6 @@
 package inf112.skeleton.app.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -44,12 +43,17 @@ public class LobbyScreen extends ScreenAdapter {
         playerList = new List<>(skin);
         playerList.setItems(" ", " ", " ", " ", " ", " ", " ", " ");
 
+        // Map selection box
+        SelectBox<String> mapSelectorBox = new SelectBox<>(skin);
+        String[] mapSelectorOptions = {"RiskyExchange.tmx", "IslandKing.tmx", "CaptureTheFlag.tmx"};
+        mapSelectorBox.setItems(mapSelectorOptions);
+
         // Start game button
         Button startGameButton = new TextButton("Start Game", skin);
         startGameButton.addListener(new InputListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                setGameStart();
+                setGameStart(mapSelectorBox.getSelected());
             }
 
             @Override
@@ -74,20 +78,23 @@ public class LobbyScreen extends ScreenAdapter {
 
         table.setFillParent(true);
         table.setDebug(false);
-        table.add(playerList);
+        table.defaults().pad(5);
+        table.add(playerList).prefWidth(200);
         table.row();
         if (isHost) {
-            table.add(startGameButton);
+            table.add(startGameButton).prefWidth(200);
+            table.row();
+            table.add(mapSelectorBox).prefWidth(200);
             table.row();
         }
-        table.add(backButton);
+        table.add(backButton).prefWidth(200);
         stage.addActor(table);
     }
 
     private void actOnGameStatus() {
-        String status = gameClient.getGameStatus();
+        String[] status = gameClient.getGameStatus().split("/");
 
-        switch (status) {
+        switch (status[0]) {
             case "CLOSE":
                 backToMenu();
                 break;
@@ -95,22 +102,22 @@ public class LobbyScreen extends ScreenAdapter {
                 updatePlayerList();
                 break;
             case "START":
-                startGame();
+                startGame(status[1]);
                 break;
             default:
 
         }
     }
 
-    private void startGame() {
+    private void startGame(String map) {
         Gdx.app.postRunnable(() -> {
             timer.cancel();
-            new GameController(game, "map-1.tmx", gameClient, isHost);
+            new GameController(game, map, gameClient, isHost);
         });
     }
 
-    private void setGameStart() {
-        gameClient.setGameStatus("START");
+    private void setGameStart(String map) {
+        gameClient.setGameStatus("START/" + map);
     }
 
     private void updatePlayerList() {
@@ -126,14 +133,14 @@ public class LobbyScreen extends ScreenAdapter {
             gameClient.closeConnection();
         }
         gameClient = null;
-        game.setScreen(new MenuScreen(game));
+        Gdx.app.postRunnable(() -> game.setScreen(new MenuScreen(game)));
     }
 
     @Override
     public void show() {
         if (isHost) {
             Thread gameHostThread = new Thread(() -> new GameHost(hostAddress));
-            gameHostThread.setName("'Game Host Server");
+            gameHostThread.setName("Game Host Server");
             gameHostThread.start();
         }
 

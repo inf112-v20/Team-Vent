@@ -37,7 +37,7 @@ public class MenuScreen extends ScreenAdapter {
 
         // Map selector
         SelectBox<String> mapSelectorBox = new SelectBox<>(skin);
-        String[] mapSelectorOptions = {"map-1.tmx"};
+        String[] mapSelectorOptions = {"RiskyExchange.tmx", "IslandKing.tmx", "CaptureTheFlag.tmx"};
         mapSelectorBox.setItems(mapSelectorOptions);
 
         // Host checkbox
