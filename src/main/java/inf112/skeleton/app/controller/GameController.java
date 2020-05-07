@@ -204,9 +204,9 @@ public class GameController extends InputAdapter {
 
         int delay = 0;
         for (int i = 0; i < 5; i++) {
-            timer.schedule(togglePhasePopUp(i, true), delay * intervalTime);
+            timer.schedule(togglePhasePopUp(i, true), delay * 500);
             delay += 4;
-            timer.schedule(togglePhasePopUp(i, false), delay * intervalTime);
+            timer.schedule(togglePhasePopUp(i, false), delay * 500);
             delay += 2;
             gameModel.scheduleSteps(delay, i, gameModel.cardSteps);
             delay += gameModel.cardSteps.get(i).size();
@@ -219,18 +219,18 @@ public class GameController extends InputAdapter {
 
         if (gameModel.checkWinnerOrLoser()) {
             if(gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
-                timer.schedule(toggleWinOrLosePopUp(true, true), delay * intervalTime);
-                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * intervalTime);
+                timer.schedule(toggleWinOrLosePopUp(true, true), delay * 500);
+                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * 500);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
-                timer.schedule(toggleWinOrLosePopUp(false, true), delay * intervalTime);
-                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * intervalTime);
+                timer.schedule(toggleWinOrLosePopUp(false, true), delay * 500);
+                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * 500);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             delay += 6;
         }
-        timer.schedule(endOfTurn(), delay * intervalTime);
+        timer.schedule(endOfTurn(), delay * 500);
     }
 
     @Override

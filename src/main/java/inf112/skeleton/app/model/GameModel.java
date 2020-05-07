@@ -433,7 +433,7 @@ public class GameModel {
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delay * intervalTime + intervalTime * i);
+            timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
         }
     }
 
