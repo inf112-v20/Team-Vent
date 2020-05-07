@@ -24,6 +24,7 @@ import inf112.skeleton.app.view.TiledMapActor;
 import java.util.HashMap;
 
 public class GameScreen extends ScreenAdapter {
+    public TiledMapActor tiledMapActor;
     private final GameModel gameModel;
     private final GameController gameController;
 
@@ -79,6 +80,9 @@ public class GameScreen extends ScreenAdapter {
         cardTextures.put("ROTATE RIGHT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_right")));
         cardTextures.put("U TURN", new TextureRegionDrawable(cardsAtlas.findRegion("card_u_turn")));
         cardTextures.put("NULL", new TextureRegionDrawable(cardsAtlas.findRegion("card_null")));
+
+        // tiled map
+        tiledMapActor = new TiledMapActor(gameModel, unitScale);
 
         // beside the board: stats table
         Table sideTable = new Table();
@@ -144,7 +148,7 @@ public class GameScreen extends ScreenAdapter {
         Table rootTable = new Table();
         rootTable.setFillParent(true);
         rootTable.defaults().padTop(10).padLeft(10);
-        rootTable.add(new TiledMapActor(gameModel, unitScale)).left();
+        rootTable.add(tiledMapActor).left();
         rootTable.add(sideTable).expandX().top().left().padLeft(50);
         rootTable.row();
         rootTable.add(cardTable).colspan(2).expandY().left();
@@ -254,10 +258,13 @@ public class GameScreen extends ScreenAdapter {
         }
         if (win.getShow()) {
             win.getSprite().draw(popImages);
-        }
-        else if (lose.getShow()) {
+        } else if (lose.getShow()) {
             lose.getSprite().draw(popImages);
         }
         popImages.end();
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

@@ -14,11 +14,10 @@ import java.util.stream.Collectors;
 
 public class GameModel {
 
-    private static final boolean ENABLE_LOGGING = true;
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
-    private final Player player;
+    private Player player;
     public final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
@@ -26,6 +25,8 @@ public class GameModel {
     public Timer timer = new Timer(true);
     public int delay;
     public LinkedList<Player> players;
+    private HashMap<Integer, Player> playerMap;
+    private int intervalTime;
 
     private GameState currentGameState;
     public GameState gameState;
@@ -35,14 +36,17 @@ public class GameModel {
         if (mapHandler.getStartLocations().size() < numberOfPlayers) {
             throw new IllegalStateException(String.format("There are not enough starting locations for %d players", numberOfPlayers));
         }
+        intervalTime = Constants.INTERVAL_TIME;
         // initialize players and robots
         players = new LinkedList<>();
         robots = new LinkedList<>();
+        playerMap = new HashMap<>();
         delay = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
             Player p = new Player(new Robot(mapHandler.getStartLocations().get(i)));
             p.dealCards();
             players.add(p);
+            playerMap.put(i, p);
             robots.add(p.getRobot());
         }
         // initialize phase lists
@@ -66,7 +70,7 @@ public class GameModel {
     }
 
     public Player getPlayer(int index){
-        return players.get(index);
+        return playerMap.get(index);
     }
 
     public Player getMyPlayer() {
@@ -101,21 +105,35 @@ public class GameModel {
                 Robot robot = player.getRobot();
                 doCard(i, gameState, gameState.getState(robot), player);
                 gameState = updateLastState(gameState, cardSteps.get(i));
+                doBorders(gameState);
             }
 
             doTiles(i, gameState);
             gameState = updateLastState(gameState, tileSteps.get(i));
+            doBorders(gameState);
 
             doLasers(i, gameState);
             gameState = updateLastState(gameState, laserSteps.get(i));
+            doBorders(gameState);
+
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
-            doBorders(gameState);
         }
 
         // end of turn effects
+
+        // make sure the end of turn effects happen in the last phase even when robots don't play cards.
+        // this is only an issue when testing. without this, robots can re-spawn too early
+        if (endOfPhaseSteps.get(PHASES - 1).isEmpty()) {
+            gameState = gameState.copy();
+            endOfPhaseSteps.get(PHASES - 1).add(gameState);
+        }
+
         doRepairs(gameState);
         doReboot(gameState);
+
+        //Change priority of players.
+        players.add(players.pop());
     }
 
     private void doLasers(int phaseNumber, GameState initialState) {
@@ -212,6 +230,7 @@ public class GameModel {
     }
 
     private void doCard(int phaseNumber, GameState initialState, RobotState robotState, Player player) {
+        if (robotState.getDead()) return;
         Card card = player.getCardInProgrammingSlot(phaseNumber);
         if (card == null) return;
         RobotState nextRobotState = robotState;
@@ -414,7 +433,7 @@ public class GameModel {
 
     public void scheduleSteps(int delay, int phase, ArrayList<Deque<GameState>> steps) {
         for (int i = 0; i < steps.get(phase).size(); i++) {
-            timer.schedule(doStep(phase, steps), delay * 500 + 500 * i);
+            timer.schedule(doStep(phase, steps), delay * intervalTime + intervalTime * i);
         }
     }
 
@@ -470,12 +489,28 @@ public class GameModel {
     }
 
     private void log(String message) {
-        if (ENABLE_LOGGING) {
+        if (Constants.ENABLE_LOGGING) {
             Gdx.app.log(this.getClass().getName(), message);
         }
     }
 
     public Iterable<? extends GameState.LaserBeam> getLaserBeams() {
         return currentGameState.getLaserBeams();
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    /**
+     * Change the player that this user controls. This allows testers to control multiple robots and to create specific
+     * scenarios for testing game mechanics in single player games. It will not work with multiplayer games.
+     */
+    public void setMyPlayer(Player player) {
+        if (!Constants.DEVELOPER_MODE) {
+            throw new IllegalStateException("Changing player mid-game is a testing feature that is only available in" +
+                    "developer mode, and should only be used for single player games");
+        }
+        this.player = player;
     }
 }

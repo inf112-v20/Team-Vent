@@ -94,10 +94,6 @@ public class MapHandler {
                 getTileLayer().getCell(i, j).setTile(tile);
             }
         }
-        // create the object layer
-        TiledMapTileLayer robotLayer = new TiledMapTileLayer(width, height, tileSize, tileSize);
-        robotLayer.setName(Constants.ROBOT_LAYER);
-        layers.add(robotLayer);
     }
 
     public int getWidth() {
@@ -242,7 +238,7 @@ public class MapHandler {
 
     public boolean hasRepairSite(RVector2 position) {
         TileType tileType = getTileType(position, Constants.TILE_LAYER);
-        return tileType == TileType.REPAIR_ONE || tileType == TileType.REPAIR_TWO;
+        return tileType == TileType.REPAIR_ONE || tileType == TileType.REPAIR_TWO || getFlag(position) != null;
     }
 
     public int getNumberOfFlags() {

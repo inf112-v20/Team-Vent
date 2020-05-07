@@ -4,20 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import inf112.skeleton.app.Constants;
 import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 import inf112.skeleton.app.model.RobotState;
 import inf112.skeleton.app.model.board.Location;
+import inf112.skeleton.app.model.board.RVector2;
 import inf112.skeleton.app.model.cards.Card;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.screens.GameScreen;
 
-import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameController extends InputAdapter {
     private GameModel gameModel;
-    private boolean shiftIsPressed = false;
     private GameClient gameClient;
     private Boolean multiplayer;
     private String lastServerStatus = "START";
@@ -28,26 +32,46 @@ public class GameController extends InputAdapter {
     private Timer countDownTimer = new Timer(true);
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
-    private boolean devMode = false;
-    private final int turnLimit = 60;
     private int countDown;
+    private int intervalTime;
 
     /**
      * Single player constructor
      */
     public GameController(RoboRallyGame game, String map_filename) {
-        this.numberOfPlayers = 8;
+        this.numberOfPlayers = 8; // up to 8
         this.gameModel = new GameModel(map_filename, numberOfPlayers, 0);
         gameClient = null;
         multiplayer = false;
         inputMultiPlexer = new InputMultiplexer();
         inputMultiPlexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiPlexer);
+        intervalTime = Constants.INTERVAL_TIME;
 
         gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
-        countDown = turnLimit;
-        scheduleCountDowns();
+        countDown = Constants.TIME_LIMIT;
+        scheduleCountdowns();
+
+
+        // this modification allows a tester to control any robot. you can switch perspective by clicking on a tile
+        // with a robot
+        if (Constants.DEVELOPER_MODE) {
+            gameScreen.tiledMapActor.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    int pixelsPerTileX = (int) (gameScreen.tiledMapActor.getWidth() / gameModel.getMapHandler().getWidth());
+                    int pixelsPerTileY = (int) (gameScreen.tiledMapActor.getHeight() / gameModel.getMapHandler().getHeight());
+                    RVector2 clickedPosition = new RVector2((int) (x / pixelsPerTileX), (int) (y / pixelsPerTileY));
+                    gameModel.getPlayers()
+                            .stream()
+                            .filter(player -> player.getRobot().getLocation().getPosition().equals(clickedPosition))
+                            .findFirst()
+                            .ifPresent(gameModel::setMyPlayer);
+                }
+            });
+        }
     }
 
     /**
@@ -71,44 +95,8 @@ public class GameController extends InputAdapter {
             new HostController(gameClient);
         }
 
-        countDown = turnLimit;
-        scheduleCountDowns();
-    }
-
-    /**
-     * Program the robot using the keyboard input.
-     */
-    private void handleCardInput(int keycode) {
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_5 && shiftIsPressed) { // undo cards
-            gameModel.getMyPlayer().undoProgrammingSlotPlacement(keycode - 8);
-        } else if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {  // play cards
-            gameModel.getMyPlayer().placeCardFromHandToSlot(keycode - 8);
-        } else if (keycode == Input.Keys.G) {  // deal new cards
-            gameModel.getMyPlayer().dealCards();
-        } else if (keycode == Input.Keys.E) { // end turn
-            lockInCards();
-        }
-    }
-
-    /**
-     * Place the robot anywhere with the arrow keys. The rules of the game do not apply.
-     */
-    private void handleTestingInput(int keycode) {
-        Robot robot = gameModel.getRobots().get(0);
-        RobotState newState = robot.getState().copy();
-        Location current = newState.getLocation();
-        switch (keycode) {
-            case Input.Keys.LEFT:
-                robot.updateState(robot.getState().updateLocation(current.rotateLeft()));
-                break;
-            case Input.Keys.UP:
-                robot.updateState(robot.getState().updateLocation(current.forward()));
-                break;
-            case Input.Keys.RIGHT:
-                robot.updateState(robot.getState().updateLocation(current.rotateRight()));
-                break;
-            default:
-        }
+        countDown = Constants.TIME_LIMIT;
+        scheduleCountdowns();
     }
 
     private TimerTask listenToServer(){
@@ -132,15 +120,7 @@ public class GameController extends InputAdapter {
                 }
                 else { gameModel.generateCardHands();}
                 roundInProgress = false;
-                scheduleCountDowns();
-                if (gameModel.getMyPlayer().wonOrLost){
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            lockInCards();
-                        }
-                    }, 5000);
-                }
+                scheduleCountdowns();
             }
         };
     }
@@ -160,7 +140,7 @@ public class GameController extends InputAdapter {
 
     public void lockInCards() {
         gameScreen.lockCards();
-        if (!devMode) gameModel.getMyPlayer().fillEmptySlots();
+        if (!Constants.DEVELOPER_MODE) gameModel.getMyPlayer().fillEmptySlots();
         if (!multiplayer){
             startRound();
             return;
@@ -169,14 +149,18 @@ public class GameController extends InputAdapter {
         gameClient.setReady();
     }
 
-    private void scheduleCountDowns() {
-        countDown = turnLimit;
-        for (int i = 0; i <= turnLimit; i++) {
-            int count = countDown;
-            countDownTimer.schedule(countDownStep(count), i*1000);
-            countDown = countDown -1;
+    private void scheduleCountdowns() {
+        if (Constants.ENABLE_TIME_LIMIT) {
+            countDown = Constants.TIME_LIMIT;
+            for (int i = 0; i <= Constants.TIME_LIMIT; i++) {
+                int count = countDown;
+                countDownTimer.schedule(countDownStep(count), i * 1000);
+                countDown = countDown - 1;
+            }
+            countDownTimer.schedule(forcedEndTurn(), (Constants.TIME_LIMIT + 1) * 1000);
+        } else {
+            gameScreen.setEndTurnButtonText("DONE");
         }
-        countDownTimer.schedule(forcedEndTurn(), (turnLimit+1)*1000);
     }
 
     private TimerTask countDownStep(int count) {
@@ -201,15 +185,15 @@ public class GameController extends InputAdapter {
         countDownTimer.cancel();
         countDownTimer = new Timer(true);
         roundInProgress = true;
-        if (multiplayer){
+        if (multiplayer) {
             Card[][] playerSlots = gameClient.getPlayerCards();
-            for (int playerI = 0; playerI < numberOfPlayers; playerI++){
-                for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++){
+            for (int playerI = 0; playerI < numberOfPlayers; playerI++) {
+                for (int cardSlotI = 0; cardSlotI < 5; cardSlotI++) {
                     gameModel.getPlayer(playerI).setCardinProgrammingSlot(cardSlotI, playerSlots[playerI][cardSlotI]);
                 }
             }
         }
-        if (!multiplayer) {
+        if (!multiplayer && !Constants.DEVELOPER_MODE) {
             gameModel.fillPLayersProgrammingSlots();
         }
         gameModel.endTurn();
@@ -220,9 +204,9 @@ public class GameController extends InputAdapter {
 
         int delay = 0;
         for (int i = 0; i < 5; i++) {
-            timer.schedule(togglePhasePopUp(i, true), delay * 500);
+            timer.schedule(togglePhasePopUp(i, true), delay * intervalTime);
             delay += 4;
-            timer.schedule(togglePhasePopUp(i, false), delay * 500);
+            timer.schedule(togglePhasePopUp(i, false), delay * intervalTime);
             delay += 2;
             gameModel.scheduleSteps(delay, i, gameModel.cardSteps);
             delay += gameModel.cardSteps.get(i).size();
@@ -235,40 +219,46 @@ public class GameController extends InputAdapter {
 
         if (gameModel.checkWinnerOrLoser()) {
             if(gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
-                timer.schedule(toggleWinOrLosePopUp(true, true), delay * 500);
-                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * 500);
+                timer.schedule(toggleWinOrLosePopUp(true, true), delay * intervalTime);
+                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * intervalTime);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
-                timer.schedule(toggleWinOrLosePopUp(false, true), delay * 500);
-                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * 500);
+                timer.schedule(toggleWinOrLosePopUp(false, true), delay * intervalTime);
+                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * intervalTime);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             delay += 6;
         }
-        timer.schedule(endOfTurn(), delay * 500);
+        timer.schedule(endOfTurn(), delay * intervalTime);
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = false;
+        if (!roundInProgress && Constants.DEVELOPER_MODE) {
+            Robot robot = gameModel.getMyPlayer().getRobot();
+            RobotState newState = robot.getState().copy();
+            Location current = newState.getLocation();
+            switch (keycode) {
+                case Input.Keys.LEFT:
+                    robot.updateState(robot.getState().updateLocation(current.rotateLeft()));
+                    break;
+                case Input.Keys.UP:
+                    robot.updateState(robot.getState().updateLocation(current.forward()));
+                    break;
+                case Input.Keys.RIGHT:
+                    robot.updateState(robot.getState().updateLocation(current.rotateRight()));
+                    break;
+                case Input.Keys.G:
+                    gameModel.getMyPlayer().dealCards();
+                    break;
+                case Input.Keys.E:
+                    lockInCards();
+                    break;
+                default:
+            }
         }
-        if (roundInProgress){
-            return false;
-        }
-        if (devMode) handleCardInput(keycode);
-        if (devMode) handleTestingInput(keycode);
         return true;
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SHIFT_LEFT) {
-            shiftIsPressed = true;
-            return true;
-        }
-        return false;
     }
 
     private TimerTask togglePhasePopUp(int phase, boolean show) {
@@ -281,15 +271,20 @@ public class GameController extends InputAdapter {
     }
 
     private TimerTask toggleWinOrLosePopUp(boolean won, boolean show) {
-        return  new TimerTask() {
+        return new TimerTask() {
             @Override
             public void run() {
                 if (won) {
                     gameScreen.win.setShow(show);
+                } else {
+                    gameScreen.lose.setShow(show);
                 }
-                else { gameScreen.lose.setShow(show); }
             }
         };
+    }
+
+    public boolean gameIsMultiplayer() {
+        return multiplayer;
     }
 
 }
