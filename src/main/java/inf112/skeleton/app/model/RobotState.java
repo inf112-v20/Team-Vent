@@ -41,6 +41,7 @@ public class RobotState {
     }
 
     public RobotState updateDead() {
+        if (this.getDead()) return this.copy();
         RobotState other = this.copy();
         other.hp = 0;
         other.lives = Math.max(other.lives - 1, 0);
