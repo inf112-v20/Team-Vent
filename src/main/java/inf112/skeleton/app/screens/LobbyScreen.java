@@ -1,7 +1,6 @@
 package inf112.skeleton.app.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -46,7 +45,7 @@ public class LobbyScreen extends ScreenAdapter {
 
         // Map selection box
         SelectBox<String> mapSelectorBox = new SelectBox<>(skin);
-        String[] mapSelectorOptions = {"map-1.tmx"};
+        String[] mapSelectorOptions = {"RiskyExchange.tmx", "IslandKing.tmx", "CaptureTheFlag.tmx"};
         mapSelectorBox.setItems(mapSelectorOptions);
 
         // Start game button
@@ -93,7 +92,7 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
     private void actOnGameStatus() {
-        String[] status = gameClient.getGameStatus().split("-");
+        String[] status = gameClient.getGameStatus().split("/");
 
         switch (status[0]) {
             case "CLOSE":
@@ -113,12 +112,12 @@ public class LobbyScreen extends ScreenAdapter {
     private void startGame(String map) {
         Gdx.app.postRunnable(() -> {
             timer.cancel();
-            new GameController(game, "map", gameClient, isHost);
+            new GameController(game, map, gameClient, isHost);
         });
     }
 
     private void setGameStart(String map) {
-        gameClient.setGameStatus("START-" + map);
+        gameClient.setGameStatus("START/" + map);
     }
 
     private void updatePlayerList() {
