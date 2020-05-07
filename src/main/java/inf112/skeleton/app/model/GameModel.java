@@ -185,7 +185,7 @@ public class GameModel {
      */
     public void doReboot(GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
-            if (!robotState.getDead()) continue;
+            if (!robotState.getDead() || robotState.getLives() == 0) continue;
             Location saved = robotState.getSaveLocation();
             Location respawn = saved;
             // if the saved location is not available, use the closest available location
