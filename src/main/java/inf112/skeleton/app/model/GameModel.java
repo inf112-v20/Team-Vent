@@ -114,7 +114,6 @@ public class GameModel {
 
             doLasers(i, gameState);
             gameState = updateLastState(gameState, laserSteps.get(i));
-            doBorders(gameState);
 
             doFlags(i, gameState);
             gameState = updateLastState(gameState, endOfPhaseSteps.get(i));
@@ -444,7 +443,6 @@ public class GameModel {
                     if (!robotState2.equals(robotState)) {
                         robotState2.setLives(1);
                         gameState.add(robotState2.updateDead());
-                        //robot.updateState(robot.getState().updateDead());
                     }
                 }
                 return true;

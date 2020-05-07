@@ -37,15 +37,15 @@ public class RobotState {
     }
 
     public RobotState copy() {
-        return new RobotState(robot, location.copy(), this.hp, this.lives, capturedFlags, saveLocation);
+        return new RobotState(robot, location.copy(), this.hp, this.lives, capturedFlags, saveLocation.copy());
     }
 
     public RobotState updateDead() {
         RobotState other = this.copy();
         other.hp = 0;
         other.lives = Math.max(other.lives - 1, 0);
-        other.updateLocation(new Location(new RVector2(-1,-1), Direction.NORTH));
-        return other;
+        RobotState other2 = other.updateLocation(new Location(new RVector2(-1,-1), Direction.NORTH));
+        return other2;
     }
 
     public void setLives(int lives) {
