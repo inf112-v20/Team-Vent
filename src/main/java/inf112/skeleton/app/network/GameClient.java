@@ -132,6 +132,8 @@ public class GameClient {
         }
         if (response == null) {
             response = "CLOSE";
+        } else if (response.equals("ERR-Invalid command")){
+            response = sendAndReceiveMessage(message);
         }
         return response;
     }

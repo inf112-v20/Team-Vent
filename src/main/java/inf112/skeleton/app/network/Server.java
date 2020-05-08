@@ -20,7 +20,12 @@ public class Server implements Runnable {
     }
 
     private String[] parseMessage(String message) {
-        return message.split("-");
+        try {
+            return message.split("-");
+        }
+        catch (NullPointerException e) {
+            return new String[] {""};
+        }
     }
 
     private String ping() {
