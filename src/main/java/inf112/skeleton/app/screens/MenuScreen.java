@@ -64,11 +64,6 @@ public class MenuScreen extends ScreenAdapter {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 new GameController(game, mapSelectorBox.getSelected());
             }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
         });
 
         // Play multiplayer button
@@ -77,11 +72,6 @@ public class MenuScreen extends ScreenAdapter {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new LobbyScreen(game, hostCheckBox.isChecked(), ipTextField.getText()));
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
             }
         });
 
@@ -92,11 +82,6 @@ public class MenuScreen extends ScreenAdapter {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
                 System.exit(0);
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
             }
         });
 
