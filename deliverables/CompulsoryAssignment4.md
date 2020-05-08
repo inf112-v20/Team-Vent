@@ -8,7 +8,7 @@
 
 ### Roles
 
-In this last iteration we continued with the same roles we have had throughout the projoect. Since we started working remote there has been a weak distinction between the different roles, but we all agreed that we were happy with how the roles have been delegated. 
+In this last iteration we continued with the same roles we have had throughout the project. Since we started working remote there has been a weak distinction between the different roles, but we all agreed that we were happy with how the roles have been delegated. 
 
 Team-Vent roles are:
 * Teamlead: Caroline
@@ -23,7 +23,7 @@ The project and semester is coming to an end and it is time to take a look back 
 
 **Project methodology**
 
-Throughout the whole project we have mainly been working by the project methodology Kanban. This is a methodology that has a projectboard in focus and in the last two iterations we have really approved our work with the projectboard. It has helped us get a good overview of what tasks need to be done, and who is working on which task. We started the iteration breaking down our requirements into issues on the projectboard. On a meeting once a week approximately we looked through the projectboard together and saw if we were missing something, or if something needed to be moved to either "In Progress" or to "Done". In this iteration we have been keeping up the good work with how we write issues, and there has been few misunderstandings. Working so good with the projectboard lately has really been an advantage for us as a team. 
+Throughout the whole project we have mainly been working by the project methodology Kanban. This is a methodology that has a projectboard in focus and in the last two iterations we have really improved our work with the projectboard. It has helped us get a good overview of what tasks need to be done, and who is working on which task. We started the iteration breaking down our requirements into issues on the projectboard. On a meeting once a week approximately we looked through the projectboard together and saw if we were missing something, or if something needed to be moved to either "In Progress" or to "Done". In this iteration we have been keeping up the good work with how we write issues, and there has been few misunderstandings. Working so good with the projectboard lately has really been an advantage for us as a team. 
 
 We tried to experience with other project methodologies like XP, especially pair-programming, but found it was hard to manage when the university shut down. We would focus even more on this if we were not working remote.
 
