@@ -33,13 +33,11 @@ public class HostController {
         String status = gameClient.getGameStatus();
         switch (status) {
             case "START":
+            case "START ROUND":
                 startProgrammingPhase();
                 break;
             case "PROGRAMMING":
                 endProgrammingPhase();
-                break;
-            case "START ROUND":
-                startProgrammingPhase();
                 break;
             default:
                 break;
