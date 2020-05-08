@@ -10,6 +10,8 @@ This is a student project where the goal is to make a digital version of the boa
 
 The program is built using Maven. To run the game, run `Launcher.java` (main) in the master branch. 
 
+Recommended screen resolution: 1920x1080
+
 ## How to play
 Here is the rulebook for the boardgame:
 
@@ -37,7 +39,7 @@ To play **Multiplayer:**
 
 -  When all the players are in the lobby, the host can press the "Start Game" button
 
--  The priority of who goes first, changes simillarly of how roborally the board game at UiB is. first player first, first round then    next round second player first and first player last etc.
+-  The priority of who goes first, changes similarly as the RoboRally board game. First player first, first round. Next round, second player first and first player last etc.
 
 (For testing purposes, 127.0.0.1 can be used to test the mutiplayer by running the program in parallel with one host and up to 7 other players)
 
