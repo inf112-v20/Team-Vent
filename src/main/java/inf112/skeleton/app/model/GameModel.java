@@ -251,8 +251,8 @@ public class GameModel {
             case MOVE_TWO:
                 if (robotState.getDead()) return;
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
-                doBordersAndHoles(initialState);
                 initialState = updateLastState(initialState, cardSteps.get(phaseNumber));
+                doBordersAndHoles(initialState);
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE_ONE:
