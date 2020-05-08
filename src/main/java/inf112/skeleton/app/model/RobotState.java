@@ -9,7 +9,7 @@ public class RobotState {
     private Location saveLocation;
     private Location location;
     private int hp;
-    private Robot robot;
+    private final Robot robot;
     private int lives;
 
     public RobotState(Robot robot, Location location, int hp, int lives, int capturedFlags, Location saveLocation) {
@@ -45,12 +45,7 @@ public class RobotState {
         RobotState other = this.copy();
         other.hp = 0;
         other.lives = Math.max(other.lives - 1, 0);
-        RobotState other2 = other.updateLocation(new Location(new RVector2(-1, -1), Direction.NORTH));
-        return other2;
-    }
-
-    public void setLives(int lives) {
-        this.lives = lives;
+        return other.updateLocation(new Location(new RVector2(-1, -1), Direction.NORTH));
     }
 
     public Robot getRobot() {
@@ -104,6 +99,10 @@ public class RobotState {
 
     public int getLives() {
         return this.lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     @Override

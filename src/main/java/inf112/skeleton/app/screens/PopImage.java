@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class PopImage {
-    private Sprite sprite;
+    private final Sprite sprite;
     private Boolean show;
     private Boolean decreaseTransparancy;
 
@@ -16,16 +16,16 @@ public class PopImage {
         decreaseTransparancy = false;
     }
 
+    public boolean getShow() {
+        return show;
+    }
+
     public void setShow(boolean show) {
         this.show = show;
         if (!show) {
             sprite.setAlpha(0f);
             decreaseTransparancy = false;
         }
-    }
-
-    public boolean getShow() {
-        return show;
     }
 
     public Sprite getSprite() {

@@ -20,7 +20,7 @@ import java.util.Objects;
 public class MapHandler {
     private final TiledMap tiledMap;
     private int numberOfFlags;
-    private List<Location> startLocations = new ArrayList<>(8);
+    private final List<Location> startLocations = new ArrayList<>(8);
     private List<Location> lasers;
 
     /**

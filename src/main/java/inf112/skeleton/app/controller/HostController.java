@@ -6,12 +6,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HostController {
-    private GameClient gameClient;
-    private Timer timer = new Timer(true);
+    private final GameClient gameClient;
 
     public HostController(GameClient gameClient) {
         this.gameClient = gameClient;
         this.gameClient.setGameStatus("START");
+        Timer timer = new Timer(true);
         timer.schedule(listenToServer(), 0, 200);
     }
 
@@ -33,13 +33,11 @@ public class HostController {
         String status = gameClient.getGameStatus();
         switch (status) {
             case "START":
+            case "START ROUND":
                 startProgrammingPhase();
                 break;
             case "PROGRAMMING":
                 endProgrammingPhase();
-                break;
-            case "START ROUND":
-                startProgrammingPhase();
                 break;
             default:
                 break;

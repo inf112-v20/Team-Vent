@@ -24,25 +24,22 @@ import inf112.skeleton.app.view.TiledMapActor;
 import java.util.HashMap;
 
 public class GameScreen extends ScreenAdapter {
-    public TiledMapActor tiledMapActor;
     private final GameModel gameModel;
     private final GameController gameController;
-
-    private Viewport viewport;
-    private Stage stage;
-    private ImageButton[] programmingSlotButtons;
-    private ImageButton[] handSlotButtons;
-    private HashMap<String, TextureRegionDrawable> cardTextures;
-    private InputMultiplexer inputMultiplexer;
-    private Label lockedInLabel;
-
-    private SpriteBatch popImages;
+    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
+    public TiledMapActor tiledMapActor;
     public PopImage[] phasesImages;
     public PopImage win;
     public PopImage lose;
-
+    private final Viewport viewport;
+    private final Stage stage;
+    private ImageButton[] programmingSlotButtons;
+    private ImageButton[] handSlotButtons;
+    private HashMap<String, TextureRegionDrawable> cardTextures;
+    private final InputMultiplexer inputMultiplexer;
+    private Label lockedInLabel;
+    private SpriteBatch popImages;
     private TextButton endTurnButton;
-    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
         this.gameModel = gameModel;
@@ -58,27 +55,7 @@ public class GameScreen extends ScreenAdapter {
         float unitScale = 0.5f; // the unit scale determines the size of the map
         Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
         TextureAtlas cardsAtlas = new TextureAtlas(Gdx.files.internal("Cards.atlas"));
-
-        popImages = new SpriteBatch();
-        phasesImages = new PopImage[5];
-        phasesImages[0] = new PopImage(new Texture("PopUpImages/Phase1.png"));
-        phasesImages[1] = new PopImage(new Texture("PopUpImages/Phase2.png"));
-        phasesImages[2] = new PopImage(new Texture("PopUpImages/Phase3.png"));
-        phasesImages[3] = new PopImage(new Texture("PopUpImages/Phase4.png"));
-        phasesImages[4] = new PopImage(new Texture("PopUpImages/Phase5.png"));
-        win = new PopImage(new Texture("PopUpImages/Win.png"));
-        lose = new PopImage(new Texture("PopUpImages/lose.png"));
-
-        // load card textures
-        cardTextures = new HashMap<>();
-        cardTextures.put("MOVE ONE", new TextureRegionDrawable(cardsAtlas.findRegion("card_move", 1)));
-        cardTextures.put("MOVE TWO", new TextureRegionDrawable(cardsAtlas.findRegion("card_move", 2)));
-        cardTextures.put("MOVE THREE", new TextureRegionDrawable(cardsAtlas.findRegion("card_move", 3)));
-        cardTextures.put("BACK UP", new TextureRegionDrawable(cardsAtlas.findRegion("card_back_up")));
-        cardTextures.put("ROTATE LEFT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_left")));
-        cardTextures.put("ROTATE RIGHT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_right")));
-        cardTextures.put("U TURN", new TextureRegionDrawable(cardsAtlas.findRegion("card_u_turn")));
-        cardTextures.put("NULL", new TextureRegionDrawable(cardsAtlas.findRegion("card_null")));
+        loadTextures(cardsAtlas);
 
         // tiled map
         tiledMapActor = new TiledMapActor(gameModel, unitScale);
@@ -90,6 +67,26 @@ public class GameScreen extends ScreenAdapter {
         sideTable.row();
 
         // below the board: card table
+        Table cardTable = createCardTable(skin);
+
+        // root table
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+        rootTable.defaults().padTop(10).padLeft(10);
+        rootTable.add(tiledMapActor).left();
+        rootTable.add(sideTable).expandX().top().left().padLeft(50);
+        rootTable.row();
+        rootTable.add(cardTable).colspan(2).expandY().left();
+
+        stage.addActor(rootTable);
+        stage.setDebugAll(false);
+
+        music.play();
+        music.setVolume(0.2f);
+        music.setLooping(true);
+    }
+
+    private Table createCardTable(Skin skin) {
         Table cardTable = new Table();
         Label programmingSlotLabel = new Label("Programming Slots:", skin);
         Label cardHandLabel = new Label("Hand:", skin);
@@ -142,22 +139,31 @@ public class GameScreen extends ScreenAdapter {
         sideButtonsTable.add(endTurnButton).padLeft(25).left().prefWidth(100);
         sideButtonsTable.row().padTop(10);
         sideButtonsTable.row();
+        return cardTable;
+    }
 
-        // root table
-        Table rootTable = new Table();
-        rootTable.setFillParent(true);
-        rootTable.defaults().padTop(10).padLeft(10);
-        rootTable.add(tiledMapActor).left();
-        rootTable.add(sideTable).expandX().top().left().padLeft(50);
-        rootTable.row();
-        rootTable.add(cardTable).colspan(2).expandY().left();
+    private void loadTextures(TextureAtlas cardsAtlas) {
+        // load pop images
+        popImages = new SpriteBatch();
+        phasesImages = new PopImage[5];
+        phasesImages[0] = new PopImage(new Texture("PopUpImages/Phase1.png"));
+        phasesImages[1] = new PopImage(new Texture("PopUpImages/Phase2.png"));
+        phasesImages[2] = new PopImage(new Texture("PopUpImages/Phase3.png"));
+        phasesImages[3] = new PopImage(new Texture("PopUpImages/Phase4.png"));
+        phasesImages[4] = new PopImage(new Texture("PopUpImages/Phase5.png"));
+        win = new PopImage(new Texture("PopUpImages/Win.png"));
+        lose = new PopImage(new Texture("PopUpImages/lose.png"));
 
-        stage.addActor(rootTable);
-        stage.setDebugAll(false);
-
-        music.play();
-        music.setVolume(0.2f);
-        music.setLooping(true);
+        // load card textures
+        cardTextures = new HashMap<>();
+        cardTextures.put("MOVE ONE", new TextureRegionDrawable(cardsAtlas.findRegion("card_move", 1)));
+        cardTextures.put("MOVE TWO", new TextureRegionDrawable(cardsAtlas.findRegion("card_move", 2)));
+        cardTextures.put("MOVE THREE", new TextureRegionDrawable(cardsAtlas.findRegion("card_move", 3)));
+        cardTextures.put("BACK UP", new TextureRegionDrawable(cardsAtlas.findRegion("card_back_up")));
+        cardTextures.put("ROTATE LEFT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_left")));
+        cardTextures.put("ROTATE RIGHT", new TextureRegionDrawable(cardsAtlas.findRegion("card_rotate_right")));
+        cardTextures.put("U TURN", new TextureRegionDrawable(cardsAtlas.findRegion("card_u_turn")));
+        cardTextures.put("NULL", new TextureRegionDrawable(cardsAtlas.findRegion("card_null")));
     }
 
     @Override

@@ -14,8 +14,8 @@ import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
 
 public class MenuScreen extends ScreenAdapter {
-    private Stage stage;
-    private Label messageLabel;
+    private final Stage stage;
+    private final Label messageLabel;
 
     public MenuScreen(RoboRallyGame game) {
         stage = new Stage(new ScreenViewport());
@@ -28,14 +28,8 @@ public class MenuScreen extends ScreenAdapter {
         Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
         Image logo = new Image(logoTexture);
 
-        // Resolution selector
-        Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
-        Label resolutionLabel = new Label("Resolution: ", skin);
-        SelectBox<String> resolutionBox = new SelectBox<>(skin);
-        String[] resolutionOptions = {"1366x768"};
-        resolutionBox.setItems(resolutionOptions);
-
         // Map selector
+        Skin skin = new Skin(Gdx.files.internal(("Skin/shade/skin/uiskin.json")));
         SelectBox<String> mapSelectorBox = new SelectBox<>(skin);
         String[] mapSelectorOptions = {"RiskyExchange.tmx", "IslandKing.tmx", "CaptureTheFlag.tmx"};
         mapSelectorBox.setItems(mapSelectorOptions);

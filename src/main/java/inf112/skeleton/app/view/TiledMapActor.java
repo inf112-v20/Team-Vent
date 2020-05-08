@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import inf112.skeleton.app.model.GameModel;
 
 public class TiledMapActor extends Actor {
-    private OrthogonalTiledMapRenderer renderer;
+    private final OrthogonalTiledMapRenderer renderer;
 
     public TiledMapActor(GameModel gameModel, float unitScale) {
         TiledMap map = gameModel.getMapHandler().getMap();

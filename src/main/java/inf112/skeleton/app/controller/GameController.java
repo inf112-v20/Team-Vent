@@ -21,17 +21,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameController extends InputAdapter {
-    private GameModel gameModel;
-    private GameClient gameClient;
-    private Boolean multiplayer;
+    private final GameModel gameModel;
+    private final GameClient gameClient;
+    private final Boolean multiplayer;
     private String lastServerStatus = "START";
-    private int numberOfPlayers;
+    private final int numberOfPlayers;
     private boolean roundInProgress = false;
 
-    private Timer timer = new Timer(true);
+    private final Timer timer = new Timer(true);
     private Timer countDownTimer = new Timer(true);
-    private InputMultiplexer inputMultiPlexer;
-    private GameScreen gameScreen;
+    private final InputMultiplexer inputMultiPlexer;
+    private final GameScreen gameScreen;
     private int countDown;
 
     /**
