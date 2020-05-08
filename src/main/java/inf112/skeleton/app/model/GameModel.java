@@ -14,21 +14,20 @@ import java.util.stream.Collectors;
 
 public class GameModel {
 
-    private final int PHASES = 5;
-    private final LinkedList<Robot> robots;
-    private final MapHandler mapHandler;
-    private Player player;
     public final ArrayList<Deque<GameState>> cardSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> tileSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> laserSteps = new ArrayList<>();
     public final ArrayList<Deque<GameState>> endOfPhaseSteps = new ArrayList<>();
+    private final int PHASES = 5;
+    private final LinkedList<Robot> robots;
+    private final MapHandler mapHandler;
     public Timer timer = new Timer(true);
     public int delay;
     public LinkedList<Player> players;
-    private HashMap<Integer, Player> playerMap;
-
-    private GameState currentGameState;
     public GameState gameState;
+    private Player player;
+    private HashMap<Integer, Player> playerMap;
+    private GameState currentGameState;
 
     public GameModel(String map_filename, int numberOfPlayers, int playerIndex) {
         mapHandler = new MapHandler(map_filename);
@@ -73,6 +72,18 @@ public class GameModel {
 
     public Player getMyPlayer() {
         return this.player;
+    }
+
+    /**
+     * Change the player that this user controls. This allows testers to control multiple robots and to create specific
+     * scenarios for testing game mechanics in single player games. It will not work with multiplayer games.
+     */
+    public void setMyPlayer(Player player) {
+        if (!Constants.DEVELOPER_MODE) {
+            throw new IllegalStateException("Changing player mid-game is a testing feature that is only available in" +
+                    "developer mode, and should only be used for single player games");
+        }
+        this.player = player;
     }
 
     public void emptyPlayersProgrammingSlots() {
@@ -420,7 +431,6 @@ public class GameModel {
         return true;
     }
 
-
     private void doFlags(int phase, GameState gameState) {
         for (RobotState robotState : gameState.getRobotStates()) {
             if (robotState.getDead()) continue;
@@ -502,17 +512,5 @@ public class GameModel {
 
     public List<Player> getPlayers() {
         return players;
-    }
-
-    /**
-     * Change the player that this user controls. This allows testers to control multiple robots and to create specific
-     * scenarios for testing game mechanics in single player games. It will not work with multiplayer games.
-     */
-    public void setMyPlayer(Player player) {
-        if (!Constants.DEVELOPER_MODE) {
-            throw new IllegalStateException("Changing player mid-game is a testing feature that is only available in" +
-                    "developer mode, and should only be used for single player games");
-        }
-        this.player = player;
     }
 }

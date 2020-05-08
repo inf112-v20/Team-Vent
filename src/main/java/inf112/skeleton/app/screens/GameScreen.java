@@ -24,10 +24,13 @@ import inf112.skeleton.app.view.TiledMapActor;
 import java.util.HashMap;
 
 public class GameScreen extends ScreenAdapter {
-    public TiledMapActor tiledMapActor;
     private final GameModel gameModel;
     private final GameController gameController;
-
+    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
+    public TiledMapActor tiledMapActor;
+    public PopImage[] phasesImages;
+    public PopImage win;
+    public PopImage lose;
     private Viewport viewport;
     private Stage stage;
     private ImageButton[] programmingSlotButtons;
@@ -35,14 +38,8 @@ public class GameScreen extends ScreenAdapter {
     private HashMap<String, TextureRegionDrawable> cardTextures;
     private InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
-
     private SpriteBatch popImages;
-    public PopImage[] phasesImages;
-    public PopImage win;
-    public PopImage lose;
-
     private TextButton endTurnButton;
-    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/Hustle.mp3"));
 
     public GameScreen(GameModel gameModel, GameController gameController, InputMultiplexer inputMultiplexer) {
         this.gameModel = gameModel;

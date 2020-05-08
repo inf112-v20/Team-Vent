@@ -49,10 +49,6 @@ public class RobotState {
         return other2;
     }
 
-    public void setLives(int lives) {
-        this.lives = lives;
-    }
-
     public Robot getRobot() {
         return robot;
     }
@@ -104,6 +100,10 @@ public class RobotState {
 
     public int getLives() {
         return this.lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     @Override

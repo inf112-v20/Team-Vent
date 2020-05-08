@@ -43,6 +43,10 @@ public class GameClient {
         return sendAndReceiveMessage("GET_S");
     }
 
+    public void setGameStatus(String status) {
+        sendAndReceiveMessage(String.format("SET_S-%s", status));
+    }
+
     public void setProgrammingSlots(Card[] playerSlots) {
         StringBuilder message = new StringBuilder();
         for (Card card : playerSlots) {
@@ -105,10 +109,6 @@ public class GameClient {
 
     public void resetReady() {
         sendAndReceiveMessage("RESET_R");
-    }
-
-    public void setGameStatus(String status) {
-        sendAndReceiveMessage(String.format("SET_S-%s", status));
     }
 
     public void closeConnection() {

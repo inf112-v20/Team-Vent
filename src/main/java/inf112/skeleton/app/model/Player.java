@@ -14,8 +14,8 @@ public class Player {
     private final Card[] programmingSlots = new Card[5];
     private final boolean[] programmingSlotsLocked = new boolean[5];
     private final Robot robot;
-    private List<Card> deck;
     public boolean wonOrLost = false;
+    private List<Card> deck;
 
     public Player() {
         this(new Robot());

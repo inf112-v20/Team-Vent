@@ -20,6 +20,10 @@ public class Robot {
         return 3;
     }
 
+    public static int getMaxHP() {
+        return 10;
+    }
+
     public Location getLocation() {
         return this.state.getLocation();
     }
@@ -44,20 +48,16 @@ public class Robot {
         return state.copy();
     }
 
-    public static int getMaxHP() {
-        return 10;
-    }
-
     @Override
     public String toString() {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

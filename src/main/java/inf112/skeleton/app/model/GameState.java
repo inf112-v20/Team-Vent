@@ -65,6 +65,11 @@ public class GameState {
         return robotMap.values();
     }
 
+    @Override
+    public String toString() {
+        return "\n" + robotMap.values().stream().map(RobotState::toString).collect(Collectors.joining("\n"));
+    }
+
     public static class LaserBeam {
         public final Location origin;
         public final RVector2 target;
@@ -75,10 +80,5 @@ public class GameState {
             this.target = targetPosition;
             this.shooterIsRobot = shooterIsRobot;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "\n" + robotMap.values().stream().map(RobotState::toString).collect(Collectors.joining("\n"));
     }
 }

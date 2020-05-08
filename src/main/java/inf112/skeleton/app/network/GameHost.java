@@ -10,12 +10,12 @@ import java.util.Arrays;
 
 public class GameHost {
     private final ServerSocket serverSocket;
+    public String[] connectionList;
+    public Boolean[] playersDone;
     private Boolean running = true;
     private Server[] servers;
     private String gameStatus;
     private String[] playerHands;
-    public String[] connectionList;
-    public Boolean[] playersDone;
 
     public GameHost(String hostName) {
         ServerSocketHints serverHints = new ServerSocketHints();
