@@ -19,12 +19,12 @@ import java.util.TimerTask;
 
 public class LobbyScreen extends ScreenAdapter {
     private Stage stage;
-    private final Boolean isHost;
-    private final String hostAddress;
+    private Boolean isHost;
+    private String hostAddress;
     private GameClient gameClient;
-    private final List<String> playerList;
-    private final RoboRallyGame game;
-    private final Timer timer = new Timer(true);
+    private List<String> playerList;
+    private RoboRallyGame game;
+    private Timer timer = new Timer(true);
 
     public LobbyScreen(RoboRallyGame game, Boolean isHost, String hostAddress) {
         this.isHost = isHost;
