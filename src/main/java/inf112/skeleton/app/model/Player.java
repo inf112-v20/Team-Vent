@@ -17,11 +17,6 @@ public class Player {
     public boolean wonOrLost = false;
     private List<Card> deck;
 
-    public Player() {
-        this(new Robot());
-    }
-
-
     public Player(Robot robot) {
         this.robot = robot;
         deck = deckOfCards();

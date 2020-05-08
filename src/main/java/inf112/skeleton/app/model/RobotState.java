@@ -45,8 +45,7 @@ public class RobotState {
         RobotState other = this.copy();
         other.hp = 0;
         other.lives = Math.max(other.lives - 1, 0);
-        RobotState other2 = other.updateLocation(new Location(new RVector2(-1, -1), Direction.NORTH));
-        return other2;
+        return other.updateLocation(new Location(new RVector2(-1, -1), Direction.NORTH));
     }
 
     public Robot getRobot() {

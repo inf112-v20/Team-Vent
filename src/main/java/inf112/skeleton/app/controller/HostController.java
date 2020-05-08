@@ -7,11 +7,11 @@ import java.util.TimerTask;
 
 public class HostController {
     private GameClient gameClient;
-    private Timer timer = new Timer(true);
 
     public HostController(GameClient gameClient) {
         this.gameClient = gameClient;
         this.gameClient.setGameStatus("START");
+        Timer timer = new Timer(true);
         timer.schedule(listenToServer(), 0, 200);
     }
 

@@ -22,7 +22,6 @@ public class GameModel {
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
     public Timer timer = new Timer(true);
-    public int delay;
     public LinkedList<Player> players;
     public GameState gameState;
     private Player player;
@@ -38,7 +37,6 @@ public class GameModel {
         players = new LinkedList<>();
         robots = new LinkedList<>();
         playerMap = new HashMap<>();
-        delay = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
             Player p = new Player(new Robot(mapHandler.getStartLocations().get(i)));
             p.dealCards();
