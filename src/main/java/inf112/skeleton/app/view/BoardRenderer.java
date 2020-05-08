@@ -86,20 +86,20 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
         int i = 0;
         // associate robots with cells for the robot layer of the map
         for (Robot robot : gameModel.getRobots()) {
-            robotCell = new Cell().setTile(new StaticTiledMapTile(robot8FacingNorth));
+            robotCell = new Cell().setTile(new StaticTiledMapTile(robot3FacingNorth));
 
             i++;
             if (i == 2) {
-                robotCell = new Cell().setTile(new StaticTiledMapTile(robot6FacingNorth));
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot5FacingNorth));
             }
             if (i == 3) {
-                robotCell = new Cell().setTile(new StaticTiledMapTile(robot3FacingNorth));
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot6FacingNorth));
             }
             if (i == 4) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot4FacingNorth));
             }
             if (i == 5) {
-                robotCell = new Cell().setTile(new StaticTiledMapTile(robot5FacingNorth));
+                robotCell = new Cell().setTile(new StaticTiledMapTile(robot8FacingNorth));
             }
             if (i == 6) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robotFacingNorth));
