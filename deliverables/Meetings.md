@@ -80,6 +80,13 @@ Decided on which requirements and user stories we managed to complete in this la
 ### 07.05.2020
 
 **Meeting notes:**
-Went through our complete list of user stories one last time. Played the game a couple of times and fixed some of the bugs that came up through the game. We also went through all our code in IntelliJ and removed unused code. Decided to meet one quick last time before the submission tomorrow.
+Went through our complete list of user stories one last time. Played the game a couple of times and fixed some of the bugs that came up through the game. Decided to meet one quick last time before the submission tomorrow.
+
+**Attendance:** Everyone
+
+### 08.05.2020
+
+**Meeting notes:**
+Last meeting. Played the game a couple of times and fixed some bugs. Went through all our code in IntelliJ and removed unused code, then reformatted all of the code.
 
 **Attendance:** Everyone
