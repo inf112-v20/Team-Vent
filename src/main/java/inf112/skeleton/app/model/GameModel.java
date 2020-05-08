@@ -26,7 +26,6 @@ public class GameModel {
     public int delay;
     public LinkedList<Player> players;
     private HashMap<Integer, Player> playerMap;
-    private int intervalTime;
 
     private GameState currentGameState;
     public GameState gameState;
@@ -36,7 +35,6 @@ public class GameModel {
         if (mapHandler.getStartLocations().size() < numberOfPlayers) {
             throw new IllegalStateException(String.format("There are not enough starting locations for %d players", numberOfPlayers));
         }
-        intervalTime = Constants.INTERVAL_TIME;
         // initialize players and robots
         players = new LinkedList<>();
         robots = new LinkedList<>();
@@ -105,12 +103,12 @@ public class GameModel {
                 Robot robot = player.getRobot();
                 doCard(i, gameState, gameState.getState(robot), player);
                 gameState = updateLastState(gameState, cardSteps.get(i));
-                doBorders(gameState);
+                doBordersAndHoles(gameState);
             }
 
             doTiles(i, gameState);
             gameState = updateLastState(gameState, tileSteps.get(i));
-            doBorders(gameState);
+            doBordersAndHoles(gameState);
 
             doLasers(i, gameState);
             gameState = updateLastState(gameState, laserSteps.get(i));
@@ -171,9 +169,11 @@ public class GameModel {
     /**
      * Edit a game state so that all robots that are outside the board die
      */
-    private void doBorders(GameState gameState) {
+    private void doBordersAndHoles(GameState gameState) {
         for (RobotState state : gameState.getRobotStates()) {
-            if (!state.getDead() && mapHandler.outOfBounds(state.getLocation())) {
+            TileType currentTileType = mapHandler.getTileType(state.getLocation().getPosition(), Constants.TILE_LAYER);
+            if ((!state.getDead() && mapHandler.outOfBounds(state.getLocation()))
+                    || TileType.HOLE.equals(currentTileType)) {
                 gameState.edit(state.updateDead());
             }
         }
@@ -236,15 +236,19 @@ public class GameModel {
         switch (card) {
             case MOVE_THREE:
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
+                doBordersAndHoles(updateLastState(initialState, cardSteps.get(phaseNumber)));
                 initialState = updateLastState(initialState, cardSteps.get(phaseNumber));
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE_TWO:
+                if (robotState.getDead()) return;
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
+                doBordersAndHoles(updateLastState(initialState, cardSteps.get(phaseNumber)));
                 initialState = updateLastState(initialState, cardSteps.get(phaseNumber));
                 robotState = initialState.getState(robotState.getRobot());
                 // no break
             case MOVE_ONE:
+                if (robotState.getDead()) return;
                 doMovement(phaseNumber, initialState, robotState, cardSteps, robotState.getLocation().getDirection());
                 break;
             case BACK_UP:

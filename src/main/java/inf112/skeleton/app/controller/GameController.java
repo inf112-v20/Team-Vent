@@ -46,7 +46,6 @@ public class GameController extends InputAdapter {
         inputMultiPlexer = new InputMultiplexer();
         inputMultiPlexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiPlexer);
-        intervalTime = Constants.INTERVAL_TIME;
 
         gameScreen = new GameScreen(gameModel, this, inputMultiPlexer);
         game.setScreen(gameScreen);
