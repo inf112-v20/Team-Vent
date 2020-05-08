@@ -1,7 +1,5 @@
 package inf112.skeleton.app.view;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -91,25 +89,25 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
             robotCell = new Cell().setTile(new StaticTiledMapTile(robot8FacingNorth));
 
             i++;
-            if (i ==2){
+            if (i == 2) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot6FacingNorth));
             }
-            if (i == 3){
+            if (i == 3) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot3FacingNorth));
             }
-            if (i==4){
+            if (i == 4) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot4FacingNorth));
             }
-            if (i==5) {
+            if (i == 5) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot5FacingNorth));
             }
-            if (i==6){
+            if (i == 6) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robotFacingNorth));
             }
-            if (i==7){
+            if (i == 7) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot7FacingNorth));
             }
-            if (i==8){
+            if (i == 8) {
                 robotCell = new Cell().setTile(new StaticTiledMapTile(robot2FacingNorth));
             }
             robotsToCellsHashMap.put(robot, robotCell);
@@ -142,7 +140,7 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
             } else if (beam.origin.getDirection() == Direction.NORTH) {
                 targetCell = VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH;
                 shooterCell = beam.shooterIsRobot ? VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH : VERTICAL_LASER_TILE_CELL;
-            } else { // beam.origin.getDirection() == Direction.SOUTH
+            } else {
                 targetCell = VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH;
                 shooterCell = beam.shooterIsRobot ? VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH : VERTICAL_LASER_TILE_CELL;
             }
@@ -194,5 +192,4 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
             throw new IllegalArgumentException("Unexpected fifth direction");
         }
     }
-
 }

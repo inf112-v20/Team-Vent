@@ -19,28 +19,28 @@ public class Server implements Runnable {
         gameHost.connectionList[index] = clientAddress;
     }
 
-    private String[] parseMessage(String message){
+    private String[] parseMessage(String message) {
         return message.split("-");
     }
 
-    private String ping(){
+    private String ping() {
         return "PONG";
     }
 
-    private String getConnectedPlayers(){
+    private String getConnectedPlayers() {
         StringBuilder response = new StringBuilder();
-        for(String connection : gameHost.connectionList){
+        for (String connection : gameHost.connectionList) {
             response.append(connection);
             response.append(" -");
         }
         return response.toString();
     }
 
-    private String getNumberOfPlayers(){
+    private String getNumberOfPlayers() {
         return Integer.toString(gameHost.numberConnectedPlayers());
     }
 
-    private String getGameStatus(){
+    private String getGameStatus() {
         return gameHost.getGameStatus();
     }
 
@@ -49,46 +49,48 @@ public class Server implements Runnable {
         return "";
     }
 
-    private String setHand(String hand){
+    private String setHand(String hand) {
         gameHost.setPlayerHand(hand, index);
         return "";
     }
 
-    private String getHands(){
+    private String getHands() {
         StringBuilder handsString = new StringBuilder();
-        for (String hand : gameHost.getPlayerHands()){
+        for (String hand : gameHost.getPlayerHands()) {
             handsString.append(hand);
             handsString.append("-");
         }
         return handsString.toString();
     }
 
-    private Boolean allReady(){
+    private Boolean allReady() {
         return gameHost.numberPlayersDone() >= gameHost.numberConnectedPlayers();
     }
 
-    private String setReady(){
+    private String setReady() {
         gameHost.setDone(index);
         return "";
     }
 
-    private String resetReady(){
+    private String resetReady() {
         gameHost.unreadyAll();
         return "";
     }
-     public void closeConnection(){
+
+    public void closeConnection() {
         gameHost.connectionList[index] = " ";
         connectedSocket.dispose();
         Thread.currentThread().interrupt();
         connected = false;
     }
 
-    private void stopHost(){
+    private void stopHost() {
         gameHost.stop();
         closeConnection();
     }
+
     @Override
-    public void run()  {
+    public void run() {
         InputStream inputStream = connectedSocket.getInputStream();
         BufferedReader bufferedInputStream = new BufferedReader(new InputStreamReader(inputStream));
         DataOutputStream outputStream = new DataOutputStream(connectedSocket.getOutputStream());
@@ -99,7 +101,7 @@ public class Server implements Runnable {
                 String[] commands = parseMessage(message);
                 String command = commands[0];
                 String response;
-                switch (command){
+                switch (command) {
                     case "PING":
                         response = ping();
                         break;
@@ -147,9 +149,9 @@ public class Server implements Runnable {
                 }
                 outputStream.writeBytes(response + "\r");
                 outputStream.flush();
-            } catch (SocketException e){
+            } catch (SocketException e) {
                 closeConnection();
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }

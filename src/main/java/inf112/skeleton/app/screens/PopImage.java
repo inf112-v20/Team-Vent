@@ -16,7 +16,7 @@ public class PopImage {
         decreaseTransparancy = false;
     }
 
-    public void setShow (boolean show) {
+    public void setShow(boolean show) {
         this.show = show;
         if (!show) {
             sprite.setAlpha(0f);
@@ -24,13 +24,16 @@ public class PopImage {
         }
     }
 
-    public boolean getShow() {return show;}
+    public boolean getShow() {
+        return show;
+    }
 
     public Sprite getSprite() {
         if (sprite.getColor().a <= 0.98f) {
             sprite.setAlpha(sprite.getColor().a + 0.02f);
+        } else {
+            decreaseTransparancy = true;
         }
-        else {decreaseTransparancy = true;}
         if (decreaseTransparancy) {
             sprite.setAlpha(sprite.getColor().a - 0.03f);
         }

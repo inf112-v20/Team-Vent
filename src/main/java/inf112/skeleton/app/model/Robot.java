@@ -3,7 +3,6 @@ package inf112.skeleton.app.model;
 import inf112.skeleton.app.model.board.Direction;
 import inf112.skeleton.app.model.board.Location;
 
-
 public class Robot {
     private String name = "Anonymous";
     private RobotState state;

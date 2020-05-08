@@ -7,8 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.RoboRallyGame;
@@ -16,7 +14,8 @@ import inf112.skeleton.app.controller.GameController;
 import inf112.skeleton.app.network.GameClient;
 import inf112.skeleton.app.network.GameHost;
 
-import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LobbyScreen extends ScreenAdapter {
     private Stage stage;
@@ -122,8 +121,8 @@ public class LobbyScreen extends ScreenAdapter {
 
     private void updatePlayerList() {
         String[] players = gameClient.getPlayersInLobby();
-        if (players == null){
-            players = new String[] {"","","","","","","",""};
+        if (players == null) {
+            players = new String[]{"", "", "", "", "", "", "", ""};
         }
         playerList.setItems(players);
     }
