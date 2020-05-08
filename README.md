@@ -37,6 +37,8 @@ To play **Multiplayer:**
 
 -  When all the players are in the lobby, the host can press the "Start Game" button
 
+-  The priority of who goes first, changes simillarly of how roboralley the board game at UiB is. first player first, first round then    next round second player first and first player last etc.
+
 (For testing purposes, 127.0.0.1 can be used to test the mutiplayer by running the program in parallel with one host and up to 7 other players)
 
 **Online Multiplayer**
