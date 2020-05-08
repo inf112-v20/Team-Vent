@@ -12,8 +12,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 public class GameClient {
-    private final BufferedReader input;
-    private final PrintWriter output;
+    private BufferedReader input;
+    private PrintWriter output;
 
     public GameClient(String hostName) {
         SocketHints socketHints = new SocketHints();
