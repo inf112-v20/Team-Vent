@@ -57,7 +57,7 @@ public class GameModel {
             endOfPhaseSteps.add(new LinkedList<>());
         }
         // legacy code
-        String[] names = {"Blue", "Yellow", "Red", "Green", "Orange", "Pink", "Golden", "Black" };
+        String[] names = {"Black", "Pink", "Red", "Green", "Orange", "Blue", "Golden", "Yellow" };
         for (int i = 0; i < names.length && i < robots.size(); i++) {
             robots.get(i).setName(names[i]);
         }
