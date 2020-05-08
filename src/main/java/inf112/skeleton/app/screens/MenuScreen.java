@@ -14,8 +14,8 @@ import inf112.skeleton.app.RoboRallyGame;
 import inf112.skeleton.app.controller.GameController;
 
 public class MenuScreen extends ScreenAdapter {
-    private Stage stage;
-    private Label messageLabel;
+    private final Stage stage;
+    private final Label messageLabel;
 
     public MenuScreen(RoboRallyGame game) {
         stage = new Stage(new ScreenViewport());

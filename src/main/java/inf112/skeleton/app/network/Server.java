@@ -6,9 +6,9 @@ import java.io.*;
 import java.net.SocketException;
 
 public class Server implements Runnable {
-    private Socket connectedSocket;
-    private GameHost gameHost;
-    private int index;
+    private final Socket connectedSocket;
+    private final GameHost gameHost;
+    private final int index;
     private boolean connected = true;
 
     public Server(GameHost gameHost, Socket connectedSocket, int index) {

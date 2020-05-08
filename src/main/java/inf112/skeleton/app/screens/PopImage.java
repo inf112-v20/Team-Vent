@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class PopImage {
-    private Sprite sprite;
+    private final Sprite sprite;
     private Boolean show;
     private Boolean decreaseTransparancy;
 

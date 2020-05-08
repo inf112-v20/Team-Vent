@@ -9,7 +9,7 @@ public class RobotState {
     private Location saveLocation;
     private Location location;
     private int hp;
-    private Robot robot;
+    private final Robot robot;
     private int lives;
 
     public RobotState(Robot robot, Location location, int hp, int lives, int capturedFlags, Location saveLocation) {

@@ -21,7 +21,7 @@ public class GameModel {
     private final int PHASES = 5;
     private final LinkedList<Robot> robots;
     private final MapHandler mapHandler;
-    public Timer timer = new Timer(true);
+    public final Timer timer = new Timer(true);
     public LinkedList<Player> players;
     public GameState gameState;
     private Player player;

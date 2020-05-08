@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameState {
-    private HashMap<Robot, RobotState> robotMap;
+    private final HashMap<Robot, RobotState> robotMap;
     private List<LaserBeam> laserBeams = new LinkedList<>();
 
     public GameState() {
@@ -73,7 +73,7 @@ public class GameState {
     public static class LaserBeam {
         public final Location origin;
         public final RVector2 target;
-        public boolean shooterIsRobot;
+        public final boolean shooterIsRobot;
 
         public LaserBeam(Location shooterLocation, RVector2 targetPosition, boolean shooterIsRobot) {
             this.origin = shooterLocation;

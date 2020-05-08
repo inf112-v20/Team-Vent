@@ -27,8 +27,8 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
     private final Cell VERTICAL_LASER_TILE_CELL_SHIFTED_NORTH;
     private final Cell VERTICAL_LASER_TILE_CELL_SHIFTED_SOUTH;
     private IdentityHashMap<Robot, Cell> robotsToCellsHashMap;
-    private TiledMapTileLayer robotLayer;
-    private TiledMapTileLayer laserLayer;
+    private final TiledMapTileLayer robotLayer;
+    private final TiledMapTileLayer laserLayer;
 
     public BoardRenderer(GameModel gameModel, float unitScale) {
         super(gameModel.getMapHandler().getMap(), unitScale);

@@ -6,7 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HostController {
-    private GameClient gameClient;
+    private final GameClient gameClient;
 
     public HostController(GameClient gameClient) {
         this.gameClient = gameClient;

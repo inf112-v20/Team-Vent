@@ -31,12 +31,12 @@ public class GameScreen extends ScreenAdapter {
     public PopImage[] phasesImages;
     public PopImage win;
     public PopImage lose;
-    private Viewport viewport;
-    private Stage stage;
+    private final Viewport viewport;
+    private final Stage stage;
     private ImageButton[] programmingSlotButtons;
     private ImageButton[] handSlotButtons;
     private HashMap<String, TextureRegionDrawable> cardTextures;
-    private InputMultiplexer inputMultiplexer;
+    private final InputMultiplexer inputMultiplexer;
     private Label lockedInLabel;
     private SpriteBatch popImages;
     private TextButton endTurnButton;

@@ -15,8 +15,8 @@ import java.util.List;
 
 public class StatsTable extends Table {
     private final Skin skin;
-    private GameModel gameModel;
-    private HashMap<Robot, Table> robotTables;
+    private final GameModel gameModel;
+    private final HashMap<Robot, Table> robotTables;
 
     public StatsTable(GameModel gameModel, Skin skin) {
         this.skin = skin;
@@ -48,8 +48,8 @@ public class StatsTable extends Table {
         private final Label flagsLabel;
         private final Label hpLabel;
         private final Label livesLabel;
-        private ProgressBar hpBar;
-        private Robot robot;
+        private final ProgressBar hpBar;
+        private final Robot robot;
 
         public RobotTable(Robot robot) {
             this.robot = robot;
