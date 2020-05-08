@@ -197,7 +197,7 @@ public class GameModel {
             Location respawn = saved;
             // if the saved location is not available, use the closest available location
             if (!available(gameState, saved.getPosition())) {
-                Set<RVector2> candidates = new HashSet<>();
+                List<RVector2> candidates = new LinkedList<>();
                 for (int dx = -2; dx <= 2; dx++) {
                     for (int dy = -2; dy <= 2; dy++) {
                         candidates.add(saved.getPosition().translate(dx, dy));
