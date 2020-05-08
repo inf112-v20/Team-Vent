@@ -130,7 +130,8 @@ public class BoardRenderer extends OrthogonalTiledMapRenderer {
             updateTilesBetweenShooterAndTarget(beam);
             // update the shooter and target tiles. shift the tiles so that the laser appears to come out of the shooter
             // and into the target
-            Cell shooterCell, targetCell;
+            Cell shooterCell;
+            Cell targetCell;
             if (beam.origin.getDirection() == Direction.WEST) {
                 targetCell = HORIZONTAL_LASER_TILE_CELL_SHIFTED_EAST;
                 shooterCell = beam.shooterIsRobot ? HORIZONTAL_LASER_TILE_CELL_SHIFTED_WEST : HORIZONTAL_LASER_TILE_CELL;
