@@ -55,7 +55,7 @@ public class GameModel {
             endOfPhaseSteps.add(new LinkedList<>());
         }
         // legacy code
-        String[] names = {"Black", "Pink", "Red", "Green", "Orange", "Blue", "Golden", "Yellow" };
+        String[] names = {"Black", "Pink", "Red", "Green", "Orange", "Blue", "Golden", "Yellow"};
         for (int i = 0; i < names.length && i < robots.size(); i++) {
             robots.get(i).setName(names[i]);
         }
@@ -67,7 +67,7 @@ public class GameModel {
         return this.mapHandler;
     }
 
-    public Player getPlayer(int index){
+    public Player getPlayer(int index) {
         return playerMap.get(index);
     }
 
@@ -75,8 +75,8 @@ public class GameModel {
         return this.player;
     }
 
-    public void emptyPlayersProgrammingSlots(){
-        for (Player player : players){
+    public void emptyPlayersProgrammingSlots() {
+        for (Player player : players) {
             player.clearProgrammingSlots();
         }
     }
@@ -149,7 +149,6 @@ public class GameModel {
             laserBeamState.addLaserBeam(origin, toShoot.getLocation().getPosition(),
                     !mapHandler.getLasersLocations().contains(origin));
         }
-
 
         for (Location origin : mapHandler.getLasersLocations()) {
             RobotState toShoot = mapHandler.robotInLineOfVision(origin, initialState, true);
@@ -274,7 +273,9 @@ public class GameModel {
     private boolean doMove(GameState initialState, RobotState robotState, Direction dir) {
 
         Location locWithDir = new Location(robotState.getLocation().getPosition().cpy(), dir);
-        if (mapHandler.wallInPath(locWithDir)) {return false;}
+        if (mapHandler.wallInPath(locWithDir)) {
+            return false;
+        }
 
         Location pointOfContention = robotState.getLocation().moveDirection(dir);
 
@@ -293,7 +294,7 @@ public class GameModel {
 
     private void doMovement(int phaseNumber, GameState state, RobotState robotState, ArrayList<Deque<GameState>> xSteps, Direction dir) {
         GameState initialState = state.copy();
-        if(doMove(initialState, robotState, dir)) {
+        if (doMove(initialState, robotState, dir)) {
             xSteps.get(phaseNumber).add(initialState);
         }
 
@@ -301,12 +302,12 @@ public class GameModel {
 
     private void doTiles(int phaseNumber, GameState initialState) {
         GameState state = initialState.copy();
-        if (doConveyorMovement(state,true)) {
+        if (doConveyorMovement(state, true)) {
             tileSteps.get(phaseNumber).add(state);
             state = tileSteps.get(phaseNumber).getLast().copy();
         }
         boolean tilesActivated = false;
-        for (Robot robot: robots) {
+        for (Robot robot : robots) {
             if (doOtherTiles(state, state.getState(robot))) {
                 tilesActivated = true;
             }
@@ -344,9 +345,9 @@ public class GameModel {
         for (Robot robot : robots) {
             moveChecked.put(robot, false);
         }
-        for (Robot robot: robots) {
+        for (Robot robot : robots) {
             if (doConveyorMove(state, state.getState(robot), moveChecked, onlyExpress))
-            somethingHappened = true;
+                somethingHappened = true;
         }
         return somethingHappened;
     }
@@ -371,7 +372,7 @@ public class GameModel {
                     TileType otherRobotTileType = mapHandler.getTileType(state.getLocation().getPosition(), Constants.TILE_LAYER);
                     Direction otherRobotTileDirection = mapHandler.getDirection(state.getLocation().getPosition(), Constants.TILE_LAYER);
                     if ((TileType.CONVEYOR_EXPRESS.equals(otherRobotTileType) || (TileType.CONVEYOR_NORMAL.equals(otherRobotTileType) && !onlyExpress))
-                    && otherRobotTileDirection.equals(currentTileDirection.opposite())) {
+                            && otherRobotTileDirection.equals(currentTileDirection.opposite())) {
                         moveChecked.put(robotState.getRobot(), true);
                         return false;
                     }
@@ -398,14 +399,14 @@ public class GameModel {
         return false;
     }
 
-    private boolean finalizeMovementWithRotation (GameState initialState, RobotState robotState, Direction currentTileDirection) {
+    private boolean finalizeMovementWithRotation(GameState initialState, RobotState robotState, Direction currentTileDirection) {
 
         Location targetLocation = robotState.getLocation().moveDirection(currentTileDirection);
         TileType targetTileType = mapHandler.getTileType(targetLocation.getPosition(), Constants.TILE_LAYER);
         Direction targetTileDirection = mapHandler.getDirection(targetLocation.getPosition(), Constants.TILE_LAYER);
 
         if ((TileType.CONVEYOR_EXPRESS.equals(targetTileType) || (TileType.CONVEYOR_NORMAL.equals(targetTileType)))
-        && !targetTileDirection.equals(currentTileDirection)) {
+                && !targetTileDirection.equals(currentTileDirection)) {
             if (targetTileDirection.equals(currentTileDirection.left())) {
                 Location newLoc = new Location(targetLocation.getPosition(), robotState.getLocation().getDirection().left());
                 initialState.edit(robotState.updateLocation(newLoc));
@@ -450,8 +451,7 @@ public class GameModel {
                     }
                 }
                 return true;
-            }
-            else if (robotState.getLives() == 0) {
+            } else if (robotState.getLives() == 0) {
                 return true;
             }
         }

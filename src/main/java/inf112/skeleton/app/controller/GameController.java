@@ -33,7 +33,6 @@ public class GameController extends InputAdapter {
     private InputMultiplexer inputMultiPlexer;
     private GameScreen gameScreen;
     private int countDown;
-    private int intervalTime;
 
     /**
      * Single player constructor
@@ -51,7 +50,6 @@ public class GameController extends InputAdapter {
         game.setScreen(gameScreen);
         countDown = Constants.TIME_LIMIT;
         scheduleCountdowns();
-
 
         // this modification allows a tester to control any robot. you can switch perspective by clicking on a tile
         // with a robot
@@ -90,7 +88,7 @@ public class GameController extends InputAdapter {
         Gdx.input.setInputProcessor(inputMultiPlexer);
         startServerListener();
         gameClient.setReady(); // lets the server know that this client has started the game
-        if (isHost){
+        if (isHost) {
             new HostController(gameClient);
         }
 
@@ -98,7 +96,7 @@ public class GameController extends InputAdapter {
         scheduleCountdowns();
     }
 
-    private TimerTask listenToServer(){
+    private TimerTask listenToServer() {
         return new TimerTask() {
             @Override
             public void run() {
@@ -107,37 +105,40 @@ public class GameController extends InputAdapter {
         };
     }
 
-    private TimerTask endOfTurn(){
+    private TimerTask endOfTurn() {
         return new TimerTask() {
             @Override
             public void run() {
                 gameScreen.unlockCards();
                 gameModel.emptyPlayersProgrammingSlots();
-                if (multiplayer){
+                if (multiplayer) {
                     gameClient.setReady();
                     gameModel.getMyPlayer().dealCards();
+                } else {
+                    gameModel.generateCardHands();
                 }
-                else { gameModel.generateCardHands();}
                 roundInProgress = false;
                 scheduleCountdowns();
-                if (gameModel.getMyPlayer().wonOrLost){
-                    lockInCards();	                    timer.schedule(new TimerTask() {
+                if (gameModel.getMyPlayer().wonOrLost) {
+                    lockInCards();
+                    timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
                             lockInCards();
                         }
-                    }, 5000);}
+                    }, 5000);
+                }
             }
         };
     }
 
-    private void startServerListener(){
+    private void startServerListener() {
         timer.schedule(listenToServer(), 0, 200);
     }
 
-    private void actOnGameStatus(){
+    private void actOnGameStatus() {
         String status = gameClient.getGameStatus();
-        if (status.equals(lastServerStatus)){ // avoids executing on same server status more than once
+        if (status.equals(lastServerStatus)) { // avoids executing on same server status more than once
             return;
         }
         lastServerStatus = status;
@@ -147,7 +148,7 @@ public class GameController extends InputAdapter {
     public void lockInCards() {
         gameScreen.lockCards();
         if (!Constants.DEVELOPER_MODE) gameModel.getMyPlayer().fillEmptySlots();
-        if (!multiplayer){
+        if (!multiplayer) {
             startRound();
             return;
         }
@@ -173,7 +174,7 @@ public class GameController extends InputAdapter {
         return new TimerTask() {
             @Override
             public void run() {
-                gameScreen.setEndTurnButtonText("DONE ("+ count + ")");
+                gameScreen.setEndTurnButtonText("DONE (" + count + ")");
             }
         };
     }
@@ -187,7 +188,7 @@ public class GameController extends InputAdapter {
         };
     }
 
-    private void startRound(){
+    private void startRound() {
         countDownTimer.cancel();
         countDownTimer = new Timer(true);
         roundInProgress = true;
@@ -224,14 +225,13 @@ public class GameController extends InputAdapter {
         }
 
         if (gameModel.checkWinnerOrLoser()) {
-            if(gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
+            if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getCapturedFlags() == gameModel.getMapHandler().getNumberOfFlags()) {
                 timer.schedule(toggleWinOrLosePopUp(true, true), delay * 500);
-                timer.schedule(toggleWinOrLosePopUp(true, false), (delay+4) * 500);
+                timer.schedule(toggleWinOrLosePopUp(true, false), (delay + 4) * 500);
                 gameModel.getMyPlayer().wonOrLost = true;
-            }
-            else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
+            } else if (gameModel.gameState.getState(gameModel.getMyPlayer().getRobot()).getLives() == 0 && !gameModel.getMyPlayer().wonOrLost) {
                 timer.schedule(toggleWinOrLosePopUp(false, true), delay * 500);
-                timer.schedule(toggleWinOrLosePopUp(false, false), (delay+4) * 500);
+                timer.schedule(toggleWinOrLosePopUp(false, false), (delay + 4) * 500);
                 gameModel.getMyPlayer().wonOrLost = true;
             }
             delay += 6;
@@ -268,7 +268,7 @@ public class GameController extends InputAdapter {
     }
 
     private TimerTask togglePhasePopUp(int phase, boolean show) {
-        return  new TimerTask() {
+        return new TimerTask() {
             @Override
             public void run() {
                 gameScreen.phasesImages[phase].setShow(show);
@@ -288,9 +288,4 @@ public class GameController extends InputAdapter {
             }
         };
     }
-
-    public boolean gameIsMultiplayer() {
-        return multiplayer;
-    }
-
 }

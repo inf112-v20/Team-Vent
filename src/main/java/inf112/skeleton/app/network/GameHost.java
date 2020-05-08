@@ -31,7 +31,7 @@ public class GameHost {
         Arrays.fill(connectionList, " ");
         Arrays.fill(playerHands, "*");
         Arrays.fill(playersDone, false);
-        while(running){
+        while (running) {
             // Waits until a new connection is established
             Socket connectedSocket;
             synchronized (serverSocket) {
@@ -46,15 +46,15 @@ public class GameHost {
                 }
             }
 
-            for(int i = 0; i < 8; i++){
-                if(connectionList[i].equals(" ")){
+            for (int i = 0; i < 8; i++) {
+                if (connectionList[i].equals(" ")) {
                     Server server = new Server(this, connectedSocket, i);
                     Thread thread = new Thread(server);
                     servers[i] = server;
                     thread.setName(String.format("Server %d", i));
                     thread.start();
                     break;
-                } else if (i == 7){
+                } else if (i == 7) {
                     System.out.println("Refused connection. Lobby is full");
                 }
             }
@@ -70,7 +70,7 @@ public class GameHost {
         this.gameStatus = gameStatus;
     }
 
-    public void setPlayerHand(String hand, int playerIndex){
+    public void setPlayerHand(String hand, int playerIndex) {
         playerHands[playerIndex] = hand;
     }
 
@@ -78,9 +78,9 @@ public class GameHost {
         return playerHands;
     }
 
-    public int numberPlayersDone(){
+    public int numberPlayersDone() {
         int players = 0;
-        for (Boolean done : playersDone){
+        for (Boolean done : playersDone) {
             if (done) {
                 players++;
             }
@@ -88,27 +88,27 @@ public class GameHost {
         return players;
     }
 
-    public void setDone(int playerIndex){
+    public void setDone(int playerIndex) {
         playersDone[playerIndex] = true;
     }
 
-    public void unreadyAll(){
+    public void unreadyAll() {
         Arrays.fill(playersDone, false);
     }
 
-    public int numberConnectedPlayers(){
+    public int numberConnectedPlayers() {
         int n = 0;
-        for (String player : connectionList){
-            if (!" ".equals(player)){
+        for (String player : connectionList) {
+            if (!" ".equals(player)) {
                 n++;
             }
         }
         return n;
     }
 
-    public void stop(){
-        for(Server s : servers){
-            if(s != null){
+    public void stop() {
+        for (Server s : servers) {
+            if (s != null) {
                 s.closeConnection();
             }
         }

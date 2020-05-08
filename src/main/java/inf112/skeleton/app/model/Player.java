@@ -3,7 +3,10 @@ package inf112.skeleton.app.model;
 
 import inf112.skeleton.app.model.cards.Card;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Player {
 
@@ -70,7 +73,7 @@ public class Player {
 
         int hp = robot.getState().getHp();
         for (int i = 5; i >= hp && i >= 1; i--) {
-            programmingSlotsLocked[i-1] = true;
+            programmingSlotsLocked[i - 1] = true;
         }
         for (int i = 0; i < programmingSlots.length; i++) {
             if (!programmingSlotsLocked[i]) {
@@ -114,13 +117,13 @@ public class Player {
     public void fillEmptySlots() {
         for (Card card : programmingSlots) {
             if (card == null) {
-                int randomPick = (int)(Math.random()*9);
+                int randomPick = (int) (Math.random() * 9);
                 while (true) {
                     if (getCardinHand(randomPick) != null) {
                         placeCardFromHandToSlot(randomPick);
                         break;
                     }
-                    randomPick = (randomPick + 1)%9;
+                    randomPick = (randomPick + 1) % 9;
                 }
             }
         }

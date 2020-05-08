@@ -4,9 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
-import inf112.skeleton.app.model.cards.*;
+import inf112.skeleton.app.model.cards.Card;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 public class GameClient {
     private BufferedReader input;
@@ -21,27 +24,29 @@ public class GameClient {
         input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public String[] getPlayersInLobby(){
+    public String[] getPlayersInLobby() {
         String response = sendAndReceiveMessage("REF_P");
         return response.split("-");
     }
 
-    public int getIndex(){
+    public int getIndex() {
         String response = sendAndReceiveMessage("GET_I");
         return Integer.parseInt(response);
     }
-    public int getNumberOfPlayers(){
+
+    public int getNumberOfPlayers() {
         String response = sendAndReceiveMessage("GET_N");
         return Integer.parseInt(response);
     }
+
     public String getGameStatus() {
         return sendAndReceiveMessage("GET_S");
     }
 
-    public void setProgrammingSlots(Card[] playerSlots){
+    public void setProgrammingSlots(Card[] playerSlots) {
         StringBuilder message = new StringBuilder();
-        for (Card card : playerSlots){
-            if (card == null){
+        for (Card card : playerSlots) {
+            if (card == null) {
                 message.append("_");
             } else {
                 message.append(card.toString());
@@ -51,17 +56,17 @@ public class GameClient {
         sendAndReceiveMessage("SET_H-" + message.toString());
     }
 
-    public Card[][] getPlayerCards(){
+    public Card[][] getPlayerCards() {
         String response = sendAndReceiveMessage("GET_H");
         Card[][] allCardSlots = new Card[8][5];
         String[] handsStringArray = response.split("-");
-        for (int i = 0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             Card[] cardSlots = new Card[5];
             String[] cardsStringArray = handsStringArray[i].split(",");
-            if (cardsStringArray[0].equals("*")){ // * indicates all empty programming slots
+            if (cardsStringArray[0].equals("*")) { // * indicates all empty programming slots
                 continue;
             }
-            for (int j = 0; j < 5; j++){
+            for (int j = 0; j < 5; j++) {
                 cardSlots[j] = stringToCard(cardsStringArray[j]);
             }
             allCardSlots[i] = cardSlots;
@@ -69,8 +74,8 @@ public class GameClient {
         return allCardSlots;
     }
 
-    public Card stringToCard(String cardString){
-        switch (cardString){
+    public Card stringToCard(String cardString) {
+        switch (cardString) {
             case "BACK UP":
                 return Card.BACK_UP;
             case "MOVE ONE":
@@ -94,11 +99,11 @@ public class GameClient {
         sendAndReceiveMessage("SET_R");
     }
 
-    public Boolean getReady(){
+    public Boolean getReady() {
         return Boolean.parseBoolean(sendAndReceiveMessage("GET_R"));
     }
 
-    public void resetReady(){
+    public void resetReady() {
         sendAndReceiveMessage("RESET_R");
     }
 
@@ -106,26 +111,26 @@ public class GameClient {
         sendAndReceiveMessage(String.format("SET_S-%s", status));
     }
 
-    public void closeConnection(){
+    public void closeConnection() {
         sendAndReceiveMessage("STOP_C");
     }
 
-    public void stopHost(){
+    public void stopHost() {
         sendAndReceiveMessage("STOP_H");
     }
 
-    public String sendAndReceiveMessage(String message){
+    public String sendAndReceiveMessage(String message) {
         output.println(message);
         String response;
-        try{
+        try {
             response = input.readLine();
-        } catch (java.net.SocketException e){
+        } catch (java.net.SocketException e) {
             response = "CLOSE";
         } catch (IOException e) {
             response = "CLOSE";
             e.printStackTrace();
         }
-        if (response == null){
+        if (response == null) {
             response = "CLOSE";
         }
         return response;

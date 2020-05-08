@@ -13,10 +13,9 @@ public class HostController {
         this.gameClient = gameClient;
         this.gameClient.setGameStatus("START");
         timer.schedule(listenToServer(), 0, 200);
-
     }
 
-    private TimerTask listenToServer(){
+    private TimerTask listenToServer() {
         return new TimerTask() {
             @Override
             public void run() {
@@ -25,14 +24,14 @@ public class HostController {
         };
     }
 
-    public void actOnAllReady(){
+    public void actOnAllReady() {
         Boolean allReady = gameClient.getReady();
-        if (!allReady){
+        if (!allReady) {
             return;
         }
         gameClient.resetReady();
         String status = gameClient.getGameStatus();
-        switch (status){
+        switch (status) {
             case "START":
                 startProgrammingPhase();
                 break;
@@ -46,11 +45,12 @@ public class HostController {
                 break;
         }
     }
-    public void startProgrammingPhase(){
+
+    public void startProgrammingPhase() {
         gameClient.setGameStatus("PROGRAMMING");
     }
 
-    public void endProgrammingPhase(){
+    public void endProgrammingPhase() {
         gameClient.setGameStatus("START ROUND");
     }
 }

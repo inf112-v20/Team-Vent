@@ -117,10 +117,6 @@ public class MapHandler {
         }
     }
 
-    public TiledMapTileLayer.Cell getTileCell(RVector2 vector, String layerName) {
-        return getTileCell(vector.getX(), vector.getY(), layerName);
-    }
-
     public Direction getDirection(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
         try {
@@ -137,10 +133,6 @@ public class MapHandler {
     public String getTileTypeString(int x, int y, String layerName) {
         TiledMapTileLayer.Cell cell = getTileCell(x, y, layerName);
         return TileType.getType(cell);
-    }
-
-    public String getTileTypeString(RVector2 vector, String layerName) {
-        return getTileTypeString((int) vector.getVector().x, (int) vector.getVector().y, layerName);
     }
 
     public TileType getTileType(int x, int y, String layerName) {

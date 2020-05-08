@@ -216,12 +216,12 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    public void lockCards(){
+    public void lockCards() {
         inputMultiplexer.removeProcessor(stage);
         lockedInLabel.setText("LOCKED IN");
     }
 
-    public void unlockCards(){
+    public void unlockCards() {
         inputMultiplexer.addProcessor(stage);
         lockedInLabel.setText("");
     }
@@ -259,9 +259,5 @@ public class GameScreen extends ScreenAdapter {
             lose.getSprite().draw(popImages);
         }
         popImages.end();
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 }

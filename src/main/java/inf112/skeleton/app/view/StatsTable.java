@@ -8,7 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import inf112.skeleton.app.model.GameModel;
 import inf112.skeleton.app.model.Robot;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StatsTable extends Table {
     private final Skin skin;
@@ -90,5 +93,4 @@ public class StatsTable extends Table {
             flagsLabel.setText(robot.getState().getCapturedFlags() + "/" + gameModel.getMapHandler().getNumberOfFlags());
         }
     }
-
 }
